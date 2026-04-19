@@ -9,7 +9,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // 只允许 /api 开头
+        registry.addMapping("/**")
                 .allowedOriginPatterns(
                         "http://localhost:*",
                         "http://127.0.0.1:*")
