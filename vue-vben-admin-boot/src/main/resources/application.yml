@@ -3,12 +3,31 @@ server:
   servlet:
     context-path: /api
 
+# JWT：accessToken 过期时间
+jwt:
+  secret: "vue-vben-demo-jwt-secret-key-at-least-32-bytes-long!!"
+  access-expiration-ms: 7d
+  # RefreshToken 过期时间
+  refresh-expiration-ms: 30d
+
+# 活跃记录窗口（仅用于 Redis 活跃记录与后续策略扩展；当前不作为强制下线条件）
+app:
+  session:
+    idle-timeout-ms: 30d
+
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 123456
+      timeout: 3s
   datasource:
     url: jdbc:mysql://localhost:3307/vben_mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   configuration:

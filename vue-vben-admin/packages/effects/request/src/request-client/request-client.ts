@@ -63,7 +63,9 @@ class RequestClient {
       },
       responseReturn: 'raw',
       // 默认超时时间
-      timeout: 10_000,
+      // timeout: 10_000,
+      // 由于目前改造的登录请求时间超时过短，所以临时加长时间，覆盖原本的10秒钟
+      timeout: 10_000_000,
     };
     const { ...axiosConfig } = options;
     const requestConfig = merge(axiosConfig, defaultConfig);
