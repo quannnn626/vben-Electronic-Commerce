@@ -3,13 +3,18 @@ import type { VbenFormSchema } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
 
 import { computed, h, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { AuthenticationRegister, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
+import { ElMessage } from 'element-plus';
+
+import { registerApi } from '#/api';
 
 defineOptions({ name: 'Register' });
 
 const loading = ref(false);
+const router = useRouter();
 
 const formSchema = computed((): VbenFormSchema[] => {
   return [
@@ -21,6 +26,15 @@ const formSchema = computed((): VbenFormSchema[] => {
       fieldName: 'username',
       label: $t('authentication.username'),
       rules: z.string().min(1, { message: $t('authentication.usernameTip') }),
+    },
+    {
+      component: 'VbenInput',
+      componentProps: {
+        placeholder: $t('authentication.nicknameTip'),
+      },
+      fieldName: 'nickname',
+      label: $t('authentication.nickname'),
+      rules: z.string().min(1, { message: $t('authentication.nicknameTip') }),
     },
     {
       component: 'VbenInputPassword',
@@ -81,8 +95,23 @@ const formSchema = computed((): VbenFormSchema[] => {
   ];
 });
 
-function handleSubmit(value: Recordable<any>) {
-  void value;
+async function handleSubmit(value: Recordable<any>) {
+  if (!value?.agreePolicy) {
+    ElMessage.warning($t('authentication.agreeTip'));
+    return;
+  }
+  try {
+    loading.value = true;
+    await registerApi({
+      nickname: value.nickname,
+      password: value.password,
+      username: value.username,
+    });
+    ElMessage.success($t('authentication.registerSuccess'));
+    await router.push('/auth/login');
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 

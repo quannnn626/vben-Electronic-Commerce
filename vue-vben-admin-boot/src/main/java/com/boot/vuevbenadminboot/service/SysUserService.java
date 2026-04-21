@@ -9,5 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2026-04-19 19:20:12
 */
 public interface SysUserService extends IService<SysUser> {
+    SysUser selectByUsername(String username);
 
+    boolean insert(SysUser user);
 }

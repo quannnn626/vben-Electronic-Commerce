@@ -17,7 +17,7 @@ public class MallOrderItem {
     /**
      * 订单明细ID
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

@@ -4,9 +4,13 @@ import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.auth.JwtTokenProvider;
 import com.boot.vuevbenadminboot.auth.RefreshTokenService;
 import com.boot.vuevbenadminboot.auth.SessionActivityService;
+import com.boot.vuevbenadminboot.domain.SysUser;
+import com.boot.vuevbenadminboot.service.SysUserService;
+import com.boot.vuevbenadminboot.util.PasswordUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +41,9 @@ public class LoginController {
         this.sessionActivityService = sessionActivityService;
     }
 
+    @Autowired
+    private SysUserService sysUserService;
+
     /**
      * 登录接口：
      * accessToken：短时效访问令牌，前端放在 Authorization 里访问业务接口
@@ -49,8 +56,14 @@ public class LoginController {
 
         String username = params.get("username");
         String password = params.get("password");
-
-        if ("vben".equals(username) && "123456".equals(password)) {
+        SysUser sysUser = sysUserService.selectByUsername(username);
+        if (sysUser == null) {
+            return ApiResponse.of(1, null, "用户不存在");
+        }
+        boolean match = PasswordUtil.matchPassword(password, sysUser.getPassword());
+        if (!match) {
+            return ApiResponse.of(1, null, "密码错误");
+        }else {
             String accessToken = jwtTokenProvider.createAccessToken(username);
             String refreshToken = refreshTokenService.issueToken(username);
             sessionActivityService.onLogin(username);
@@ -58,10 +71,9 @@ public class LoginController {
 
             Map<String, Object> data = new HashMap<>();
             data.put("accessToken", accessToken);
-            return buildResponse(0, data, "success");
+            return ApiResponse.of(0, data, "success");
         }
 
-        return buildResponse(1, null, "用户名或密码错误");
     }
 
     /**
@@ -71,10 +83,10 @@ public class LoginController {
     public Map<String, Object> codes(HttpServletRequest request) {
         String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
         if (username == null) {
-            return buildResponse(-1, null, "未登录");
+            return ApiResponse.of(-1, null, "未登录");
         }
         List<String> codes = Arrays.asList("AC_100100", "AC_100110");
-        return buildResponse(0, codes, "success");
+        return ApiResponse.of(0, codes, "success");
     }
 
     /**
@@ -114,7 +126,7 @@ public class LoginController {
             }
         }
         clearRefreshCookie(response);
-        return buildResponse(0, true, "success");
+        return ApiResponse.of(0, true, "success");
     }
 
     private String readRefreshCookie(HttpServletRequest request) {
@@ -146,11 +158,4 @@ public class LoginController {
         response.addCookie(cookie);
     }
 
-    private Map<String, Object> buildResponse(int code, Object data, String message) {
-        Map<String, Object> res = new HashMap<>();
-        res.put("code", code);
-        res.put("data", data);
-        res.put("message", message);
-        return res;
-    }
 }

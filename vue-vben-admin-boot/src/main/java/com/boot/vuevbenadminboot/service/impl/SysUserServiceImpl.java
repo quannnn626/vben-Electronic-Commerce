@@ -6,6 +6,8 @@ import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
 * @author quannnn
 * @description 针对表【sys_user(系统用户表)】的数据库操作Service实现
@@ -15,6 +17,32 @@ import org.springframework.stereotype.Service;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
     implements SysUserService{
 
+    private final SysUserMapper sysUserMapper;
+
+    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+        this.sysUserMapper = sysUserMapper;
+    }
+
+    @Override
+    public SysUser selectByUsername(String username) {
+        return baseMapper.selectByUsername(username);
+    }
+
+    @Override
+    public boolean insert(SysUser user) {
+        Date now = new Date(System.currentTimeMillis());
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setRole("user");
+        user.setStatus(1);
+        user.setDeleted(0);
+        user.setHomePath("/home");
+        int insert = sysUserMapper.insert(user);
+        if (insert > 0) {
+            return true;
+        }
+        return false;
+    }
 }
 
 

@@ -16,7 +16,7 @@ public class SysUser {
     /**
      * 用户ID（主键）
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -35,9 +35,24 @@ public class SysUser {
     private String nickname;
 
     /**
+     * 头像地址
+     */
+    private String avatar;
+
+    /**
      * 用户角色：admin-管理员 user-普通用户
      */
     private String role;
+
+    /**
+     * 登录后默认首页路径
+     */
+    private String homePath;
+
+    /**
+     * 用户简介
+     */
+    private String userDesc;
 
     /**
      * 状态：1正常 0禁用

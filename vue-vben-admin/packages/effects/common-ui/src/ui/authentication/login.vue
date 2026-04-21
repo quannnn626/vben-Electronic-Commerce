@@ -31,12 +31,12 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   qrCodeLoginPath: '/auth/qrcode-login',
   registerPath: '/auth/register',
-  showCodeLogin: true,
+  showCodeLogin: false,
   showForgetPassword: true,
-  showQrcodeLogin: true,
+  showQrcodeLogin: false,
   showRegister: true,
   showRememberMe: true,
-  showThirdPartyLogin: true,
+  showThirdPartyLogin: false,
   submitButtonText: '',
   subTitle: '',
   title: '',
@@ -68,10 +68,7 @@ async function handleSubmit() {
   const { valid } = await formApi.validate();
   const values = await formApi.getValues();
   if (valid) {
-    localStorage.setItem(
-      REMEMBER_ME_KEY,
-      rememberMe.value ? values?.username : '',
-    );
+    localStorage.setItem(REMEMBER_ME_KEY, rememberMe.value ? values?.username : '');
     emit('submit', values);
   }
 }
@@ -110,16 +107,9 @@ defineExpose({
 
     <Form />
 
-    <div
-      v-if="showRememberMe || showForgetPassword"
-      class="mb-6 flex justify-between"
-    >
+    <div v-if="showRememberMe || showForgetPassword" class="mb-6 flex justify-between">
       <div class="flex-center">
-        <VbenCheckbox
-          v-if="showRememberMe"
-          v-model="rememberMe"
-          name="rememberMe"
-        >
+        <VbenCheckbox v-if="showRememberMe" v-model="rememberMe" name="rememberMe">
           {{ $t('authentication.rememberMe') }}
         </VbenCheckbox>
       </div>
@@ -174,10 +164,7 @@ defineExpose({
     <slot name="to-register">
       <div v-if="showRegister" class="mt-3 text-center text-sm">
         {{ $t('authentication.accountTip') }}
-        <span
-          class="vben-link text-sm font-normal"
-          @click="handleGo(registerPath)"
-        >
+        <span class="vben-link text-sm font-normal" @click="handleGo(registerPath)">
           {{ $t('authentication.createAccount') }}
         </span>
       </div>

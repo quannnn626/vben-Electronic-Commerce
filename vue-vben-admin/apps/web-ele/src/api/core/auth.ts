@@ -12,6 +12,13 @@ export namespace AuthApi {
     accessToken: string;
   }
 
+  /** 注册接口参数 */
+  export interface RegisterParams {
+    nickname?: string;
+    password: string;
+    username: string;
+  }
+
   export interface RefreshTokenResult {
     data: string;
     status: number;
@@ -23,6 +30,15 @@ export namespace AuthApi {
  */
 export async function loginApi(data: AuthApi.LoginParams) {
   return requestClient.post<AuthApi.LoginResult>('/auth/login', data, {
+    withCredentials: true,
+  });
+}
+
+/**
+ * 注册
+ */
+export async function registerApi(data: AuthApi.RegisterParams) {
+  return requestClient.post('/auth/register', data, {
     withCredentials: true,
   });
 }

@@ -46,9 +46,10 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 登录、刷新、登出接口直接放行
+        // 登录、注册、刷新、登出接口直接放行
         String path = request.getServletPath();
         if ("/auth/login".equals(path)
+                || "/auth/register".equals(path)
                 || "/auth/refresh".equals(path)
                 || "/auth/logout".equals(path)) {
             filterChain.doFilter(request, response);
