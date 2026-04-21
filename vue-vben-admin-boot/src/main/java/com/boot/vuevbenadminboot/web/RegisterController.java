@@ -3,13 +3,13 @@ package com.boot.vuevbenadminboot.web;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.util.PasswordUtil;
+import com.boot.vuevbenadminboot.web.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,11 +20,11 @@ public class RegisterController {
 
     @RequestMapping("/register")
     public Map<String, Object> register(
-            @RequestBody java.util.Map<java.lang.String, java.lang.String> params,
+            @RequestBody RegisterRequest params,
             HttpServletResponse response) {
-        String username = params.get("username");
-        String password = params.get("password");
-        String nickname = params.get("nickname");
+        String username = params.getUsername();
+        String password = params.getPassword();
+        String nickname = params.getNickname();
         SysUser sysUser = sysUserService.selectByUsername(username);
         if (sysUser != null) {
             return ApiResponse.of(1, null, "用户名已存在");

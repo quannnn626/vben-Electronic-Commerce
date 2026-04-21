@@ -12,8 +12,7 @@
     "analytics": "Analytics",
     "workspace": "Workspace"
   },
-  "home": {
-    "title": "Home",
-    "index": "index"
+  "category": {
+    "categoryManage": "categoryManage"
   }
 }

@@ -12,8 +12,7 @@
     "analytics": "分析页",
     "workspace": "工作台"
   },
-  "home": {
-    "title": "首页",
-    "index": "首页子菜单"
+  "category": {
+    "categoryManage": "商品类目管理"
   }
 }

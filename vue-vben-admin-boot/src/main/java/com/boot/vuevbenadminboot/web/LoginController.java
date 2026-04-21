@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.auth.SessionActivityService;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.util.PasswordUtil;
+import com.boot.vuevbenadminboot.web.dto.LoginRequest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,11 +52,11 @@ public class LoginController {
      */
     @PostMapping("/login")
     public Map<String, Object> login(
-            @RequestBody Map<String, String> params,
+            @RequestBody LoginRequest params,
             HttpServletResponse response) {
 
-        String username = params.get("username");
-        String password = params.get("password");
+        String username = params.getUsername();
+        String password = params.getPassword();
         SysUser sysUser = sysUserService.selectByUsername(username);
         if (sysUser == null) {
             return ApiResponse.of(1, null, "用户不存在");
