@@ -9,5 +9,6 @@ public final class AuthConstants {
     /** 已登录用户名，供 Controller 读取 */
     public static final String REQUEST_USERNAME = "AUTH_USERNAME";
 
+    // 防止实例化，这个类只能存public static final常量
     private AuthConstants() {}
 }

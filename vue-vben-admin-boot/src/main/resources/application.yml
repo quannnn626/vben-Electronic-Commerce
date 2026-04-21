@@ -5,15 +5,16 @@ server:
 
 # JWT：accessToken 过期时间
 jwt:
+  # secret 密钥，用于签名和验证 JWT 令牌,除开发外，不要写到这里面
   secret: "vue-vben-demo-jwt-secret-key-at-least-32-bytes-long!!"
-  access-expiration-ms: 7d
+  access-expiration-ms: 604800000
   # RefreshToken 过期时间
-  refresh-expiration-ms: 30d
+  refresh-expiration-ms: 2592000000
 
 # 活跃记录窗口（仅用于 Redis 活跃记录与后续策略扩展；当前不作为强制下线条件）
 app:
   session:
-    idle-timeout-ms: 30d
+    idle-timeout-ms: 2592000000
 
 spring:
   data:
