@@ -2,6 +2,10 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.vuevbenadminboot.service.dto.ProductListItemDto;
+import com.boot.vuevbenadminboot.service.dto.ProductSaveRequest;
+
+import java.util.List;
 
 /**
 * @author quannnn
@@ -9,5 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2026-04-19 19:20:12
 */
 public interface MallProductService extends IService<MallProduct> {
-
+    List<ProductListItemDto> listProducts();
+    Long createProduct(ProductSaveRequest req);
+    boolean updateProduct(ProductSaveRequest req);
+    boolean deleteProduct(ProductSaveRequest req);
 }

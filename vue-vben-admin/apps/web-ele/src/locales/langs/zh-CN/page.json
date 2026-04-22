@@ -14,5 +14,8 @@
   },
   "category": {
     "categoryManage": "商品类目管理"
+  },
+  "product": {
+    "productManage": "商品管理"
   }
 }

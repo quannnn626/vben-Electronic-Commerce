@@ -11,11 +11,37 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 21/04/2026 22:04:46
+ Date: 22/04/2026 17:38:41
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for mall_file
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_file`;
+CREATE TABLE `mall_file`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID（主键）',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '附件名称',
+  `file_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '附件访问路径',
+  `file_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '附件类型',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `status` int NULL DEFAULT 0 COMMENT '状态：0-未删除 1-已删除',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_file
+-- ----------------------------
+INSERT INTO `mall_file` VALUES (1, 'QQ图片20230426170644.jpg', '/upload/20260422152734_d3e3db395c044d60aa8e46c11e1862a5.jpg', 'image/jpeg', '2026-04-22 15:27:34', '2026-04-22 15:27:34', 0);
+INSERT INTO `mall_file` VALUES (2, 'QQ图片20230426170644.jpg', '/upload/20260422155444_6fa439751a5f42b4b26070b9d3975e8f.jpg', 'image/jpeg', '2026-04-22 15:54:44', '2026-04-22 15:54:44', 0);
+INSERT INTO `mall_file` VALUES (3, '微信图片_20250918000345.jpg', '/upload/20260422155531_d5a451efd4e74c7ba8f3bbf3f9860573.jpg', 'image/jpeg', '2026-04-22 15:55:31', '2026-04-22 15:55:31', 0);
+INSERT INTO `mall_file` VALUES (4, 'QQ图片20230426170644.jpg', '/upload/20260422162644_4af48c7f348a49e1b4710347df49180a.jpg', 'image/jpeg', '2026-04-22 16:26:44', '2026-04-22 16:26:44', 0);
+INSERT INTO `mall_file` VALUES (5, 'QQ图片20230426170644.jpg', '/upload/20260422162925_0e2c1e62d7864a6d9e2512e45069df37.jpg', 'image/jpeg', '2026-04-22 16:29:26', '2026-04-22 16:29:26', 0);
+INSERT INTO `mall_file` VALUES (6, '微信图片_20250329220729.png', '/upload/20260422162932_0ce1ecd2a81f4b59a19e638bd6269f16.png', 'image/png', '2026-04-22 16:29:32', '2026-04-22 16:29:32', 0);
+INSERT INTO `mall_file` VALUES (7, '5f6e98f8059c026064a3b7e33fb5a69c.mp4', '/upload/20260422162940_4c7b4e48aa534a14b8ee0a1a10bc055a.mp4', 'video/mp4', '2026-04-22 16:29:40', '2026-04-22 16:29:40', 0);
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -72,18 +98,20 @@ CREATE TABLE `mall_product`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
+INSERT INTO `mall_product` VALUES (1, '蒙娜丽莎', 200000.00, 1, '蒙娜丽莎的微笑', 1, '2026-04-22 15:27:53', '2026-04-22 16:26:53', 0);
+INSERT INTO `mall_product` VALUES (2, '丽邦', 20.00, 200000, '', 1, '2026-04-22 16:29:43', '2026-04-22 16:29:43', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_category`;
 CREATE TABLE `mall_product_category`  (
-  `id` bigint NOT NULL COMMENT '类目ID（主键）',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '类目ID（主键）',
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '类目名称',
   `parent_id` bigint NULL DEFAULT 0 COMMENT '父级类目ID（0表示顶级类目）',
   `level` int NULL DEFAULT 1 COMMENT '类目层级',
@@ -395,9 +423,66 @@ INSERT INTO `mall_product_category` VALUES (41112, '其他百达翡丽', 4111, 3
 INSERT INTO `mall_product_category` VALUES (41121, '劳力士', 4112, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
 INSERT INTO `mall_product_category` VALUES (41122, '其他劳力士', 4112, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
 INSERT INTO `mall_product_category` VALUES (101313, '义乌出品', 2041, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (101314, '现代艺术', 0, 1, 0, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 1);
-INSERT INTO `mall_product_category` VALUES (101315, '雕塑', 101314, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 1);
-INSERT INTO `mall_product_category` VALUES (101316, '克劳狄乌斯半身像', 101315, 3, 0, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 1);
+INSERT INTO `mall_product_category` VALUES (101314, '义务', 0, 1, 16, 1, '义乌出品', '2026-04-22 10:57:51', '2026-04-22 10:57:51', 0);
+INSERT INTO `mall_product_category` VALUES (101315, '日用', 101314, 2, 1, 1, '日用品', '2026-04-22 10:58:53', '2026-04-22 10:58:53', 0);
+INSERT INTO `mall_product_category` VALUES (101316, '雨伞', 101315, 3, 1, 1, '雨伞', '2026-04-22 11:03:51', '2026-04-22 11:03:51', 0);
+INSERT INTO `mall_product_category` VALUES (101317, '纸巾', 101315, 3, 2, 1, '餐巾纸', '2026-04-22 11:06:26', '2026-04-22 11:06:26', 0);
+
+-- ----------------------------
+-- Table structure for mall_product_category_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_product_category_rel`;
+CREATE TABLE `mall_product_category_rel`  (
+  `id` bigint NOT NULL COMMENT '主键ID',
+  `product_id` bigint NOT NULL COMMENT '商品ID',
+  `category_id` bigint NOT NULL COMMENT '类目ID',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_product_category_rel
+-- ----------------------------
+INSERT INTO `mall_product_category_rel` VALUES (2046868326162673665, 1, 111);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326225588225, 1, 112);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326225588226, 1, 113);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326225588227, 1, 114);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326225588228, 1, 115);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326225588229, 1, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697089, 1, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697090, 1, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697091, 1, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697092, 1, 131);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697093, 1, 132);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326292697094, 1, 133);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611650, 1, 134);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611651, 1, 141);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611652, 1, 142);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611653, 1, 143);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611654, 1, 144);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326355611655, 1, 145);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326422720513, 1, 151);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326422720514, 1, 152);
+INSERT INTO `mall_product_category_rel` VALUES (2046868326422720515, 1, 153);
+INSERT INTO `mall_product_category_rel` VALUES (2046869039471177730, 2, 101317);
+
+-- ----------------------------
+-- Table structure for mall_product_file_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_product_file_rel`;
+CREATE TABLE `mall_product_file_rel`  (
+  `id` bigint NOT NULL COMMENT '主键ID',
+  `product_id` bigint NOT NULL COMMENT '商品ID',
+  `file_id` bigint NOT NULL COMMENT '附件ID',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-附件关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_product_file_rel
+-- ----------------------------
+INSERT INTO `mall_product_file_rel` VALUES (2046868326422720516, 1, 4);
+INSERT INTO `mall_product_file_rel` VALUES (2046869039538286594, 2, 5);
+INSERT INTO `mall_product_file_rel` VALUES (2046869039538286595, 2, 6);
+INSERT INTO `mall_product_file_rel` VALUES (2046869039538286596, 2, 7);
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -417,7 +502,7 @@ CREATE TABLE `sys_user`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0未删除 1已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2046495738450235394 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_user
