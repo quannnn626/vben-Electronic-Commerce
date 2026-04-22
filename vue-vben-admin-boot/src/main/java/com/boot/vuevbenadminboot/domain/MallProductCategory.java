@@ -17,7 +17,7 @@ public class MallProductCategory {
     /**
      * 类目ID
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

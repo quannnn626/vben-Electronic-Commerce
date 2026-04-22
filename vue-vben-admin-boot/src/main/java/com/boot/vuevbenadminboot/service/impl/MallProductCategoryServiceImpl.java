@@ -92,6 +92,7 @@ public class MallProductCategoryServiceImpl extends ServiceImpl<MallProductCateg
         return this.removeByIds(toDeleteIds);
     }
 
+    // 验证请求参数
     private String validateRequest(CategorySaveRequest req, boolean isUpdate) {
         if (req == null) {
             return "请求参数不能为空";

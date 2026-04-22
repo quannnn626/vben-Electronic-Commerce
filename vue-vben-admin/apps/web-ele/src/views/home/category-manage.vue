@@ -53,7 +53,8 @@ const isEdit = ref(false);
 const currentEditId = ref<null | number>(null);
 const lockLevelByNode = ref(false);
 const currentAction = ref<'create' | 'create-child' | 'edit'>('create');
-const treeApiPath = '/mall/product-category/tree';
+const categoryApiBase = '/mall/product-category';
+const treeApiPath = `${categoryApiBase}/tree`;
 
 const treeData = ref<CategoryNode[]>([]);
 
@@ -93,20 +94,6 @@ function findNodeAndParentById(
     }
   }
   return { node: null, parent: null };
-}
-
-function removeNodeById(list: CategoryNode[], id: number): boolean {
-  const index = list.findIndex((item) => item.id === id);
-  if (index >= 0) {
-    list.splice(index, 1);
-    return true;
-  }
-  for (const item of list) {
-    if (item.children?.length && removeNodeById(item.children, id)) {
-      return true;
-    }
-  }
-  return false;
 }
 
 function cloneAndFilterTree(nodes: CategoryNode[], key: string, status: StatusFilter): CategoryNode[] {
@@ -278,14 +265,6 @@ function validateForm(): boolean {
   return true;
 }
 
-function getNextId(): number {
-  let maxId = 0;
-  walkNodes(treeData.value, (node) => {
-    maxId = Math.max(maxId, node.id);
-  });
-  return maxId + 1;
-}
-
 function buildCategoryPayload() {
   return {
     code: formModel.code.trim(),
@@ -299,52 +278,36 @@ function buildCategoryPayload() {
   };
 }
 
-function submitCategory() {
+async function submitCategory() {
   if (!validateForm()) {
     return;
   }
   const payload = buildCategoryPayload();
-  // TODO: 后端接口可直接使用 payload，按 currentAction.value 分发到新增/修改接口
   submitLoading.value = true;
-  setTimeout(() => {
+  try {
     if (isEdit.value && currentEditId.value !== null) {
-      const found = findNodeAndParentById(treeData.value, currentEditId.value);
-      if (found.node) {
-        found.node.name = payload.name;
-        found.node.code = payload.code;
-        found.node.sort = payload.sort;
-        found.node.status = payload.status;
-        found.node.remark = payload.remark;
-      }
+      await requestClient.put(categoryApiBase, {
+        ...payload,
+        id: currentEditId.value,
+      });
       ElMessage.success('类目修改成功');
     } else {
-      const newNode: CategoryNode = {
+      await requestClient.post(categoryApiBase, {
         code: payload.code,
-        createTime: new Date().toLocaleString(),
-        id: getNextId(),
         level: payload.level,
         name: payload.name,
         parentId: payload.parentId,
         remark: payload.remark,
         sort: payload.sort,
         status: payload.status,
-      };
-      if (newNode.level === 1) {
-        treeData.value.unshift(newNode);
-      } else if (newNode.parentId !== null) {
-        const found = findNodeAndParentById(treeData.value, newNode.parentId);
-        if (found.node) {
-          if (!found.node.children) {
-            found.node.children = [];
-          }
-          found.node.children.push(newNode);
-        }
-      }
+      });
       ElMessage.success('类目新增成功');
     }
-    submitLoading.value = false;
     dialogVisible.value = false;
-  }, 250);
+    await loadCategoryTree();
+  } finally {
+    submitLoading.value = false;
+  }
 }
 
 async function removeCategory(row: CategoryNode, action: CategoryAction = 'delete') {
@@ -357,10 +320,11 @@ async function removeCategory(row: CategoryNode, action: CategoryAction = 'delet
       '删除确认',
       { confirmButtonText: '确认删除', type: 'warning' },
     );
-    removeNodeById(treeData.value, row.id);
+    await requestClient.delete(categoryApiBase, { data: { id: row.id } });
     ElMessage.success('删除成功');
+    await loadCategoryTree();
   } catch {
-    // 用户取消删除
+    // 用户取消删除 或 请求失败（错误提示由拦截器处理）
   }
 }
 
