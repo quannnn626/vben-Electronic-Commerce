@@ -1,7 +1,7 @@
 package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.service.MallProductService;
-import com.boot.vuevbenadminboot.service.dto.ProductSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.ProductSaveRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

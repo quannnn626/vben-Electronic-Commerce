@@ -1,4 +1,4 @@
-package com.boot.vuevbenadminboot.service.dto;
+package com.boot.vuevbenadminboot.web.dto;
 
 import lombok.Data;
 

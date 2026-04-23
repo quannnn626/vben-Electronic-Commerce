@@ -13,9 +13,9 @@ import com.boot.vuevbenadminboot.service.MallProductCategoryRelService;
 import com.boot.vuevbenadminboot.service.MallProductFileRelService;
 import com.boot.vuevbenadminboot.service.MallProductService;
 import com.boot.vuevbenadminboot.service.MallProductStockService;
-import com.boot.vuevbenadminboot.service.dto.ProductFileDto;
-import com.boot.vuevbenadminboot.service.dto.ProductListItemDto;
-import com.boot.vuevbenadminboot.service.dto.ProductSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.ProductFileDto;
+import com.boot.vuevbenadminboot.web.dto.ProductListItemDto;
+import com.boot.vuevbenadminboot.web.dto.ProductSaveRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
