@@ -17,5 +17,8 @@
   },
   "product": {
     "productManage": "商品管理"
+  },
+  "stock": {
+    "stockManage": "库存管理"
   }
 }
