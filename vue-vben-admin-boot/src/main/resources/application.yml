@@ -41,4 +41,4 @@ mybatis-plus:
 logging:
   level:
     com.boot.vuevbenadminboot.mapper: debug
-#上面的注释用于打开日志，方便调试
+#上面的用于打开日志，方便调试
