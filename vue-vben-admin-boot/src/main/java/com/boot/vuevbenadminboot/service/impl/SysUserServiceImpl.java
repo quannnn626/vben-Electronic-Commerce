@@ -36,7 +36,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         user.setRole("user");
         user.setStatus(1);
         user.setDeleted(0);
-        user.setHomePath("/home");
+        user.setHomePath("/analytics");
         int insert = sysUserMapper.insert(user);
         if (insert > 0) {
             return true;

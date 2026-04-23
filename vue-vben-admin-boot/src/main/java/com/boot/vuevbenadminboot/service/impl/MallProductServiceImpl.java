@@ -6,11 +6,13 @@ import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallProductCategoryRel;
 import com.boot.vuevbenadminboot.domain.MallProductFileRel;
+import com.boot.vuevbenadminboot.domain.MallProductStock;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallProductCategoryRelService;
 import com.boot.vuevbenadminboot.service.MallProductFileRelService;
 import com.boot.vuevbenadminboot.service.MallProductService;
+import com.boot.vuevbenadminboot.service.MallProductStockService;
 import com.boot.vuevbenadminboot.service.dto.ProductFileDto;
 import com.boot.vuevbenadminboot.service.dto.ProductListItemDto;
 import com.boot.vuevbenadminboot.service.dto.ProductSaveRequest;
@@ -39,14 +41,17 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     private final MallProductCategoryRelService productCategoryRelService;
     private final MallProductFileRelService productFileRelService;
     private final MallFileService mallFileService;
+    private final MallProductStockService productStockService;
 
     public MallProductServiceImpl(
             MallProductCategoryRelService productCategoryRelService,
             MallProductFileRelService productFileRelService,
-            MallFileService mallFileService) {
+            MallFileService mallFileService,
+            MallProductStockService productStockService) {
         this.productCategoryRelService = productCategoryRelService;
         this.productFileRelService = productFileRelService;
         this.mallFileService = mallFileService;
+        this.productStockService = productStockService;
     }
 
     @Override
@@ -62,6 +67,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         List<Long> productIds = products.stream().map(MallProduct::getId).toList();
         Map<Long, List<Long>> categoryMap = buildCategoryMap(productIds);
         Map<Long, List<ProductFileDto>> fileMap = buildFileMap(productIds);
+        Map<Long, MallProductStock> stockMap = productStockService.getStockMapByProductIds(productIds);
 
         List<ProductListItemDto> result = new ArrayList<>();
         for (MallProduct product : products) {
@@ -69,7 +75,8 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             dto.setId(product.getId());
             dto.setName(product.getName());
             dto.setPrice(product.getPrice());
-            dto.setStock(product.getStock());
+            MallProductStock stock = stockMap.get(product.getId());
+            dto.setStock(stock == null || stock.getStock() == null ? 0 : stock.getStock());
             dto.setDescription(product.getDescription());
             dto.setStatus(product.getStatus());
             dto.setCreateTime(product.getCreateTime());
@@ -86,13 +93,13 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         MallProduct product = new MallProduct();
         product.setName(req.getName().trim());
         product.setPrice(req.getPrice());
-        product.setStock(req.getStock());
         product.setDescription(req.getDescription());
         product.setStatus(req.getStatus() == null ? 1 : req.getStatus());
         product.setDeleted(0);
         product.setCreateTime(new Date());
         product.setUpdateTime(new Date());
         this.save(product);
+        productStockService.saveProductStock(product.getId(), req.getStock());
         saveProductRelations(product.getId(), req);
         return product.getId();
     }
@@ -106,11 +113,11 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         old.setName(req.getName().trim());
         old.setPrice(req.getPrice());
-        old.setStock(req.getStock());
         old.setDescription(req.getDescription());
         old.setStatus(req.getStatus() == null ? 1 : req.getStatus());
         old.setUpdateTime(new Date());
         boolean updated = this.updateById(old);
+        productStockService.saveProductStock(req.getId(), req.getStock());
         clearProductRelations(req.getId());
         saveProductRelations(req.getId(), req);
         return updated;
@@ -125,6 +132,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         if (old == null || Objects.equals(old.getDeleted(), 1)) {
             throw new IllegalArgumentException("商品不存在");
         }
+        productStockService.deleteByProductId(req.getId());
         clearProductRelations(req.getId());
         return this.removeById(req.getId());
     }
@@ -224,6 +232,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         return result;
     }
+
 }
 
 

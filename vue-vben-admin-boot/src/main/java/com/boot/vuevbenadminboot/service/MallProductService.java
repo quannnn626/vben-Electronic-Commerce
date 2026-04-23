@@ -8,13 +8,16 @@ import com.boot.vuevbenadminboot.service.dto.ProductSaveRequest;
 import java.util.List;
 
 /**
-* @author quannnn
-* @description 针对表【mall_product(商品表)】的数据库操作Service
-* @createDate 2026-04-19 19:20:12
-*/
+ * @author quannnn
+ * @description 针对表【mall_product(商品表)】的数据库操作Service
+ * @createDate 2026-04-19 19:20:12
+ */
 public interface MallProductService extends IService<MallProduct> {
     List<ProductListItemDto> listProducts();
+
     Long createProduct(ProductSaveRequest req);
+
     boolean updateProduct(ProductSaveRequest req);
+
     boolean deleteProduct(ProductSaveRequest req);
 }

@@ -35,9 +35,10 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-logging:
-  level:
-    com.boot.vuevbenboot.mapper: debug
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#
+#logging:
+#  level:
+#    com.boot.vuevbenadminboot.mapper: debug
+#上面的注释用于打开日志，方便调试

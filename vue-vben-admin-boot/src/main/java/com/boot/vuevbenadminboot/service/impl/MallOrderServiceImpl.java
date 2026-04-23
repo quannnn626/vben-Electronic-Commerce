@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
 * @author quannnn
 * @description 针对表【mall_order(订单表)】的数据库操作Service实现
-* @createDate 2026-04-19 19:20:12
+* @createDate 2026-04-23 13:48:03
 */
 @Service
 public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder>

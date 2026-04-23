@@ -32,11 +32,6 @@ public class MallProduct {
     private BigDecimal price;
 
     /**
-     * 库存数量
-     */
-    private Integer stock;
-
-    /**
      * 商品描述
      */
     private String description;
@@ -76,7 +71,6 @@ public class MallProduct {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
             && (this.getPrice() == null ? other.getPrice() == null : this.getPrice().equals(other.getPrice()))
-            && (this.getStock() == null ? other.getStock() == null : this.getStock().equals(other.getStock()))
             && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
             && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
@@ -91,7 +85,6 @@ public class MallProduct {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getPrice() == null) ? 0 : getPrice().hashCode());
-        result = prime * result + ((getStock() == null) ? 0 : getStock().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
@@ -109,7 +102,6 @@ public class MallProduct {
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
         sb.append(", price=").append(price);
-        sb.append(", stock=").append(stock);
         sb.append(", description=").append(description);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);

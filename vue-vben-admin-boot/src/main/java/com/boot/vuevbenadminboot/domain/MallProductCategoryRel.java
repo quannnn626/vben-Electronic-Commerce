@@ -16,7 +16,7 @@ public class MallProductCategoryRel {
     /**
      * 主键ID
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

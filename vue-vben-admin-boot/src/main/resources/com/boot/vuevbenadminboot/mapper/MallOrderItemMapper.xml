@@ -8,15 +8,18 @@
             <id property="id" column="id" />
             <result property="orderId" column="order_id" />
             <result property="productId" column="product_id" />
-            <result property="quantity" column="quantity" />
+            <result property="productName" column="product_name" />
+            <result property="productImage" column="product_image" />
             <result property="price" column="price" />
+            <result property="quantity" column="quantity" />
+            <result property="totalPrice" column="total_price" />
             <result property="createTime" column="create_time" />
             <result property="updateTime" column="update_time" />
             <result property="deleted" column="deleted" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,order_id,product_id,quantity,price,create_time,
-        update_time,deleted
+        id,order_id,product_id,product_name,product_image,price,
+        quantity,total_price,create_time,update_time,deleted
     </sql>
 </mapper>

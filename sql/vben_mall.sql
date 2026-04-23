@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 22/04/2026 17:38:41
+ Date: 23/04/2026 13:47:05
 */
 
 SET NAMES utf8mb4;
@@ -49,15 +49,26 @@ INSERT INTO `mall_file` VALUES (7, '5f6e98f8059c026064a3b7e33fb5a69c.mp4', '/upl
 DROP TABLE IF EXISTS `mall_order`;
 CREATE TABLE `mall_order`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单ID',
-  `order_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单编号（业务唯一）',
+  `order_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '订单编号',
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `total_amount` decimal(10, 2) NOT NULL COMMENT '订单总金额',
-  `status` tinyint NOT NULL COMMENT '订单状态：0待支付 1已支付 2已取消 3已完成',
+  `pay_amount` decimal(10, 2) NULL DEFAULT NULL COMMENT '实付金额',
+  `status` tinyint NOT NULL COMMENT '0待支付 1已支付 2已发货 3已完成 4已取消',
+  `receiver_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '收货人（快照）',
+  `receiver_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手机号（快照）',
+  `receiver_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '地址（快照）',
+  `address_id` bigint NULL DEFAULT NULL COMMENT '地址ID',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `pay_time` datetime NULL DEFAULT NULL COMMENT '支付时间',
+  `delivery_time` datetime NULL DEFAULT NULL COMMENT '发货时间',
+  `finish_time` datetime NULL DEFAULT NULL COMMENT '完成时间',
+  `cancel_time` datetime NULL DEFAULT NULL COMMENT '取消时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_order_no`(`order_no` ASC) USING BTREE,
+  INDEX `idx_user_id`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_order
@@ -68,16 +79,20 @@ CREATE TABLE `mall_order`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_order_item`;
 CREATE TABLE `mall_order_item`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单明细ID',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '明细ID',
   `order_id` bigint NOT NULL COMMENT '订单ID',
   `product_id` bigint NOT NULL COMMENT '商品ID',
-  `quantity` int NOT NULL COMMENT '购买数量',
-  `price` decimal(10, 2) NOT NULL COMMENT '下单时单价（价格快照）',
+  `product_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '商品名称快照',
+  `product_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '商品图片快照',
+  `price` decimal(10, 2) NOT NULL COMMENT '单价',
+  `quantity` int NOT NULL COMMENT '数量',
+  `total_price` decimal(10, 2) NOT NULL COMMENT '小计',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
+  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_order_id`(`order_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_order_item
@@ -91,7 +106,6 @@ CREATE TABLE `mall_product`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '商品ID',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '商品名称',
   `price` decimal(10, 2) NOT NULL COMMENT '商品单价',
-  `stock` int NOT NULL COMMENT '库存数量',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '商品描述',
   `status` tinyint NULL DEFAULT 1 COMMENT '状态：1上架 0下架',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -103,8 +117,8 @@ CREATE TABLE `mall_product`  (
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
-INSERT INTO `mall_product` VALUES (1, '蒙娜丽莎', 200000.00, 1, '蒙娜丽莎的微笑', 1, '2026-04-22 15:27:53', '2026-04-22 16:26:53', 0);
-INSERT INTO `mall_product` VALUES (2, '丽邦', 20.00, 200000, '', 1, '2026-04-22 16:29:43', '2026-04-22 16:29:43', 0);
+INSERT INTO `mall_product` VALUES (1, '蒙娜丽莎', 200000.00, '蒙娜丽莎的微笑', 1, '2026-04-22 15:27:53', '2026-04-22 16:26:53', 0);
+INSERT INTO `mall_product` VALUES (2, '丽邦', 20.00, '', 1, '2026-04-22 16:29:43', '2026-04-22 16:29:43', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -122,7 +136,7 @@ CREATE TABLE `mall_product_category`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` int NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 101318 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product_category
@@ -433,7 +447,7 @@ INSERT INTO `mall_product_category` VALUES (101317, '纸巾', 101315, 3, 2, 1, '
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_category_rel`;
 CREATE TABLE `mall_product_category_rel`  (
-  `id` bigint NOT NULL COMMENT '主键ID',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `category_id` bigint NOT NULL COMMENT '类目ID',
   PRIMARY KEY (`id`) USING BTREE
@@ -470,7 +484,7 @@ INSERT INTO `mall_product_category_rel` VALUES (2046869039471177730, 2, 101317);
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_file_rel`;
 CREATE TABLE `mall_product_file_rel`  (
-  `id` bigint NOT NULL COMMENT '主键ID',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `file_id` bigint NOT NULL COMMENT '附件ID',
   PRIMARY KEY (`id`) USING BTREE
@@ -483,6 +497,50 @@ INSERT INTO `mall_product_file_rel` VALUES (2046868326422720516, 1, 4);
 INSERT INTO `mall_product_file_rel` VALUES (2046869039538286594, 2, 5);
 INSERT INTO `mall_product_file_rel` VALUES (2046869039538286595, 2, 6);
 INSERT INTO `mall_product_file_rel` VALUES (2046869039538286596, 2, 7);
+
+-- ----------------------------
+-- Table structure for mall_product_stock
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_product_stock`;
+CREATE TABLE `mall_product_stock`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `product_id` bigint NOT NULL COMMENT '商品ID',
+  `stock` int NOT NULL COMMENT '可用库存',
+  `locked_stock` int NULL DEFAULT 0 COMMENT '锁定库存',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_product_id`(`product_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品库存表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_product_stock
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mall_user_address
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_user_address`;
+CREATE TABLE `mall_user_address`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '地址ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `receiver_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '收货人',
+  `receiver_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '手机号',
+  `province` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '省',
+  `city` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '市',
+  `district` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '区',
+  `detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '详细地址',
+  `is_default` tinyint NULL DEFAULT 0 COMMENT '是否默认地址 1是 0否',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_user_id`(`user_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_user_address
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -508,6 +566,7 @@ CREATE TABLE `sys_user`  (
 -- Records of sys_user
 -- ----------------------------
 INSERT INTO `sys_user` VALUES (2046463574828482561, 'vben', '$2a$10$vj1MurvaDi6sMAycJOA8geMyUVdH.smxVC43ZF9idADeVE//FiV3e', 'Super', '', 'admin', '/analytics', '', 1, '2026-04-19 19:06:22', '2026-04-21 13:39:11', 0);
-INSERT INTO `sys_user` VALUES (2046495738450235393, 'test', '$2a$10$81x9rMP5EKA0xP4zO2/jSuM9OyuUKQSXWHZ.bMdjTpy7Qnki0MlFe', 'User', NULL, 'user', '/home', NULL, 1, '2026-04-21 15:46:21', '2026-04-21 15:59:58', 0);
+INSERT INTO `sys_user` VALUES (2046495738450235393, 'test', '$2a$10$81x9rMP5EKA0xP4zO2/jSuM9OyuUKQSXWHZ.bMdjTpy7Qnki0MlFe', 'User', NULL, 'user', '/analytics', NULL, 1, '2026-04-21 15:46:21', '2026-04-23 09:50:11', 0);
+INSERT INTO `sys_user` VALUES (2047131275460681729, 'user', '$2a$10$PKAE5Cd4tkv.hAEHDLlcd.oW5S4B8fYHkj/brPisHKWaF6WaVQgFq', '用户', NULL, 'user', '/analytics', NULL, 1, '2026-04-23 09:51:45', '2026-04-23 09:51:45', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

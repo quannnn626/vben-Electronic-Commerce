@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 /**
 * @author quannnn
 * @description 针对表【mall_order(订单表)】的数据库操作Mapper
-* @createDate 2026-04-19 19:20:12
-* @Entity com.boot.vuevbenadmin.domain.MallOrder
+* @createDate 2026-04-23 13:48:03
+* @Entity com.boot.vuevbenadminboot.domain.MallOrder
 */
 @Mapper
 public interface MallOrderMapper extends BaseMapper<MallOrder> {
