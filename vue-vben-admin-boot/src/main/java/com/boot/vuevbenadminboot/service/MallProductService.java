@@ -15,6 +15,8 @@ import java.util.List;
 public interface MallProductService extends IService<MallProduct> {
     List<ProductListItemDto> listProducts();
 
+    ProductListItemDto getProductDetail(Long id);
+
     Long createProduct(ProductSaveRequest req);
 
     boolean updateProduct(ProductSaveRequest req);

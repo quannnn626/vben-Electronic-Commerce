@@ -16,7 +16,8 @@
     "categoryManage": "categoryManage"
   },
     "product": {
-    "productManage": "productManage"
+    "productManage": "productManage",
+    "productBrowse": "Product Browse"
   },
   "stock": {
     "stockManage": "Stock Management"

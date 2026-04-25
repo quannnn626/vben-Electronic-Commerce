@@ -16,7 +16,8 @@
     "categoryManage": "商品类目管理"
   },
   "product": {
-    "productManage": "商品管理"
+    "productManage": "商品管理",
+    "productBrowse": "商品浏览"
   },
   "stock": {
     "stockManage": "库存管理"

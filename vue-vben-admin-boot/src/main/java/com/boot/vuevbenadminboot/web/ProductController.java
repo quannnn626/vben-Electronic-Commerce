@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -24,6 +25,15 @@ public class ProductController {
     @GetMapping("/list")
     public Map<String, Object> list() {
         return ApiResponse.of(0, productService.listProducts(), "success");
+    }
+
+    @GetMapping("/detail")
+    public Map<String, Object> detail(@RequestParam Long id) {
+        try {
+            return ApiResponse.of(0, productService.getProductDetail(id), "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
     }
 
     @PostMapping

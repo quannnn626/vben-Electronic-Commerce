@@ -62,6 +62,7 @@ class RequestClient {
         'Content-Type': 'application/json;charset=utf-8',
       },
       responseReturn: 'raw',
+      // TODO: 临时配置，后续需要根据实际情况调整超时时间
       // 默认超时时间
       // timeout: 10_000,
       // 由于目前改造的登录请求时间超时过短，所以临时加长时间，覆盖原本的10秒钟

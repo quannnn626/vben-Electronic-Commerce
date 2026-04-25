@@ -12,10 +12,8 @@ import {
   ElInput,
   ElInputNumber,
   ElMessage,
-  ElMessageBox,
   ElSpace,
   ElTable,
-  ElTag,
 } from 'element-plus';
 
 import { requestClient } from '#/api/request';
@@ -27,6 +25,9 @@ interface StockItem {
   lockedStock: number;
   productId: number;
   productName: string;
+  skuCode: string;
+  skuId: number;
+  specName: string;
   totalStock: number;
   updateTime: string;
 }
@@ -57,7 +58,11 @@ const tableData = computed(() => {
   if (!key) {
     return stockList.value;
   }
-  return stockList.value.filter((item) => item.productName.toLowerCase().includes(key));
+  return stockList.value.filter((item) =>
+    item.productName.toLowerCase().includes(key)
+    || (item.specName ?? '').toLowerCase().includes(key)
+    || (item.skuCode ?? '').toLowerCase().includes(key),
+  );
 });
 
 async function loadStocks() {
@@ -97,7 +102,7 @@ async function submitOperate() {
   submitLoading.value = true;
   try {
     await requestClient.post(`${stockApiBase}/${currentAction.value}`, {
-      productId: currentRow.value.productId,
+      skuId: currentRow.value.skuId,
       quantity: formModel.quantity,
     });
     ElMessage.success(`${actionTitleMap[currentAction.value]}成功`);
@@ -141,9 +146,12 @@ onMounted(async () => {
     </ElCard>
 
     <ElCard class="mt-4" shadow="never">
-      <ElTable :data="tableData" border row-key="productId" v-loading="tableLoading">
+      <ElTable :data="tableData" border row-key="skuId" v-loading="tableLoading">
         <ElTable.TableColumn label="商品ID" min-width="90" prop="productId" />
         <ElTable.TableColumn label="商品名称" min-width="180" prop="productName" />
+        <ElTable.TableColumn label="SKU ID" min-width="90" prop="skuId" />
+        <ElTable.TableColumn label="SKU编码" min-width="140" prop="skuCode" />
+        <ElTable.TableColumn label="规格" min-width="140" prop="specName" />
         <ElTable.TableColumn label="可用库存" min-width="100" prop="availableStock" />
         <ElTable.TableColumn label="锁定库存" min-width="100" prop="lockedStock" />
         <ElTable.TableColumn label="总库存" min-width="100" prop="totalStock" />
@@ -171,13 +179,13 @@ onMounted(async () => {
 
     <ElDialog
       v-model="dialogVisible"
-      :title="`${actionTitleMap[currentAction]} - ${currentRow?.productName ?? ''}`"
+      :title="`${actionTitleMap[currentAction]} - ${currentRow?.productName ?? ''} / ${currentRow?.specName ?? ''}`"
       destroy-on-close
       width="460px"
     >
       <ElForm label-width="90px">
-        <ElFormItem label="商品ID">
-          <span>{{ currentRow?.productId }}</span>
+        <ElFormItem label="SKU ID">
+          <span>{{ currentRow?.skuId }}</span>
         </ElFormItem>
         <ElFormItem label="操作数量" required>
           <ElInputNumber v-model="formModel.quantity" :min="1" :step="1" style="width: 220px" />

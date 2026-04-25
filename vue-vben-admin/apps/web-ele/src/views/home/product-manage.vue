@@ -20,6 +20,8 @@ import {
   ElMessage,
   ElMessageBox,
   ElSpace,
+  ElSelect,
+  ElOption,
   ElSwitch,
   ElTable,
   ElTag,
@@ -46,10 +48,23 @@ interface ProductItem {
   categoryIds: number[];
   createTime: string;
   description: string;
-  files: ProductFile[];
   id: number;
   name: string;
   price: number;
+  skus?: ProductSku[];
+  status: number;
+  stock: number;
+}
+
+interface ProductSku {
+  fileId?: number;
+  fileName?: string;
+  filePath?: string;
+  fileType?: string;
+  id?: number;
+  price: number;
+  skuCode: string;
+  specName: string;
   status: number;
   stock: number;
 }
@@ -71,12 +86,10 @@ const maxFileSizeBytes = 100 * 1024 * 1024;
 const formModel = reactive({
   categoryIds: [] as number[],
   description: '',
-  fileIds: [] as number[],
   files: [] as UploadUserFile[],
   name: '',
-  price: 0,
+  skus: [] as ProductSku[],
   status: true,
-  stock: 0,
 });
 
 const categoryTreeOptions = computed(() => {
@@ -98,30 +111,72 @@ const tableData = computed(() => {
 
 function resetForm() {
   formModel.name = '';
-  formModel.price = 0;
-  formModel.stock = 0;
   formModel.description = '';
   formModel.status = true;
+  formModel.skus = [createEmptySku()];
   formModel.categoryIds = [];
-  formModel.fileIds = [];
   formModel.files = [];
 }
+
+function createEmptySku(): ProductSku {
+  return {
+    price: 0,
+    skuCode: '',
+    specName: '',
+    status: 1,
+    stock: 0,
+  };
+}
+
+const uploadedFileOptions = computed(() => {
+  const map = new Map<number, ProductFile>();
+  for (const file of formModel.files) {
+    const maybeId = Number(file.uid);
+    if (!Number.isNaN(maybeId) && maybeId > 0) {
+      map.set(maybeId, {
+        fileName: file.name,
+        filePath: file.url || '',
+        fileType: '',
+        id: maybeId,
+      });
+    }
+    if (file.response && typeof file.response === 'object' && 'id' in file.response) {
+      const id = Number((file.response as any).id);
+      if (!Number.isNaN(id)) {
+        map.set(id, {
+          fileName: (file.response as any).fileName ?? file.name,
+          filePath: (file.response as any).filePath ?? file.url ?? '',
+          fileType: (file.response as any).fileType ?? '',
+          id,
+        });
+      }
+    }
+  }
+  return Array.from(map.values());
+});
 
 function validateForm() {
   if (!formModel.name.trim()) {
     ElMessage.warning('请输入商品名称');
     return false;
   }
-  if (formModel.price <= 0) {
-    ElMessage.warning('商品价格必须大于0');
-    return false;
-  }
-  if (formModel.stock < 0) {
-    ElMessage.warning('库存不能小于0');
-    return false;
-  }
   if (formModel.categoryIds.length === 0) {
     ElMessage.warning('请至少选择一个分类');
+    return false;
+  }
+  if (!formModel.skus.length) {
+    ElMessage.warning('请至少添加一个SKU规格');
+    return false;
+  }
+  const hasInvalidSku = formModel.skus.some(
+    (sku) =>
+      !sku.specName.trim()
+      || sku.price <= 0
+      || sku.stock < 0
+      || !sku.fileId,
+  );
+  if (hasInvalidSku) {
+    ElMessage.warning('请检查SKU规格：规格名不能为空、附件必选、价格需大于0、库存不能小于0');
     return false;
   }
   return true;
@@ -153,13 +208,37 @@ function openEditDialog(row: ProductItem) {
   isEdit.value = true;
   currentEditId.value = row.id;
   formModel.name = row.name;
-  formModel.price = row.price;
-  formModel.stock = row.stock;
   formModel.description = row.description ?? '';
   formModel.status = row.status === 1;
+  formModel.skus = (row.skus ?? []).map((sku) => ({
+    fileId: sku.fileId,
+    fileName: sku.fileName,
+    filePath: sku.filePath,
+    fileType: sku.fileType,
+    id: sku.id,
+    price: sku.price,
+    skuCode: sku.skuCode ?? '',
+    specName: sku.specName ?? '',
+    status: sku.status ?? 1,
+    stock: sku.stock ?? 0,
+  }));
+  if (formModel.skus.length === 0) {
+    formModel.skus = [createEmptySku()];
+  }
   formModel.categoryIds = [...(row.categoryIds ?? [])];
-  formModel.fileIds = (row.files ?? []).map((item) => item.id);
-  formModel.files = (row.files ?? []).map((item) => ({
+  const uniqueFileMap = new Map<number, ProductFile>();
+  for (const sku of row.skus ?? []) {
+    if (!sku.fileId || !sku.filePath) continue;
+    if (!uniqueFileMap.has(sku.fileId)) {
+      uniqueFileMap.set(sku.fileId, {
+        fileName: sku.fileName ?? `file-${sku.fileId}`,
+        filePath: sku.filePath,
+        fileType: sku.fileType ?? '',
+        id: sku.fileId,
+      });
+    }
+  }
+  formModel.files = Array.from(uniqueFileMap.values()).map((item) => ({
     name: item.fileName,
     status: 'success',
     uid: item.id,
@@ -172,16 +251,37 @@ function buildPayload() {
   return {
     categoryIds: formModel.categoryIds,
     description: formModel.description.trim(),
-    fileIds: formModel.fileIds,
     id: currentEditId.value,
     name: formModel.name.trim(),
-    price: formModel.price,
+    skus: formModel.skus.map((item) => ({
+      fileId: item.fileId,
+      id: item.id,
+      price: item.price,
+      skuCode: item.skuCode.trim(),
+      specName: item.specName.trim(),
+      status: item.status,
+      stock: item.stock,
+    })),
     status: formModel.status ? 1 : 0,
-    stock: formModel.stock,
   };
 }
 
+function addSkuRow() {
+  formModel.skus.push(createEmptySku());
+}
+
+function removeSkuRow(index: number) {
+  if (formModel.skus.length <= 1) {
+    ElMessage.warning('至少保留一个SKU规格');
+    return;
+  }
+  formModel.skus.splice(index, 1);
+}
+
 async function submitProduct() {
+  if (submitLoading.value) {
+    return;
+  }
   if (!validateForm()) {
     return;
   }
@@ -248,7 +348,6 @@ async function uploadFile(option: UploadRequestOptions) {
     if (!saved) {
       throw new Error('上传失败');
     }
-    formModel.fileIds.push(saved.id);
     onSuccess?.(saved as any);
   } catch (e) {
     onError?.(e as any);
@@ -256,21 +355,17 @@ async function uploadFile(option: UploadRequestOptions) {
 }
 
 function handleUploadSuccess(response: ProductFile, file: UploadUserFile) {
+  file.uid = response.id;
   file.url = response.filePath;
 }
 
 function handleUploadRemove(file: UploadUserFile) {
-  const fileId = Number(file.uid);
-  if (!Number.isNaN(fileId)) {
-    formModel.fileIds = formModel.fileIds.filter((id) => id !== fileId);
-    return;
+  let removedId = Number(file.uid);
+  if (Number.isNaN(removedId) && file.response && typeof file.response === 'object' && 'id' in file.response) {
+    removedId = Number((file.response as any).id);
   }
-  if (file.response && typeof file.response === 'object' && 'id' in file.response) {
-    const uploadedId = Number((file.response as any).id);
-    if (!Number.isNaN(uploadedId)) {
-      formModel.fileIds = formModel.fileIds.filter((id) => id !== uploadedId);
-    }
-  }
+  if (Number.isNaN(removedId)) return;
+  formModel.skus = formModel.skus.map((sku) => (sku.fileId === removedId ? { ...sku, fileId: undefined } : sku));
 }
 
 function getAuthHeaders() {
@@ -309,8 +404,13 @@ onMounted(async () => {
     <ElCard class="mt-4" shadow="never">
       <ElTable :data="tableData" border row-key="id" v-loading="tableLoading">
         <ElTable.TableColumn label="商品名称" min-width="180" prop="name" />
-        <ElTable.TableColumn label="价格" min-width="100" prop="price" />
-        <ElTable.TableColumn label="库存" min-width="90" prop="stock" />
+        <ElTable.TableColumn label="最低价" min-width="100" prop="price" />
+        <ElTable.TableColumn label="总库存" min-width="90" prop="stock" />
+        <ElTable.TableColumn label="SKU数" min-width="90">
+          <template #default="{ row }">
+            {{ row.skus?.length ?? 0 }}
+          </template>
+        </ElTable.TableColumn>
         <ElTable.TableColumn label="状态" min-width="100">
           <template #default="{ row }">
             <ElTag :type="row.status === 1 ? 'success' : 'info'">
@@ -325,7 +425,7 @@ onMounted(async () => {
         </ElTable.TableColumn>
         <ElTable.TableColumn label="附件数量" min-width="100">
           <template #default="{ row }">
-            {{ row.files?.length ?? 0 }}
+            {{ row.skus?.filter((item: ProductSku) => item.fileId).length ?? 0 }}
           </template>
         </ElTable.TableColumn>
         <ElTable.TableColumn label="创建时间" min-width="180" prop="createTime" />
@@ -350,20 +450,57 @@ onMounted(async () => {
         <ElFormItem label="商品名称" required>
           <ElInput v-model="formModel.name" maxlength="64" placeholder="请输入商品名称" />
         </ElFormItem>
-        <ElFormItem label="商品价格" required>
-          <ElInputNumber
-            v-model="formModel.price"
-            :min="0"
-            :precision="2"
-            :step="1"
-            style="width: 220px"
-          />
-        </ElFormItem>
-        <ElFormItem label="库存" required>
-          <ElInputNumber v-model="formModel.stock" :min="0" :step="1" style="width: 220px" />
-        </ElFormItem>
         <ElFormItem label="商品状态">
           <ElSwitch v-model="formModel.status" />
+        </ElFormItem>
+        <ElFormItem label="SKU规格" required>
+          <div class="w-full">
+            <ElTable :data="formModel.skus" border size="small">
+              <ElTable.TableColumn label="规格名" min-width="180">
+                <template #default="{ row }">
+                  <ElInput v-model="row.specName" placeholder="如：42码 / XL / 黑色" />
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="SKU编码" min-width="150">
+                <template #default="{ row }">
+                  <ElInput v-model="row.skuCode" placeholder="可选" />
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="价格" min-width="120">
+                <template #default="{ row }">
+                  <ElInputNumber v-model="row.price" :min="0" :precision="2" :step="1" style="width: 100%" />
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="库存" min-width="110">
+                <template #default="{ row }">
+                  <ElInputNumber v-model="row.stock" :min="0" :step="1" style="width: 100%" />
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="附件" min-width="180">
+                <template #default="{ row }">
+                  <ElSelect v-model="row.fileId" clearable placeholder="选择附件">
+                    <ElOption
+                      v-for="file in uploadedFileOptions"
+                      :key="file.id"
+                      :label="file.fileName"
+                      :value="file.id"
+                    />
+                  </ElSelect>
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="启用" width="90" align="center">
+                <template #default="{ row }">
+                  <ElSwitch v-model="row.status" :active-value="1" :inactive-value="0" />
+                </template>
+              </ElTable.TableColumn>
+              <ElTable.TableColumn label="操作" width="80" align="center">
+                <template #default="{ $index }">
+                  <ElButton link type="danger" @click="removeSkuRow($index)">删除</ElButton>
+                </template>
+              </ElTable.TableColumn>
+            </ElTable>
+            <ElButton class="mt-2" plain type="primary" @click="addSkuRow">新增规格</ElButton>
+          </div>
         </ElFormItem>
         <ElFormItem label="商品分类" required>
           <ElTreeSelect
@@ -387,7 +524,7 @@ onMounted(async () => {
           >
             <ElButton type="primary">选择附件</ElButton>
             <template #tip>
-              <div class="text-gray-500">仅支持图片或视频，可上传多个附件</div>
+              <div class="text-gray-500">先上传附件，再在SKU行里给每个规格选择一个附件</div>
             </template>
           </ElUpload>
         </ElFormItem>

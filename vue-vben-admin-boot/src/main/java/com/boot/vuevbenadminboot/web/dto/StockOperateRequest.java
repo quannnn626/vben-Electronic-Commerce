@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class StockOperateRequest {
-    private Long productId;
+    private Long skuId;
     private Integer quantity;
 }

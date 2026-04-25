@@ -7,7 +7,6 @@
     <resultMap id="BaseResultMap" type="com.boot.vuevbenadminboot.domain.MallProduct">
             <id property="id" column="id" />
             <result property="name" column="name" />
-            <result property="price" column="price" />
             <result property="description" column="description" />
             <result property="status" column="status" />
             <result property="createTime" column="create_time" />
@@ -16,7 +15,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,price,description,status,
+        id,name,description,status,
         create_time,update_time,deleted
     </sql>
 </mapper>
