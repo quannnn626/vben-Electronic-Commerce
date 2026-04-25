@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallProductCategoryRel;
+import com.boot.vuevbenadminboot.domain.MallProductCategory;
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
+import com.boot.vuevbenadminboot.mapper.MallProductCategoryMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallProductCategoryRelService;
 import com.boot.vuevbenadminboot.service.MallProductService;
@@ -42,15 +44,18 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     implements MallProductService{
 
     private final MallProductCategoryRelService productCategoryRelService;
+    private final MallProductCategoryMapper productCategoryMapper;
     private final MallFileService mallFileService;
     private final MallSkuService mallSkuService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallProductServiceImpl(
             MallProductCategoryRelService productCategoryRelService,
+            MallProductCategoryMapper productCategoryMapper,
             MallFileService mallFileService,
             MallSkuService mallSkuService) {
         this.productCategoryRelService = productCategoryRelService;
+        this.productCategoryMapper = productCategoryMapper;
         this.mallFileService = mallFileService;
         this.mallSkuService = mallSkuService;
     }
@@ -67,6 +72,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         List<Long> productIds = products.stream().map(MallProduct::getId).toList();
         Map<Long, List<Long>> categoryMap = buildCategoryMap(productIds);
+        Map<Long, List<String>> categoryNameMap = buildCategoryNameMap(categoryMap);
         Map<Long, List<ProductSkuDto>> skuMap = buildSkuMap(productIds);
 
         List<ProductListItemDto> result = new ArrayList<>();
@@ -81,7 +87,9 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             dto.setDescription(product.getDescription());
             dto.setStatus(product.getStatus());
             dto.setCreateTime(product.getCreateTime());
-            dto.setCategoryIds(categoryMap.getOrDefault(product.getId(), List.of()));
+            List<Long> categoryIds = categoryMap.getOrDefault(product.getId(), List.of());
+            dto.setCategoryIds(categoryIds);
+            dto.setCategoryNames(categoryNameMap.getOrDefault(product.getId(), List.of()));
             result.add(dto);
         }
         return result;
@@ -98,6 +106,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         List<Long> productIds = List.of(id);
         Map<Long, List<Long>> categoryMap = buildCategoryMap(productIds);
+        Map<Long, List<String>> categoryNameMap = buildCategoryNameMap(categoryMap);
         Map<Long, List<ProductSkuDto>> skuMap = buildSkuMap(productIds);
 
         ProductListItemDto dto = new ProductListItemDto();
@@ -110,7 +119,9 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         dto.setDescription(product.getDescription());
         dto.setStatus(product.getStatus());
         dto.setCreateTime(product.getCreateTime());
-        dto.setCategoryIds(categoryMap.getOrDefault(product.getId(), List.of()));
+        List<Long> categoryIds = categoryMap.getOrDefault(product.getId(), List.of());
+        dto.setCategoryIds(categoryIds);
+        dto.setCategoryNames(categoryNameMap.getOrDefault(product.getId(), List.of()));
         return dto;
     }
 
@@ -264,6 +275,32 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
                         Collectors.mapping(MallProductCategoryRel::getCategoryId, Collectors.toList())
                 )
         );
+    }
+
+    private Map<Long, List<String>> buildCategoryNameMap(Map<Long, List<Long>> categoryMap) {
+        if (categoryMap == null || categoryMap.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Set<Long> allCategoryIds = categoryMap.values().stream()
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        if (allCategoryIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<Long, String> idNameMap = productCategoryMapper.selectBatchIds(allCategoryIds).stream()
+                .filter(item -> !Objects.equals(item.getDeleted(), 1))
+                .collect(Collectors.toMap(MallProductCategory::getId, MallProductCategory::getName, (a, b) -> a));
+
+        Map<Long, List<String>> result = new HashMap<>();
+        for (Map.Entry<Long, List<Long>> entry : categoryMap.entrySet()) {
+            List<String> names = entry.getValue().stream()
+                    .map(idNameMap::get)
+                    .filter(name -> name != null && !name.isBlank())
+                    .toList();
+            result.put(entry.getKey(), names);
+        }
+        return result;
     }
 
     private Map<Long, List<ProductSkuDto>> buildSkuMap(List<Long> productIds) {

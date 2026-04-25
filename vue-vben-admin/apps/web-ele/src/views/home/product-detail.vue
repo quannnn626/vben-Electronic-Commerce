@@ -22,6 +22,7 @@ import { requestClient } from '#/api/request';
 
 interface ProductItem {
   categoryIds: number[];
+  categoryNames?: string[];
   createTime: string;
   description: string;
   id: number;
@@ -88,7 +89,7 @@ function detectMediaKind(file: MediaItem) {
   return 'other';
 }
 
-const mediaFiles = computed(() =>
+const allSkuMediaFiles = computed(() =>
   (detail.value?.skus ?? [])
     .filter((sku): sku is ProductSku & { fileId: number; filePath: string } => !!sku.fileId && !!sku.filePath)
     .map((sku) => ({
@@ -103,6 +104,13 @@ const mediaFiles = computed(() =>
     .filter((file) => file.mediaKind !== 'other'),
 );
 
+const mediaFiles = computed(() => {
+  if (!selectedSku.value?.fileId) {
+    return [];
+  }
+  return allSkuMediaFiles.value.filter((item) => item.id === selectedSku.value?.fileId);
+});
+
 const activeMedia = computed(() => {
   if (mediaFiles.value.length === 0) return null;
   if (activeMediaId.value == null) return mediaFiles.value[0] ?? null;
@@ -113,12 +121,11 @@ const selectedSku = computed(
   () => skuOptions.value.find((item) => item.id === selectedSkuId.value) ?? skuOptions.value[0] ?? null,
 );
 const displayPrice = computed(() => selectedSku.value?.price ?? detail.value?.price ?? 0);
+const currentSkuStock = computed(() => selectedSku.value?.stock ?? 0);
 
 watch(selectedSku, (sku) => {
   if (!sku?.fileId) return;
-  if (mediaFiles.value.some((item) => item.id === sku.fileId)) {
-    activeMediaId.value = sku.fileId;
-  }
+  activeMediaId.value = sku.fileId;
 });
 
 async function loadDetail() {
@@ -133,8 +140,8 @@ async function loadDetail() {
       params: { id },
     });
     detail.value = data;
-    activeMediaId.value = mediaFiles.value[0]?.id ?? null;
     selectedSkuId.value = (data.skus ?? [])[0]?.id ?? null;
+    activeMediaId.value = (data.skus ?? [])[0]?.fileId ?? null;
   } finally {
     loading.value = false;
   }
@@ -213,8 +220,8 @@ onMounted(async () => {
           </div>
           <div class="meta-grid">
             <div class="meta-item">
-              <span class="meta-key">库存</span>
-              <span class="meta-value">{{ detail.stock }}</span>
+              <span class="meta-key">当前规格库存</span>
+              <span class="meta-value">{{ currentSkuStock }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-key">状态</span>
@@ -226,7 +233,7 @@ onMounted(async () => {
             </div>
             <div class="meta-item">
               <span class="meta-key">分类</span>
-              <span class="meta-value">{{ detail.categoryIds?.join(' / ') || '-' }}</span>
+              <span class="meta-value">{{ detail.categoryNames?.join(' / ') || '-' }}</span>
             </div>
             <div class="meta-item">
               <span class="meta-key">创建时间</span>
@@ -249,7 +256,7 @@ onMounted(async () => {
                 :class="{ active: selectedSkuId === sku.id }"
                 @click="selectedSkuId = sku.id"
               >
-                {{ sku.specName || `SKU-${sku.id}` }}
+                {{ sku.specName || `SKU-${sku.id}` }}（库存 {{ sku.stock ?? 0 }}）
               </button>
             </div>
             <div class="buy-line">
@@ -289,10 +296,14 @@ onMounted(async () => {
                 <div class="detail-rich-block">
                   <h3>商品参数</h3>
                   <p>商品ID：{{ detail.id }}</p>
-                  <p>库存：{{ detail.stock }}</p>
+                  <p>总库存：{{ detail.stock }}</p>
                   <p>状态：{{ detail.status === 1 ? '上架' : '下架' }}</p>
-                  <p>分类：{{ detail.categoryIds?.join(' / ') || '-' }}</p>
+                  <p>分类：{{ detail.categoryNames?.join(' / ') || '-' }}</p>
                   <p>创建时间：{{ detail.createTime || '-' }}</p>
+                  <h3>规格库存明细</h3>
+                  <p v-for="sku in skuOptions" :key="`stock-${sku.id}`">
+                    {{ sku.specName || `SKU-${sku.id}` }}：{{ sku.stock ?? 0 }}
+                  </p>
                   <h3>商品说明</h3>
                   <p>{{ detail.description || '暂无说明' }}</p>
                 </div>

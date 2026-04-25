@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class ProductListItemDto {
     private List<Long> categoryIds;
+    private List<String> categoryNames;
     private String description;
     private Long id;
     private String name;
