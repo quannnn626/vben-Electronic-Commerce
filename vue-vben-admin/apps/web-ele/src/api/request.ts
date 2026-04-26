@@ -60,6 +60,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
+      // TODO 用于查看请求参数，便于后台调试
+      console.log('[request]', config.method, config.url, config.params, config.data);
       const accessStore = useAccessStore();
 
       config.headers.Authorization = formatToken(accessStore.accessToken);

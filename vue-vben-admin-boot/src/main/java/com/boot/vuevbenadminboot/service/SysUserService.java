@@ -2,6 +2,8 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.boot.vuevbenadminboot.web.dto.UserSaveRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
 * @author quannnn
@@ -12,4 +14,6 @@ public interface SysUserService extends IService<SysUser> {
     SysUser selectByUsername(String username);
 
     boolean insert(SysUser user);
+
+    boolean updateUser(UserSaveRequest userSaveRequest, String request);
 }

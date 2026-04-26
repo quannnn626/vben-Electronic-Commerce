@@ -3,11 +3,10 @@ package com.boot.vuevbenadminboot.web;
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.SysUserService;
+import com.boot.vuevbenadminboot.web.dto.UserSaveRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,5 +35,19 @@ public class UserController {
         data.put("desc", sysUser.getUserDesc() == null ? "" : sysUser.getUserDesc());
         data.put("homePath", sysUser.getHomePath() == null ? "/analytics" : sysUser.getHomePath());
         return ApiResponse.of(0, data, "success");
+    }
+
+    @PutMapping("/update")
+    public Map<String, Object> updateUser(@RequestBody UserSaveRequest userSaveRequest, HttpServletRequest request) {
+        try {
+            String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+            boolean ok = sysUserService.updateUser(userSaveRequest, username);
+            if (ok) {
+                return ApiResponse.of(0, true, "success");
+            }
+            return ApiResponse.of(-1, false, "修改失败");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
     }
 }

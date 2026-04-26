@@ -1,4 +1,4 @@
-import type { UserInfo } from '@vben/types';
+import type { Recordable, UserInfo } from '@vben/types';
 
 import { requestClient } from '#/api/request';
 
@@ -7,4 +7,11 @@ import { requestClient } from '#/api/request';
  */
 export async function getUserInfoApi() {
   return requestClient.get<UserInfo>('/user/info');
+}
+
+/**
+ * 更新个人资料
+ */
+export async function updateUserInfoApi(data: Recordable<any>) {
+  return requestClient.put<unknown>('/user/update', data);
 }

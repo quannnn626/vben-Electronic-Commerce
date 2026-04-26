@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import type { BasicOption } from '@vben/types';
+import type { BasicOption, Recordable } from '@vben/types';
 
 import type { VbenFormSchema } from '#/adapter/form';
 
 import { computed, onMounted, ref } from 'vue';
 
+import { ElMessage } from 'element-plus';
+import { useUserStore } from '@vben/stores';
+
+import { useAuthStore } from '#/store';
+
 import { ProfileBaseSetting } from '@vben/common-ui';
 
-import { getUserInfoApi } from '#/api';
+import { getUserInfoApi, updateUserInfoApi } from '#/api';
 
 const profileBaseSettingRef = ref();
+const authStore = useAuthStore();
+const userStore = useUserStore();
 
 const MOCK_ROLES_OPTIONS: BasicOption[] = [
   {
@@ -59,7 +66,21 @@ onMounted(async () => {
   const data = await getUserInfoApi();
   profileBaseSettingRef.value.getFormApi().setValues(data);
 });
+
+async function handleProfileSubmit(values: Recordable<any>) {
+  const userId = userStore.userInfo?.userId ?? values.userId;
+  await updateUserInfoApi({
+    ...values,
+    userId,
+  });
+  await authStore.fetchUserInfo();
+  ElMessage.success('保存成功');
+}
 </script>
 <template>
-  <ProfileBaseSetting ref="profileBaseSettingRef" :form-schema="formSchema" />
+  <ProfileBaseSetting
+    ref="profileBaseSettingRef"
+    :form-schema="formSchema"
+    @submit="handleProfileSubmit"
+  />
 </template>
