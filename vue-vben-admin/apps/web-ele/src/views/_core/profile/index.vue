@@ -5,7 +5,6 @@ import { Profile } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
 import ProfileBase from './base-setting.vue';
-import ProfileAddressSetting from './address-setting.vue';
 import ProfileNotificationSetting from './notification-setting.vue';
 import ProfilePasswordSetting from './password-setting.vue';
 import ProfileSecuritySetting from './security-setting.vue';
@@ -31,10 +30,6 @@ const tabs = ref([
     label: '新消息提醒',
     value: 'notice',
   },
-  {
-    label: '个人地址',
-    value: 'address',
-  }
 ]);
 </script>
 <template>
@@ -49,7 +44,6 @@ const tabs = ref([
       <ProfileSecuritySetting v-if="tabsValue === 'security'" />
       <ProfilePasswordSetting v-if="tabsValue === 'password'" />
       <ProfileNotificationSetting v-if="tabsValue === 'notice'" />
-      <ProfileAddressSetting v-if="tabsValue === 'address'" />
     </template>
   </Profile>
 </template>
