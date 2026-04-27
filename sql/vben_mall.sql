@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 25/04/2026 20:33:01
+ Date: 27/04/2026 15:09:28
 */
 
 SET NAMES utf8mb4;
@@ -30,7 +30,7 @@ CREATE TABLE `mall_file`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `status` int NULL DEFAULT 0 COMMENT '状态：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_file
@@ -112,7 +112,7 @@ CREATE TABLE `mall_product`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product
@@ -135,7 +135,7 @@ CREATE TABLE `mall_product_category`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` int NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 101317 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 101318 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product_category
@@ -450,7 +450,7 @@ CREATE TABLE `mall_product_category_rel`  (
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `category_id` bigint NOT NULL COMMENT '类目ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2047612856616968207 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2047612856616968208 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product_category_rel
@@ -494,14 +494,14 @@ CREATE TABLE `mall_sku`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_product_id`(`product_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_sku
 -- ----------------------------
 INSERT INTO `mall_sku` VALUES (6, 7, 11282.00, 100, 0, '{\"name\": \"U7 255HX/3060\", \"fileId\": 18}', '', 1, '2026-04-24 17:45:22', '2026-04-24 17:45:22');
 INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 100, 0, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-04-24 17:45:22');
-INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 100, 0, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-04-25 20:32:22');
+INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 94, 0, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-04-25 21:38:42');
 
 -- ----------------------------
 -- Table structure for mall_user_address
@@ -522,11 +522,14 @@ CREATE TABLE `mall_user_address`  (
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_user_address
 -- ----------------------------
+INSERT INTO `mall_user_address` VALUES (1, 2046463574828482561, '张三', '13800000001', '广东省', '深圳市', '南山区', '科技园科苑路15号', 0, '2026-04-26 22:00:00', '2026-04-27 14:18:31', 0);
+INSERT INTO `mall_user_address` VALUES (2, 2046463574828482561, '李四', '13900000002', '广东省', '广州市', '天河区', '珠江新城花城大道88号', 0, '2026-04-26 22:05:00', '2026-04-27 14:27:16', 0);
+INSERT INTO `mall_user_address` VALUES (3, 2046463574828482561, 'y', '19987665633', '浙江省', '嘉兴市', '嘉善县', '宇智波幼儿园', 1, '2026-04-27 14:27:16', '2026-04-27 14:27:16', 0);
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -546,12 +549,12 @@ CREATE TABLE `sys_user`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0未删除 1已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2047131275460681729 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2047131275460681730 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '系统用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (2046463574828482561, 'vben', '$2a$10$vj1MurvaDi6sMAycJOA8geMyUVdH.smxVC43ZF9idADeVE//FiV3e', 'Super', '', 'admin', '/analytics', '', 1, '2026-04-19 19:06:22', '2026-04-21 13:39:11', 0);
+INSERT INTO `sys_user` VALUES (2046463574828482561, 'vben', '$2a$10$vj1MurvaDi6sMAycJOA8geMyUVdH.smxVC43ZF9idADeVE//FiV3e', 'Super', '', 'super', '/analytics', '', 1, '2026-04-19 19:06:22', '2026-04-26 16:55:44', 0);
 INSERT INTO `sys_user` VALUES (2046495738450235393, 'test', '$2a$10$81x9rMP5EKA0xP4zO2/jSuM9OyuUKQSXWHZ.bMdjTpy7Qnki0MlFe', 'User', NULL, 'user', '/analytics', NULL, 1, '2026-04-21 15:46:21', '2026-04-23 09:50:11', 0);
 INSERT INTO `sys_user` VALUES (2047131275460681729, 'user', '$2a$10$PKAE5Cd4tkv.hAEHDLlcd.oW5S4B8fYHkj/brPisHKWaF6WaVQgFq', '用户', NULL, 'user', '/analytics', NULL, 1, '2026-04-23 09:51:45', '2026-04-23 09:51:45', 0);
 
