@@ -151,6 +151,25 @@ function goBack() {
   router.back();
 }
 
+function handleBuyNow() {
+  if (!detail.value) return;
+  const sku = selectedSku.value;
+  const goodsInfo = {
+    productId: detail.value.id,
+    productName: detail.value.name,
+    productImage: activeMedia.value?.previewUrl || '',
+    productImageType: activeMedia.value?.mediaKind || '',
+    skuId: sku?.id ?? null,
+    skuSpecName: sku?.specName || null,
+    price: displayPrice.value,
+    quantity: buyCount.value,
+  };
+  router.push({
+    path: '/order/confirm',
+    query: { goods: encodeURIComponent(JSON.stringify([goodsInfo])) },
+  });
+}
+
 onMounted(async () => {
   await loadDetail();
 });
@@ -264,7 +283,7 @@ onMounted(async () => {
               <ElInputNumber v-model="buyCount" :max="selectedSku?.stock || detail.stock || 1" :min="1" />
             </div>
             <ElSpace wrap>
-              <ElButton type="danger">立即购买</ElButton>
+              <ElButton type="danger" @click="handleBuyNow">立即购买</ElButton>
               <ElButton type="primary" plain>加入购物车</ElButton>
             </ElSpace>
           </div>
