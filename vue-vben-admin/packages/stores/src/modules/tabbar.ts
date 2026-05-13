@@ -344,9 +344,8 @@ export const useTabbarStore = defineStore('core-tabbar', {
      * @param router
      */
     async closeTabByKey(key: string, router: Router) {
-      const originKey = decodeURIComponent(key);
       const index = this.tabs.findIndex(
-        (item) => getTabKeyFromTab(item) === originKey,
+        (item) => getTabKeyFromTab(item) === key,
       );
       if (index === -1) {
         return;
