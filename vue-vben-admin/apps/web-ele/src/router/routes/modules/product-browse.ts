@@ -21,6 +21,15 @@ const routes: RouteRecordRaw[] = [
     path: '/product/browse/:id',
     component: () => import('#/views/home/product-detail.vue'),
   },
+  {
+    meta: {
+      hideInMenu: true,
+      title: '确认订单',
+    },
+    name: 'OrderConfirm',
+    path: '/order/confirm',
+    component: () => import('#/views/home/order-confirm.vue'),
+  },
 ];
 
 export default routes;
