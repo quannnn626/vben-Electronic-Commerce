@@ -93,6 +93,13 @@ const menus = computed(() => [
     icon: 'lucide:user',
     text: $t('page.auth.profile'),
   },
+  {
+    handler: () => {
+      router.push({ name: 'myOrderList' });
+    },
+    icon: 'lucide:list',
+    text: $t('page.auth.myOrderList'),
+  },
   // {
   //   handler: () => {
   //     openWindow(VBEN_DOC_URL, {
