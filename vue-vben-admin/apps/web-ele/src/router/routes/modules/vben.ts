@@ -116,6 +116,16 @@ const routes: RouteRecordRaw[] = [
       title: $t('page.auth.profile'),
     },
   },
+  {
+    name: 'myOrderList',
+    path: '/order/list',
+    component: () => import('#/views/home/order-list.vue'),
+    meta: {
+      icon: 'lucide:list',
+      hideInMenu: true,
+      title: $t('page.auth.myOrderList'),
+    },
+  },
 ];
 
 export default routes;
