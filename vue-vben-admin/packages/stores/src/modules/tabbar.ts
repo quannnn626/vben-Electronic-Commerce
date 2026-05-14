@@ -14,7 +14,7 @@ import { markRaw, toRaw } from 'vue';
 import { preferences } from '@vben-core/preferences';
 import {
   createStack,
-  openRouteInNewWindow,
+  openWindow,
   Stack,
   startProgress,
   stopProgress,
@@ -152,7 +152,7 @@ export const useTabbarStore = defineStore('core-tabbar', {
         if (
           maxNumOfOpenTab > 0 &&
           this.tabs.filter((tab) => tab.name === routeTab.name).length >=
-            maxNumOfOpenTab
+          maxNumOfOpenTab
         ) {
           // 关闭第一个
           const index = this.tabs.findIndex(
@@ -344,8 +344,9 @@ export const useTabbarStore = defineStore('core-tabbar', {
      * @param router
      */
     async closeTabByKey(key: string, router: Router) {
+      const originKey = decodeURIComponent(key);
       const index = this.tabs.findIndex(
-        (item) => getTabKeyFromTab(item) === key,
+        (item) => getTabKeyFromTab(item) === originKey,
       );
       if (index === -1) {
         return;
@@ -370,8 +371,9 @@ export const useTabbarStore = defineStore('core-tabbar', {
      * @zh_CN 新窗口打开标签页
      * @param tab
      */
-    async openTabInNewWindow(tab: TabDefinition) {
-      openRouteInNewWindow(tab.fullPath || tab.path);
+    async openTabInNewWindow(tab: TabDefinition, router: Router) {
+      const href = router.resolve(tab.fullPath || tab.path).href;
+      openWindow(new URL(href, location.href).href, { target: '_blank' });
     },
 
     /**
@@ -674,10 +676,10 @@ function cloneTab(route: TabDefinition): TabDefinition {
     ...opt,
     matched: (matched
       ? matched.map((item) => ({
-          meta: item.meta,
-          name: item.name,
-          path: item.path,
-        }))
+        meta: item.meta,
+        name: item.name,
+        path: item.path,
+      }))
       : undefined) as RouteRecordNormalized[],
     meta: {
       ...meta,
