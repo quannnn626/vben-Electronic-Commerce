@@ -152,7 +152,7 @@ export const useTabbarStore = defineStore('core-tabbar', {
         if (
           maxNumOfOpenTab > 0 &&
           this.tabs.filter((tab) => tab.name === routeTab.name).length >=
-          maxNumOfOpenTab
+            maxNumOfOpenTab
         ) {
           // 关闭第一个
           const index = this.tabs.findIndex(
@@ -676,10 +676,10 @@ function cloneTab(route: TabDefinition): TabDefinition {
     ...opt,
     matched: (matched
       ? matched.map((item) => ({
-        meta: item.meta,
-        name: item.name,
-        path: item.path,
-      }))
+          meta: item.meta,
+          name: item.name,
+          path: item.path,
+        }))
       : undefined) as RouteRecordNormalized[],
     meta: {
       ...meta,

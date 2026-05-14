@@ -24,13 +24,13 @@ import {
 
 const props = defineProps<
   ContextMenuRootProps & {
-  class?: ClassType;
-  contentClass?: ClassType;
-  contentProps?: ContextMenuContentProps;
-  handlerData?: Record<string, any>;
-  itemClass?: ClassType;
-  menus: (data: any) => IContextMenuItem[];
-}
+    class?: ClassType;
+    contentClass?: ClassType;
+    contentProps?: ContextMenuContentProps;
+    handlerData?: Record<string, any>;
+    itemClass?: ClassType;
+    menus: (data: any) => IContextMenuItem[];
+  }
 >();
 
 const emits = defineEmits<ContextMenuRootEmits>();
