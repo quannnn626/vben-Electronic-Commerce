@@ -166,7 +166,7 @@ function handleBuyNow() {
   };
   router.push({
     path: '/order/confirm',
-    query: { goods: encodeURIComponent(JSON.stringify([goodsInfo])) },
+    query: { goods: JSON.stringify([goodsInfo]) },
   });
 }
 
