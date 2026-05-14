@@ -182,16 +182,16 @@ const routes: RouteRecordRaw[] = [
   //     },
   //   ],
   // },
-  {
-    name: 'VbenAbout',
-    path: '/vben-admin/about',
-    component: () => import('#/views/_core/about/index.vue'),
-    meta: {
-      icon: 'lucide:copyright',
-      title: $t('demos.vben.about'),
-      order: 9999,
-    },
-  },
+  // {
+  //   name: 'VbenAbout',
+  //   path: '/vben-admin/about',
+  //   component: () => import('#/views/_core/about/index.vue'),
+  //   meta: {
+  //     icon: 'lucide:copyright',
+  //     title: $t('demos.vben.about'),
+  //     order: 9999,
+  //   },
+  // },
   {
     name: 'Profile',
     path: '/profile',
