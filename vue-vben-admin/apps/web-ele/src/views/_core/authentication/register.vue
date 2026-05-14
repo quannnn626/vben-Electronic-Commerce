@@ -112,7 +112,6 @@ async function handleSubmit(value: Recordable<any>) {
   } finally {
     loading.value = false;
   }
-}
 </script>
 
 <template>
