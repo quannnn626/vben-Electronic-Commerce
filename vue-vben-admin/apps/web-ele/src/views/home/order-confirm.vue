@@ -120,7 +120,7 @@ function initGoodsFromQuery() {
   const raw = route.query.goods;
   if (!raw) return;
   try {
-    const list: QueryGoods[] = JSON.parse(decodeURIComponent(raw as string));
+    const list: QueryGoods[] = JSON.parse(raw as string);
     goodsList.value = list.map((item) => ({
       productId: Number(item.productId),
       productName: item.productName,
