@@ -27,9 +27,9 @@ public class MallOrderItem {
     private Long orderId;
 
     /**
-     * 商品ID
+     * SKU ID
      */
-    private Long productId;
+    private Long skuId;
 
     /**
      * 商品名称快照
@@ -40,6 +40,11 @@ public class MallOrderItem {
      * 商品图片快照
      */
     private String productImage;
+
+    /**
+     * SKU规格名称快照
+     */
+    private String skuSpecName;
 
     /**
      * 单价
@@ -85,7 +90,7 @@ public class MallOrderItem {
         MallOrderItem other = (MallOrderItem) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
-            && (this.getProductId() == null ? other.getProductId() == null : this.getProductId().equals(other.getProductId()))
+            && (this.getSkuId() == null ? other.getSkuId() == null : this.getSkuId().equals(other.getSkuId()))
             && (this.getProductName() == null ? other.getProductName() == null : this.getProductName().equals(other.getProductName()))
             && (this.getProductImage() == null ? other.getProductImage() == null : this.getProductImage().equals(other.getProductImage()))
             && (this.getPrice() == null ? other.getPrice() == null : this.getPrice().equals(other.getPrice()))
@@ -102,7 +107,7 @@ public class MallOrderItem {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getOrderId() == null) ? 0 : getOrderId().hashCode());
-        result = prime * result + ((getProductId() == null) ? 0 : getProductId().hashCode());
+        result = prime * result + ((getSkuId() == null) ? 0 : getSkuId().hashCode());
         result = prime * result + ((getProductName() == null) ? 0 : getProductName().hashCode());
         result = prime * result + ((getProductImage() == null) ? 0 : getProductImage().hashCode());
         result = prime * result + ((getPrice() == null) ? 0 : getPrice().hashCode());
@@ -122,7 +127,7 @@ public class MallOrderItem {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", orderId=").append(orderId);
-        sb.append(", productId=").append(productId);
+        sb.append(", skuId=").append(skuId);
         sb.append(", productName=").append(productName);
         sb.append(", productImage=").append(productImage);
         sb.append(", price=").append(price);

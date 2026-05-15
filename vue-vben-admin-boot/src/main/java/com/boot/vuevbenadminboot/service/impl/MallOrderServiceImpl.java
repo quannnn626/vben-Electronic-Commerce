@@ -6,6 +6,7 @@ import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
+import com.boot.vuevbenadminboot.domain.MallUserAddress;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
@@ -13,18 +14,25 @@ import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
+import com.boot.vuevbenadminboot.service.MallUserAddressService;
+import com.boot.vuevbenadminboot.web.dto.OrderCreateRequest;
 import com.boot.vuevbenadminboot.web.dto.OrderItemDto;
 import com.boot.vuevbenadminboot.web.dto.OrderListItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,17 +43,20 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private final MallOrderItemService orderItemService;
     private final MallSkuService skuService;
     private final MallFileService fileService;
+    private final MallUserAddressService addressService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallOrderServiceImpl(
             SysUserMapper sysUserMapper,
             MallOrderItemService orderItemService,
             MallSkuService skuService,
-            MallFileService fileService) {
+            MallFileService fileService,
+            MallUserAddressService addressService) {
         this.sysUserMapper = sysUserMapper;
         this.orderItemService = orderItemService;
         this.skuService = skuService;
         this.fileService = fileService;
+        this.addressService = addressService;
     }
 
     @Override
@@ -63,42 +74,167 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         List<Long> orderIds = orders.stream().map(MallOrder::getId).toList();
         Map<Long, List<MallOrderItem>> itemMap = buildItemMap(orderIds);
 
-        Set<Long> productIds = itemMap.values().stream()
+        Set<Long> skuIds = itemMap.values().stream()
                 .flatMap(List::stream)
-                .map(MallOrderItem::getProductId)
+                .map(MallOrderItem::getSkuId)
                 .collect(Collectors.toSet());
-        Map<Long, String> productImageMap = buildProductImageMap(productIds);
+        Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
 
         List<OrderListItemDto> result = new ArrayList<>();
         for (MallOrder order : orders) {
-            OrderListItemDto dto = new OrderListItemDto();
-            dto.setId(order.getId());
-            dto.setOrderNo(order.getOrderNo());
-            dto.setTotalAmount(order.getTotalAmount());
-            dto.setPayAmount(order.getPayAmount());
-            dto.setStatus(order.getStatus());
-            dto.setCreateTime(order.getCreateTime());
-            dto.setPayTime(order.getPayTime());
-            dto.setDeliveryTime(order.getDeliveryTime());
-            dto.setFinishTime(order.getFinishTime());
-
-            List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
-            List<OrderItemDto> itemDtos = new ArrayList<>();
-            for (MallOrderItem item : items) {
-                OrderItemDto itemDto = new OrderItemDto();
-                itemDto.setId(item.getId());
-                itemDto.setProductId(item.getProductId());
-                itemDto.setProductName(item.getProductName());
-                itemDto.setProductImage(productImageMap.get(item.getProductId()));
-                itemDto.setPrice(item.getPrice());
-                itemDto.setQuantity(item.getQuantity());
-                itemDto.setTotalPrice(item.getTotalPrice());
-                itemDtos.add(itemDto);
-            }
-            dto.setItems(itemDtos);
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap);
             result.add(dto);
         }
         return result;
+    }
+
+    @Override
+    @Transactional
+    public OrderListItemDto createOrder(String username, OrderCreateRequest req) {
+        Long userId = requireUserId(username);
+
+        MallUserAddress address = addressService.getById(req.getAddressId());
+        if (address == null || !address.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("收货地址不存在");
+        }
+
+        List<OrderCreateRequest.OrderItemRequest> items = req.getItems();
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("商品不能为空");
+        }
+
+        BigDecimal totalAmount = items.stream()
+                .map(OrderCreateRequest.OrderItemRequest::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        MallOrder order = new MallOrder();
+        order.setOrderNo(generateOrderNo());
+        order.setUserId(userId);
+        order.setTotalAmount(totalAmount);
+        order.setPayAmount(totalAmount);
+        order.setStatus(0);
+        order.setReceiverName(address.getReceiverName());
+        order.setReceiverPhone(address.getReceiverPhone());
+        order.setReceiverAddress(buildAddressText(address));
+        order.setAddressId(address.getId());
+        order.setCreateTime(new java.util.Date());
+        order.setUpdateTime(new java.util.Date());
+        order.setDeleted(0);
+        this.save(order);
+
+        List<MallOrderItem> orderItems = new ArrayList<>();
+        for (OrderCreateRequest.OrderItemRequest itemReq : items) {
+            MallOrderItem item = new MallOrderItem();
+            item.setOrderId(order.getId());
+            item.setSkuId(itemReq.getSkuId());
+            item.setProductName(itemReq.getProductName());
+            item.setProductImage(itemReq.getProductImage());
+            item.setSkuSpecName(itemReq.getSkuSpecName());
+            item.setPrice(itemReq.getPrice());
+            item.setQuantity(itemReq.getQuantity());
+            item.setTotalPrice(itemReq.getTotalPrice());
+            item.setCreateTime(new java.util.Date());
+            item.setUpdateTime(new java.util.Date());
+            item.setDeleted(0);
+            orderItems.add(item);
+        }
+        orderItemService.saveBatch(orderItems);
+
+        // 锁定SKU库存
+        for (OrderCreateRequest.OrderItemRequest itemReq : items) {
+            if (itemReq.getSkuId() != null) {
+                skuService.lockStock(itemReq.getSkuId(), itemReq.getQuantity());
+            }
+        }
+
+        // 组建返回 DTO
+        Set<Long> skuIds = items.stream()
+                .map(OrderCreateRequest.OrderItemRequest::getSkuId)
+                .collect(Collectors.toSet());
+        Map<Long, String> imageMap = buildSkuImageMap(skuIds);
+
+        Map<Long, List<MallOrderItem>> itemMap = Map.of(order.getId(), orderItems);
+        return buildOrderDto(order, itemMap, imageMap);
+    }
+
+    @Override
+    @Transactional
+    public void cancelOrder(String username, Long orderId) {
+        Long userId = requireUserId(username);
+        MallOrder order = this.getById(orderId);
+        if (order == null || !order.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (order.getStatus() != 0) {
+            throw new IllegalArgumentException("仅待支付订单可取消");
+        }
+        order.setStatus(4);
+        order.setCancelTime(new java.util.Date());
+        order.setUpdateTime(new java.util.Date());
+        this.updateById(order);
+    }
+
+    @Override
+    @Transactional
+    public void finishOrder(String username, Long orderId) {
+        Long userId = requireUserId(username);
+        MallOrder order = this.getById(orderId);
+        if (order == null || !order.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (order.getStatus() != 2) {
+            throw new IllegalArgumentException("仅已发货订单可确认收货");
+        }
+        order.setStatus(3);
+        order.setFinishTime(new java.util.Date());
+        order.setUpdateTime(new java.util.Date());
+        this.updateById(order);
+    }
+
+    private OrderListItemDto buildOrderDto(MallOrder order,
+                                            Map<Long, List<MallOrderItem>> itemMap,
+                                            Map<Long, String> imageMap) {
+        OrderListItemDto dto = new OrderListItemDto();
+        dto.setId(order.getId());
+        dto.setOrderNo(order.getOrderNo());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setPayAmount(order.getPayAmount());
+        dto.setStatus(order.getStatus());
+        dto.setCreateTime(order.getCreateTime());
+        dto.setPayTime(order.getPayTime());
+        dto.setDeliveryTime(order.getDeliveryTime());
+        dto.setFinishTime(order.getFinishTime());
+
+        List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
+        List<OrderItemDto> itemDtos = new ArrayList<>();
+        for (MallOrderItem item : items) {
+            OrderItemDto itemDto = new OrderItemDto();
+            itemDto.setId(item.getId());
+            itemDto.setSkuId(item.getSkuId());
+            itemDto.setProductName(item.getProductName());
+            itemDto.setProductImage(imageMap.get(item.getSkuId()));
+            itemDto.setPrice(item.getPrice());
+            itemDto.setQuantity(item.getQuantity());
+            itemDto.setTotalPrice(item.getTotalPrice());
+            itemDtos.add(itemDto);
+        }
+        dto.setItems(itemDtos);
+        return dto;
+    }
+
+    private String buildAddressText(MallUserAddress addr) {
+        StringBuilder sb = new StringBuilder();
+        if (addr.getProvince() != null) sb.append(addr.getProvince());
+        if (addr.getCity() != null) sb.append(addr.getCity());
+        if (addr.getDistrict() != null) sb.append(addr.getDistrict());
+        if (addr.getDetailAddress() != null) sb.append(addr.getDetailAddress());
+        return sb.toString();
+    }
+
+    private String generateOrderNo() {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        int rand = ThreadLocalRandom.current().nextInt(100_000, 999_999);
+        return now + rand;
     }
 
     private Long requireUserId(String username) {
@@ -121,35 +257,27 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return items.stream().collect(Collectors.groupingBy(MallOrderItem::getOrderId));
     }
 
-    private Map<Long, String> buildProductImageMap(Set<Long> productIds) {
-        if (productIds.isEmpty()) {
+    private Map<Long, String> buildSkuImageMap(Set<Long> skuIds) {
+        if (skuIds.isEmpty()) {
             return Collections.emptyMap();
         }
-        List<MallSku> skus = skuService.list(
-                new LambdaQueryWrapper<MallSku>()
-                        .in(MallSku::getProductId, productIds)
-                        .eq(MallSku::getStatus, 1)
-                        .orderByAsc(MallSku::getId)
-        );
-        Map<Long, Long> productFileIdMap = new LinkedHashMap<>();
+        List<MallSku> skus = skuService.listByIds(skuIds);
+        Map<Long, Long> skuFileIdMap = new LinkedHashMap<>();
         for (MallSku sku : skus) {
-            if (productFileIdMap.containsKey(sku.getProductId())) {
-                continue;
-            }
             Long fileId = parseFileId(sku.getSpecData());
             if (fileId != null) {
-                productFileIdMap.put(sku.getProductId(), fileId);
+                skuFileIdMap.put(sku.getId(), fileId);
             }
         }
-        if (productFileIdMap.isEmpty()) {
+        if (skuFileIdMap.isEmpty()) {
             return Collections.emptyMap();
         }
-        List<MallFile> files = fileService.listByIds(productFileIdMap.values());
+        List<MallFile> files = fileService.listByIds(skuFileIdMap.values());
         Map<Long, String> filePathMap = files.stream()
                 .collect(Collectors.toMap(MallFile::getId, MallFile::getFilePath, (a, b) -> a));
 
         Map<Long, String> result = new LinkedHashMap<>();
-        for (Map.Entry<Long, Long> entry : productFileIdMap.entrySet()) {
+        for (Map.Entry<Long, Long> entry : skuFileIdMap.entrySet()) {
             String path = filePathMap.get(entry.getValue());
             if (path != null && !path.isBlank()) {
                 result.put(entry.getKey(), path);
