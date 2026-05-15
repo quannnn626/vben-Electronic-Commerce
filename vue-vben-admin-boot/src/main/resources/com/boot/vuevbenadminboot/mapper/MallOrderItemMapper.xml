@@ -7,9 +7,10 @@
     <resultMap id="BaseResultMap" type="com.boot.vuevbenadminboot.domain.MallOrderItem">
             <id property="id" column="id" />
             <result property="orderId" column="order_id" />
-            <result property="productId" column="product_id" />
+            <result property="skuId" column="sku_id" />
             <result property="productName" column="product_name" />
             <result property="productImage" column="product_image" />
+            <result property="skuSpecName" column="sku_spec_name" />
             <result property="price" column="price" />
             <result property="quantity" column="quantity" />
             <result property="totalPrice" column="total_price" />
@@ -19,7 +20,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,order_id,product_id,product_name,product_image,price,
+        id,order_id,sku_id,product_name,product_image,sku_spec_name,price,
         quantity,total_price,create_time,update_time,deleted
     </sql>
 </mapper>

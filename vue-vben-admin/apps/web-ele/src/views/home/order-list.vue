@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { ElButton, ElCard, ElEmpty, ElInput, ElTag } from 'element-plus';
+import { ElButton, ElCard, ElEmpty, ElInput, ElMessage, ElMessageBox, ElTag } from 'element-plus';
 
 import { requestClient } from '#/api/request';
 
 interface BackendOrderItem {
   id: number;
-  productId: number;
+  skuId: number;
   productName: string;
   productImage: string;
   price: number;
@@ -110,20 +111,65 @@ const tableData = computed(() => {
   );
 });
 
+const router = useRouter();
+const actionLoading = ref<Record<string, boolean>>({});
+
 function handlePay(row: OrderItem) {
-  console.log('去支付', row.orderNo);
+  // TODO
+  ElMessage.info('支付接口开发中');
 }
 
-function handleCancel(row: OrderItem) {
-  console.log('取消订单', row.orderNo);
+async function handleCancel(row: OrderItem) {
+  try {
+    await ElMessageBox.confirm('确定要取消该订单吗？', '取消订单', {
+      confirmButtonText: '确定',
+      cancelButtonText: '返回',
+      type: 'warning',
+    });
+  } catch {
+    return;
+  }
+  actionLoading.value[row.id] = true;
+  try {
+    await requestClient.post('/mall/order/cancel', null, {
+      params: { orderId: Number(row.id) },
+    });
+    ElMessage.success('订单已取消');
+    await loadOrders();
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '取消失败');
+  } finally {
+    actionLoading.value[row.id] = false;
+  }
 }
 
-function handleConfirm(row: OrderItem) {
-  console.log('确认收货', row.orderNo);
+async function handleConfirm(row: OrderItem) {
+  try {
+    await ElMessageBox.confirm('确认已收到商品吗？', '确认收货', {
+      confirmButtonText: '确定',
+      cancelButtonText: '返回',
+      type: 'success',
+    });
+  } catch {
+    return;
+  }
+  actionLoading.value[row.id] = true;
+  try {
+    await requestClient.post('/mall/order/finish', null, {
+      params: { orderId: Number(row.id) },
+    });
+    ElMessage.success('确认收货成功');
+    await loadOrders();
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '确认失败');
+  } finally {
+    actionLoading.value[row.id] = false;
+  }
 }
 
 function handleViewDetail(row: OrderItem) {
-  console.log('查看详情', row.orderNo);
+  const backendId = Number(row.id);
+  router.push({ path: '/product/detail', params: { id: backendId } });
 }
 
 onMounted(() => {

@@ -35,11 +35,11 @@ interface AddressItem {
 }
 
 interface OrderGoodsItem {
-  productId: number;
+  productId?: number;
+  skuId?: number;
   productName: string;
   productImage?: string;
   productImageType?: string;
-  skuId?: number;
   skuSpecName?: string;
   price: number;
   quantity: number;
@@ -55,6 +55,9 @@ const router = useRouter();
 
 const loading = ref(false);
 const submitLoading = ref(false);
+const successDialogVisible = ref(false);
+const lastOrderNo = ref('');
+const lastProductId = ref<null | number>(null);
 
 /* ---------- 收货地址 ---------- */
 
@@ -106,11 +109,11 @@ function confirmAddressSelect() {
 const goodsList = ref<OrderGoodsItem[]>([]);
 
 interface QueryGoods {
-  productId: number;
+  productId?: number;
+  skuId?: number;
   productName: string;
   productImage?: string;
   productImageType?: string;
-  skuId?: number;
   skuSpecName?: string;
   price: number;
   quantity: number;
@@ -122,11 +125,11 @@ function initGoodsFromQuery() {
   try {
     const list: QueryGoods[] = JSON.parse(raw as string);
     goodsList.value = list.map((item) => ({
-      productId: Number(item.productId),
+      productId: item.productId ? Number(item.productId) : undefined,
+      skuId: item.skuId ? Number(item.skuId) : undefined,
       productName: item.productName,
       productImage: item.productImage,
       productImageType: item.productImageType,
-      skuId: item.skuId ? Number(item.skuId) : undefined,
       skuSpecName: item.skuSpecName,
       price: Number(item.price),
       quantity: Number(item.quantity),
@@ -175,7 +178,6 @@ async function submitOrder() {
     const payload = {
       addressId: selectedAddress.value.id,
       items: goodsList.value.map((g) => ({
-        productId: g.productId,
         skuId: g.skuId ?? null,
         productName: g.productName,
         productImage: g.productImage ?? null,
@@ -187,16 +189,13 @@ async function submitOrder() {
       paymentMethod: paymentMethod.value,
       remark: remark.value || null,
     };
-    const res = await requestClient.post<{ orderNo: string; id: number }>('/mall/order/create', payload);
-    ElMessage.success('订单创建成功');
-    if (res?.orderNo) {
-      router.replace({
-        path: `/order/confirm/${res.id}`,
-        query: { success: '1', orderNo: res.orderNo },
-      });
-    } else {
-      router.back();
-    }
+    const res = await requestClient.post<{ orderNo: string; id: number }>(
+      '/mall/order/create',
+      payload,
+    );
+    lastOrderNo.value = res?.orderNo ?? '';
+    lastProductId.value = goodsList.value[0]?.productId ?? null;
+    successDialogVisible.value = true;
   } catch (e: any) {
     ElMessage.error(e?.message ?? '下单失败，请重试');
   } finally {
@@ -230,18 +229,63 @@ onMounted(async () => {
 
 <template>
   <Page description="确认订单信息并提交" title="确认订单">
-    <!-- 成功提示 -->
-    <ElCard v-if="route.query.success === '1'" shadow="never" class="success-card">
-      <div class="success-banner">
-        <ElIcon :size="48" color="#67C23A">✓</ElIcon>
-        <div>
-          <h2 class="success-title">下单成功</h2>
-          <p class="success-sub">
-            订单编号：{{ route.query.orderNo ?? '-' }}，请尽快完成支付
-          </p>
+    <!-- 下单成功弹窗 -->
+    <ElDialog
+      v-model="successDialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      title=""
+      width="420px"
+      center
+      append-to-body
+    >
+      <div class="success-dialog-body">
+        <div class="success-icon-wrap">
+          <svg class="success-check" viewBox="0 0 52 52">
+            <circle
+              class="success-check-circle"
+              cx="26"
+              cy="26"
+              r="25"
+              fill="none"
+            />
+            <path
+              class="success-check-tick"
+              fill="none"
+              d="M14 27l7 7 16-16"
+            />
+          </svg>
         </div>
+        <h2 class="success-dialog-title">下单成功</h2>
+        <p class="success-dialog-no">
+          订单编号：{{ lastOrderNo }}
+        </p>
       </div>
-    </ElCard>
+      <template #footer>
+        <div class="success-dialog-actions">
+          <ElButton
+            type="primary"
+            plain
+            @click="
+              successDialogVisible = false;
+              router.push({ path: '/product/detail', params: { id: lastProductId } });
+            "
+          >
+            返回商品详情
+          </ElButton>
+          <ElButton
+            type="danger"
+            @click="
+              successDialogVisible = false;
+              router.push({ name: 'myOrderList' });
+            "
+          >
+            查看订单列表
+          </ElButton>
+        </div>
+      </template>
+    </ElDialog>
 
     <!-- 左右布局 -->
     <div class="confirm-layout">
@@ -422,7 +466,6 @@ onMounted(async () => {
           <div class="summary-actions">
             <ElButton class="action-btn" @click="goBack">返回</ElButton>
             <ElButton
-              :disabled="route.query.success === '1'"
               :loading="submitLoading"
               class="action-btn action-submit"
               type="danger"
@@ -438,26 +481,67 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.success-card {
-  margin-bottom: 20px;
+.success-dialog-body {
+  text-align: center;
+  padding: 8px 0 16px;
 }
 
-.success-banner {
-  align-items: center;
-  display: flex;
-  gap: 16px;
+.success-icon-wrap {
+  margin-bottom: 16px;
 }
 
-.success-title {
-  color: var(--el-color-success);
-  font-size: 20px;
-  margin: 0 0 4px;
+.success-check {
+  width: 64px;
+  height: 64px;
 }
 
-.success-sub {
-  color: var(--el-text-color-secondary);
+.success-check-circle {
+  stroke: #67c23a;
+  stroke-width: 2;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: circle-fill 0.5s ease-out forwards;
+}
+
+.success-check-tick {
+  stroke: #67c23a;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: tick-draw 0.4s 0.4s ease-out forwards;
+}
+
+@keyframes circle-fill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tick-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.success-dialog-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+  margin: 0 0 12px;
+}
+
+.success-dialog-no {
   font-size: 14px;
+  color: var(--el-text-color-secondary);
   margin: 0;
+}
+
+.success-dialog-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
 /* 左右布局 */
