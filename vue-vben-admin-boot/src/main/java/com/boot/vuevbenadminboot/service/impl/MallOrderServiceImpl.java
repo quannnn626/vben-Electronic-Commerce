@@ -8,6 +8,7 @@ import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
 import com.boot.vuevbenadminboot.domain.SysUser;
+import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
@@ -112,7 +113,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         order.setUserId(userId);
         order.setTotalAmount(totalAmount);
         order.setPayAmount(totalAmount);
-        order.setStatus(0);
+        order.setStatus(OrderStatusEnum.WAIT_PAY.getCode());
         order.setReceiverName(address.getReceiverName());
         order.setReceiverPhone(address.getReceiverPhone());
         order.setReceiverAddress(buildAddressText(address));
@@ -165,10 +166,10 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (order.getStatus() != 0) {
+        if (!order.getStatus().equals(OrderStatusEnum.WAIT_PAY.getCode())) {
             throw new IllegalArgumentException("仅待支付订单可取消");
         }
-        order.setStatus(4);
+        order.setStatus(OrderStatusEnum.CANCELLED.getCode());
         order.setCancelTime(new java.util.Date());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);
@@ -194,10 +195,10 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (order.getStatus() != 2) {
+        if (!order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
             throw new IllegalArgumentException("仅已发货订单可确认收货");
         }
-        order.setStatus(3);
+        order.setStatus(OrderStatusEnum.COMPLETED.getCode());
         order.setFinishTime(new java.util.Date());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);

@@ -23,7 +23,7 @@ interface BackendOrder {
   orderNo: string;
   totalAmount: number;
   payAmount: number;
-  status: number; // 0待支付 1已支付 2已发货 3已完成 4已取消
+  status: number; // 对应 OrderStatusEnum: 0待支付 1已支付 2已发货 3已完成 4已取消
   createTime: string;
   payTime: string | null;
   deliveryTime: string | null;
@@ -43,12 +43,21 @@ interface OrderItem {
   createTime: string;
 }
 
+// 订单状态码常量
+const ORDER_STATUS = {
+  WAIT_PAY: 0,   // 待支付
+  PAID: 1,       // 已支付
+  SHIPPED: 2,    // 已发货
+  COMPLETED: 3,  // 已完成
+  CANCELLED: 4,  // 已取消
+} as const;
+
 const backendStatusMap: Record<number, OrderItem['status']> = {
-  0: 'pending',
-  1: 'paid',
-  2: 'shipped',
-  3: 'completed',
-  4: 'cancelled',
+  [ORDER_STATUS.WAIT_PAY]: 'pending',
+  [ORDER_STATUS.PAID]: 'paid',
+  [ORDER_STATUS.SHIPPED]: 'shipped',
+  [ORDER_STATUS.COMPLETED]: 'completed',
+  [ORDER_STATUS.CANCELLED]: 'cancelled',
 };
 
 const statusMap: Record<OrderItem['status'], { label: string; type: string }> = {

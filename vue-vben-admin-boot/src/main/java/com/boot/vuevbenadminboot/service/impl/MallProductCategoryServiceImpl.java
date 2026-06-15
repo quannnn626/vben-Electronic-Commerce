@@ -3,6 +3,7 @@ package com.boot.vuevbenadminboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallProductCategory;
+import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallProductCategoryMapper;
 import com.boot.vuevbenadminboot.service.MallProductCategoryService;
 import com.boot.vuevbenadminboot.web.dto.CategorySaveRequest;
@@ -49,7 +50,7 @@ public class MallProductCategoryServiceImpl extends ServiceImpl<MallProductCateg
         entity.setParentId(req.getLevel() == 1 ? 0L : req.getParentId());
         entity.setLevel(req.getLevel());
         entity.setSort(req.getSort());
-        entity.setStatus(req.getStatus() ? 1 : 0);
+        entity.setStatus(CommonStatusEnum.fromBoolean(req.getStatus()).getCode());
         entity.setIcon(req.getCode() == null ? null : req.getCode().trim());
         entity.setDeleted(0);
         this.save(entity);
@@ -68,7 +69,7 @@ public class MallProductCategoryServiceImpl extends ServiceImpl<MallProductCateg
         }
         old.setName(req.getName().trim());
         old.setSort(req.getSort());
-        old.setStatus(req.getStatus() ? 1 : 0);
+        old.setStatus(CommonStatusEnum.fromBoolean(req.getStatus()).getCode());
         old.setIcon(req.getCode() == null ? null : req.getCode().trim());
         return this.updateById(old);
     }
@@ -164,7 +165,7 @@ public class MallProductCategoryServiceImpl extends ServiceImpl<MallProductCateg
         node.setParentId(item.getParentId() == null || item.getParentId() == 0 ? null : item.getParentId());
         node.setLevel(item.getLevel() == null ? 1 : item.getLevel());
         node.setSort(item.getSort() == null ? 0 : item.getSort());
-        node.setStatus(Objects.equals(item.getStatus(), 1));
+        node.setStatus(Objects.equals(CommonStatusEnum.ENABLED.getCode(), item.getStatus()));
         node.setCode(item.getIcon() == null ? String.valueOf(item.getId()) : item.getIcon());
         node.setRemark("");
         node.setCreateTime(item.getCreateTime());

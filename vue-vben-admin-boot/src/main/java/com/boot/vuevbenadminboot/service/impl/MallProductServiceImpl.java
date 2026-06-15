@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallProductCategoryRel;
 import com.boot.vuevbenadminboot.domain.MallProductCategory;
 import com.boot.vuevbenadminboot.domain.MallSku;
+import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
@@ -132,7 +133,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         MallProduct product = new MallProduct();
         product.setName(req.getName().trim());
         product.setDescription(req.getDescription());
-        product.setStatus(req.getStatus() == null ? 1 : req.getStatus());
+        product.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         product.setDeleted(0);
         product.setCreateTime(new Date());
         product.setUpdateTime(new Date());
@@ -152,7 +153,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         old.setName(req.getName().trim());
         old.setDescription(req.getDescription());
-        old.setStatus(req.getStatus() == null ? 1 : req.getStatus());
+        old.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         old.setUpdateTime(new Date());
         boolean updated = this.updateById(old);
         saveProductSkus(req.getId(), req.getSkus());
@@ -234,7 +235,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             entity.setPrice(sku.getPrice());
             entity.setStock(sku.getStock());
             entity.setLockedStock(0);
-            entity.setStatus(sku.getStatus() == null ? 1 : sku.getStatus());
+            entity.setStatus(sku.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : sku.getStatus());
             entity.setCreateTime(now);
             entity.setUpdateTime(now);
             entities.add(entity);
@@ -335,7 +336,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             dto.setPrice(sku.getPrice());
             dto.setStock(sku.getStock() == null ? 0 : sku.getStock());
             dto.setLockedStock(sku.getLockedStock() == null ? 0 : sku.getLockedStock());
-            dto.setStatus(sku.getStatus() == null ? 1 : sku.getStatus());
+            dto.setStatus(sku.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : sku.getStatus());
             dto.setSpecName(Objects.toString(specMap.getOrDefault("name", ""), ""));
             dto.setFileId(fileId);
             if (file != null) {

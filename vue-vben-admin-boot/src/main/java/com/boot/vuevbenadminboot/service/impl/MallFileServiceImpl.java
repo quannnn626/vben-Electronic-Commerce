@@ -2,6 +2,7 @@ package com.boot.vuevbenadminboot.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallFile;
+import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallFileMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class MallFileServiceImpl extends ServiceImpl<MallFileMapper, MallFile>
             mallFile.setFileType(file.getContentType());
             mallFile.setCreateTime(new Date());
             mallFile.setUpdateTime(new Date());
-            mallFile.setStatus(0);
+            mallFile.setStatus(CommonStatusEnum.DISABLED.getCode());
             this.save(mallFile);
             saved.add(mallFile);
         }

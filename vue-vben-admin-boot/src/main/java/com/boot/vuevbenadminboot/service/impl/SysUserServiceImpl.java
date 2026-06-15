@@ -3,6 +3,7 @@ package com.boot.vuevbenadminboot.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.SysUser;
+import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
 import com.boot.vuevbenadminboot.web.dto.UserSaveRequest;
@@ -37,7 +38,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         user.setCreateTime(now);
         user.setUpdateTime(now);
         user.setRole("user");
-        user.setStatus(1);
+        user.setStatus(CommonStatusEnum.ENABLED.getCode());
         user.setDeleted(0);
         user.setHomePath("/analytics");
         int insert = sysUserMapper.insert(user);
