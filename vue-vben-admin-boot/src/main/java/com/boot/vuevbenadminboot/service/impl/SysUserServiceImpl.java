@@ -61,6 +61,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
         }
         return false;
     }
+
+    @Override
+    public Long requireUserId(String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("未登录");
+        }
+        SysUser user = sysUserMapper.selectByUsername(username);
+        if (user == null || user.getId() == null) {
+            throw new IllegalArgumentException("用户不存在");
+        }
+        return user.getId();
+    }
 }
 
 

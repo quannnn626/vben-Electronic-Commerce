@@ -7,15 +7,14 @@ import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
-import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
-import com.boot.vuevbenadminboot.mapper.SysUserMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
+import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.OrderCreateRequest;
 import com.boot.vuevbenadminboot.web.dto.OrderItemDto;
 import com.boot.vuevbenadminboot.web.dto.OrderListItemDto;
@@ -40,7 +39,7 @@ import java.util.stream.Collectors;
 public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder>
     implements MallOrderService{
 
-    private final SysUserMapper sysUserMapper;
+    private final SysUserService sysUserService;
     private final MallOrderItemService orderItemService;
     private final MallSkuService skuService;
     private final MallFileService fileService;
@@ -48,12 +47,12 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallOrderServiceImpl(
-            SysUserMapper sysUserMapper,
+            SysUserService sysUserService,
             MallOrderItemService orderItemService,
             MallSkuService skuService,
             MallFileService fileService,
             MallUserAddressService addressService) {
-        this.sysUserMapper = sysUserMapper;
+        this.sysUserService = sysUserService;
         this.orderItemService = orderItemService;
         this.skuService = skuService;
         this.fileService = fileService;
@@ -62,7 +61,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
     @Override
     public List<OrderListItemDto> listOrders(String username) {
-        Long userId = requireUserId(username);
+        Long userId = sysUserService.requireUserId(username);
         List<MallOrder> orders = this.list(
                 new LambdaQueryWrapper<MallOrder>()
                         .eq(MallOrder::getUserId, userId)
@@ -92,7 +91,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     @Override
     @Transactional
     public OrderListItemDto createOrder(String username, OrderCreateRequest req) {
-        Long userId = requireUserId(username);
+        Long userId = sysUserService.requireUserId(username);
 
         MallUserAddress address = addressService.getById(req.getAddressId());
         if (address == null || !address.getUserId().equals(userId)) {
@@ -161,7 +160,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     @Override
     @Transactional
     public void cancelOrder(String username, Long orderId) {
-        Long userId = requireUserId(username);
+        Long userId = sysUserService.requireUserId(username);
         MallOrder order = this.getById(orderId);
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
@@ -190,7 +189,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     @Override
     @Transactional
     public void finishOrder(String username, Long orderId) {
-        Long userId = requireUserId(username);
+        Long userId = sysUserService.requireUserId(username);
         MallOrder order = this.getById(orderId);
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
@@ -248,17 +247,6 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         int rand = ThreadLocalRandom.current().nextInt(100_000, 999_999);
         return now + rand;
-    }
-
-    private Long requireUserId(String username) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("未登录");
-        }
-        SysUser user = sysUserMapper.selectByUsername(username);
-        if (user == null || user.getId() == null) {
-            throw new IllegalArgumentException("用户不存在");
-        }
-        return user.getId();
     }
 
     private Map<Long, List<MallOrderItem>> buildItemMap(List<Long> orderIds) {

@@ -16,4 +16,9 @@ public interface SysUserService extends IService<SysUser> {
     boolean insert(SysUser user);
 
     boolean updateUser(UserSaveRequest userSaveRequest, String request);
+
+    /**
+     * 根据用户名获取用户ID
+     */
+    Long requireUserId(String username);
 }
