@@ -172,6 +172,18 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         order.setCancelTime(new java.util.Date());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);
+
+        // 释放锁定库存
+        List<MallOrderItem> items = orderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .eq(MallOrderItem::getOrderId, orderId)
+                        .eq(MallOrderItem::getDeleted, 0)
+        );
+        for (MallOrderItem item : items) {
+            if (item.getSkuId() != null) {
+                skuService.unlockStock(item.getSkuId(), item.getQuantity());
+            }
+        }
     }
 
     @Override
