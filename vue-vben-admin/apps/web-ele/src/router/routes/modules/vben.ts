@@ -212,6 +212,16 @@ const routes: RouteRecordRaw[] = [
       title: $t('page.auth.myOrderList'),
     },
   },
+  {
+    name: 'OrderPayment',
+    path: '/order/payment',
+    component: () => import('#/views/home/payment.vue'),
+    meta: {
+      icon: 'lucide:credit-card',
+      hideInMenu: true,
+      title: $t('page.auth.orderPayment'),
+    },
+  },
 ];
 
 export default routes;

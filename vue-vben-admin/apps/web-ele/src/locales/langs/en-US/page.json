@@ -6,7 +6,8 @@
     "qrcodeLogin": "Qr Code Login",
     "forgetPassword": "Forget Password",
     "profile": "Profile",
-    "myOrderList" : "MyOrder"
+    "myOrderList" : "MyOrder",
+    "orderPayment": "Payment"
   },
   "dashboard": {
     "title": "Dashboard",

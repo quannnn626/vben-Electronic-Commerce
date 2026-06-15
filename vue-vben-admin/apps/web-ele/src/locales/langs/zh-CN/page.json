@@ -6,7 +6,8 @@
     "qrcodeLogin": "二维码登录",
     "forgetPassword": "忘记密码",
     "profile": "个人中心",
-    "myOrderList" : "我的订单"
+    "myOrderList" : "我的订单",
+    "orderPayment": "订单支付"
   },
   "dashboard": {
     "title": "概览",

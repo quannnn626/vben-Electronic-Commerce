@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 15/06/2026 11:51:05
+ Date: 15/06/2026 16:21:01
 */
 
 SET NAMES utf8mb4;
@@ -43,6 +43,7 @@ INSERT INTO `mall_file` VALUES (15, 'QQ图片20230426170644.jpg', '/upload/20260
 INSERT INTO `mall_file` VALUES (16, '微信图片_20250413113719.png', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'image/png', '2026-04-24 17:43:57', '2026-04-24 17:43:57', 0);
 INSERT INTO `mall_file` VALUES (17, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'image/jpeg', '2026-04-24 17:43:59', '2026-04-24 17:43:59', 0);
 INSERT INTO `mall_file` VALUES (18, '10月31日 (1).mp4', '/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'video/mp4', '2026-04-24 17:44:06', '2026-04-24 17:44:06', 0);
+INSERT INTO `mall_file` VALUES (19, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', 'image/png', '2026-06-15 13:18:48', '2026-06-15 13:18:48', 0);
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -79,6 +80,7 @@ CREATE TABLE `mall_order`  (
 INSERT INTO `mall_order` VALUES (29, '20260515173623241224', 2046463574828482561, 11282.00, 11282.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-05-15 17:36:23', NULL, NULL, NULL, '2026-06-12 14:18:45', '2026-06-12 14:18:45', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (30, '20260515173631957513', 2046463574828482561, 11282.00, 11282.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-05-15 17:36:31', NULL, NULL, NULL, '2026-06-12 14:18:39', '2026-06-12 14:18:39', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (31, '20260612141408359248', 2046463574828482561, 9998.00, 9998.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-12 14:14:08', NULL, NULL, NULL, '2026-06-15 10:01:03', '2026-06-15 10:01:03', 0, NULL, NULL);
+INSERT INTO `mall_order` VALUES (32, '20260615131913507790', 2046463574828482561, 20.00, 20.00, 0, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-15 13:19:13', NULL, NULL, NULL, NULL, '2026-06-15 13:19:13', 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for mall_order_item
@@ -107,6 +109,7 @@ CREATE TABLE `mall_order_item`  (
 INSERT INTO `mall_order_item` VALUES (26, 29, 6, 'ROG', '/api/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 1, 11282.00, '2026-05-15 17:36:23', '2026-05-15 17:36:23', 0);
 INSERT INTO `mall_order_item` VALUES (27, 30, 6, 'ROG', '/api/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 1, 11282.00, '2026-05-15 17:36:31', '2026-05-15 17:36:31', 0);
 INSERT INTO `mall_order_item` VALUES (28, 31, 7, 'ROG', '/api/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-06-12 14:14:08', '2026-06-12 14:14:08', 0);
+INSERT INTO `mall_order_item` VALUES (29, 32, 9, '测试修改枚举类后新增商品', '/api/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', '1', 20.00, 1, 20.00, '2026-06-15 13:19:13', '2026-06-15 13:19:13', 0);
 
 -- ----------------------------
 -- Table structure for mall_payment
@@ -154,6 +157,7 @@ CREATE TABLE `mall_product`  (
 -- Records of mall_product
 -- ----------------------------
 INSERT INTO `mall_product` VALUES (7, 'ROG', 'ROG魔霸系列', 1, '2026-04-24 17:45:22', '2026-04-24 17:45:22', 0);
+INSERT INTO `mall_product` VALUES (8, '测试修改枚举类后新增商品', '', 1, '2026-06-15 13:18:57', '2026-06-15 13:18:57', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -512,6 +516,27 @@ INSERT INTO `mall_product_category_rel` VALUES (2047612856616968204, 7, 145);
 INSERT INTO `mall_product_category_rel` VALUES (2047612856616968205, 7, 151);
 INSERT INTO `mall_product_category_rel` VALUES (2047612856616968206, 7, 152);
 INSERT INTO `mall_product_category_rel` VALUES (2047612856616968207, 7, 153);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486529, 8, 111);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486530, 8, 112);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486531, 8, 113);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486532, 8, 114);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486533, 8, 115);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486534, 8, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978206486535, 8, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818178, 8, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818179, 8, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818180, 8, 131);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818181, 8, 132);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818182, 8, 133);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818183, 8, 134);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818184, 8, 141);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818185, 8, 142);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818186, 8, 143);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818187, 8, 144);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818188, 8, 145);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818189, 8, 151);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818190, 8, 152);
+INSERT INTO `mall_product_category_rel` VALUES (2066389978256818191, 8, 153);
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -538,6 +563,7 @@ CREATE TABLE `mall_sku`  (
 INSERT INTO `mall_sku` VALUES (6, 7, 11282.00, 98, 2, '{\"name\": \"U7 255HX/3060\", \"fileId\": 18}', '', 1, '2026-04-24 17:45:22', '2026-05-15 17:36:31');
 INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 100, 0, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-06-15 10:01:03');
 INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 94, 0, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-04-25 21:38:42');
+INSERT INTO `mall_sku` VALUES (9, 8, 20.00, 1, 1, '{\"name\": \"1\", \"fileId\": 19}', '', 1, '2026-06-15 13:18:57', '2026-06-15 13:19:13');
 
 -- ----------------------------
 -- Table structure for mall_user_address

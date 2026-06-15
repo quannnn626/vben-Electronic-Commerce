@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.vuevbenadminboot.mapper.MallPaymentMapper">
+
+    <resultMap id="BaseResultMap" type="com.boot.vuevbenadminboot.domain.MallPayment">
+            <id property="id" column="id" />
+            <result property="paymentNo" column="payment_no" />
+            <result property="orderId" column="order_id" />
+            <result property="orderNo" column="order_no" />
+            <result property="userId" column="user_id" />
+            <result property="payType" column="pay_type" />
+            <result property="amount" column="amount" />
+            <result property="status" column="status" />
+            <result property="thirdTradeNo" column="third_trade_no" />
+            <result property="payTime" column="pay_time" />
+            <result property="callbackTime" column="callback_time" />
+            <result property="remark" column="remark" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleted" column="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,payment_no,order_id,order_no,user_id,pay_type,
+        amount,status,third_trade_no,pay_time,callback_time,
+        remark,create_time,update_time,deleted
+    </sql>
+</mapper>

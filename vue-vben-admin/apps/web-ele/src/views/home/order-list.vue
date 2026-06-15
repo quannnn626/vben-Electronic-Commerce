@@ -123,9 +123,27 @@ const tableData = computed(() => {
 const router = useRouter();
 const actionLoading = ref<Record<string, boolean>>({});
 
-function handlePay(row: OrderItem) {
-  // TODO
-  ElMessage.info('支付接口开发中');
+async function handlePay(row: OrderItem) {
+  actionLoading.value[row.id] = true;
+  try {
+    const payment = await requestClient.post('/mall/payment/create', {
+      orderId: Number(row.id),
+      payType: 'alipay',
+    });
+    router.push({
+      name: 'OrderPayment',
+      query: {
+        paymentNo: payment.paymentNo,
+        orderId: String(row.id),
+        orderNo: row.orderNo,
+        amount: String(row.actualAmount),
+      },
+    });
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '创建支付单失败');
+  } finally {
+    actionLoading.value[row.id] = false;
+  }
 }
 
 async function handleCancel(row: OrderItem) {
