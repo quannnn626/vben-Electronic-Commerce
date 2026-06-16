@@ -3,7 +3,7 @@ package com.boot.vuevbenadminboot.web;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.util.PasswordUtil;
-import com.boot.vuevbenadminboot.web.dto.RegisterRequest;
+import com.boot.vuevbenadminboot.web.dto.req.RegisterRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

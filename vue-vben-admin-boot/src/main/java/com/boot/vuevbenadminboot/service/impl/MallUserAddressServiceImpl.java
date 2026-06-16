@@ -8,7 +8,7 @@ import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
 import com.boot.vuevbenadminboot.mapper.MallUserAddressMapper;
-import com.boot.vuevbenadminboot.web.dto.UserAddressSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.req.UserAddressSaveRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

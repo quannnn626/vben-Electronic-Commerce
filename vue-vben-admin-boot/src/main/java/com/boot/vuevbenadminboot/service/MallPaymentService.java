@@ -2,7 +2,7 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallPayment;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.PaymentCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.PaymentCreateRequest;
 
 /**
  * @author quannnn

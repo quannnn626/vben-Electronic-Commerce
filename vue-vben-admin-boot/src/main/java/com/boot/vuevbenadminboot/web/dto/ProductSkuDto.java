@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * 商品SKU规格DTO 入参/出参
+ */
 @Data
 public class ProductSkuDto {
     private Long fileId;

@@ -1,13 +1,11 @@
 package com.boot.vuevbenadminboot.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.mapper.SysUserMapper;
-import com.boot.vuevbenadminboot.web.dto.UserSaveRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import com.boot.vuevbenadminboot.web.dto.req.UserSaveRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

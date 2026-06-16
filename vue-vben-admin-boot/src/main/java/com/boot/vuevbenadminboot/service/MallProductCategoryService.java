@@ -1,8 +1,8 @@
 package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallProductCategory;
-import com.boot.vuevbenadminboot.web.dto.CategorySaveRequest;
-import com.boot.vuevbenadminboot.web.dto.CategoryTreeNode;
+import com.boot.vuevbenadminboot.web.dto.req.CategorySaveRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.CategoryTreeNode;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

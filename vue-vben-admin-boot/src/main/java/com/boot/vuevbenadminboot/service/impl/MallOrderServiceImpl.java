@@ -15,9 +15,9 @@ import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
 import com.boot.vuevbenadminboot.service.SysUserService;
-import com.boot.vuevbenadminboot.web.dto.OrderCreateRequest;
-import com.boot.vuevbenadminboot.web.dto.OrderItemDto;
-import com.boot.vuevbenadminboot.web.dto.OrderListItemDto;
+import com.boot.vuevbenadminboot.web.dto.req.OrderCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto;
+import com.boot.vuevbenadminboot.web.dto.resp.OrderListItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -59,6 +59,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         this.addressService = addressService;
     }
 
+    // 获取订单列表
     @Override
     public List<OrderListItemDto> listOrders(String username) {
         Long userId = sysUserService.requireUserId(username);
@@ -88,6 +89,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return result;
     }
 
+    // 创建订单
     @Override
     @Transactional
     public OrderListItemDto createOrder(String username, OrderCreateRequest req) {
@@ -157,6 +159,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return buildOrderDto(order, itemMap, imageMap);
     }
 
+    // 取消订单
     @Override
     @Transactional
     public void cancelOrder(String username, Long orderId) {
@@ -186,6 +189,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         }
     }
 
+    // 确认收货
     @Override
     @Transactional
     public void finishOrder(String username, Long orderId) {
@@ -202,6 +206,17 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);
     }
+
+    // 查看订单详情
+    @Override
+    public OrderListItemDto getOrderDetail(Long orderId) {
+        MallOrder order = this.getById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        return null;
+    }
+
 
     private OrderListItemDto buildOrderDto(MallOrder order,
                                             Map<Long, List<MallOrderItem>> itemMap,
@@ -234,6 +249,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return dto;
     }
 
+    // 构建地址文本，以防止用户修改地址后订单地址被修改
     private String buildAddressText(MallUserAddress addr) {
         StringBuilder sb = new StringBuilder();
         if (addr.getProvince() != null) sb.append(addr.getProvince());
@@ -243,12 +259,14 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return sb.toString();
     }
 
+    // 生成唯一订单号
     private String generateOrderNo() {
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         int rand = ThreadLocalRandom.current().nextInt(100_000, 999_999);
         return now + rand;
     }
 
+    // 查询订单对应商品
     private Map<Long, List<MallOrderItem>> buildItemMap(List<Long> orderIds) {
         List<MallOrderItem> items = orderItemService.list(
                 new LambdaQueryWrapper<MallOrderItem>()
@@ -258,6 +276,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return items.stream().collect(Collectors.groupingBy(MallOrderItem::getOrderId));
     }
 
+    // 查询商品对应图片
     private Map<Long, String> buildSkuImageMap(Set<Long> skuIds) {
         if (skuIds.isEmpty()) {
             return Collections.emptyMap();
@@ -287,6 +306,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return result;
     }
 
+    // 解析规格数据中的文件ID
     private Long parseFileId(Object specData) {
         Map<String, Object> map = parseSpecData(specData);
         Object value = map.get("fileId");
@@ -302,6 +322,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return null;
     }
 
+    // 将规格数据转换为Map<String, Object>格式
     private Map<String, Object> parseSpecData(Object specData) {
         if (specData == null) {
             return Collections.emptyMap();

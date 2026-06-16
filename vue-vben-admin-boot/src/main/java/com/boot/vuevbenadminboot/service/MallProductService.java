@@ -2,8 +2,8 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.ProductListItemDto;
-import com.boot.vuevbenadminboot.web.dto.ProductSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.ProductListItemDto;
+import com.boot.vuevbenadminboot.web.dto.req.ProductSaveRequest;
 
 import java.util.List;
 

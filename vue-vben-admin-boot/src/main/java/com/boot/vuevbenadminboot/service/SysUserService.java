@@ -2,8 +2,7 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.UserSaveRequest;
-import jakarta.servlet.http.HttpServletRequest;
+import com.boot.vuevbenadminboot.web.dto.req.UserSaveRequest;
 
 /**
 * @author quannnn

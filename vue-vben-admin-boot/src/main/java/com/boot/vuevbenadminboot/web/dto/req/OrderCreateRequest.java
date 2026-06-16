@@ -1,10 +1,13 @@
-package com.boot.vuevbenadminboot.web.dto;
+package com.boot.vuevbenadminboot.web.dto.req;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * 创建订单请求入参
+ */
 @Data
 public class OrderCreateRequest {
     private Long addressId;

@@ -2,7 +2,7 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.UserAddressSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.req.UserAddressSaveRequest;
 
 import java.util.List;
 

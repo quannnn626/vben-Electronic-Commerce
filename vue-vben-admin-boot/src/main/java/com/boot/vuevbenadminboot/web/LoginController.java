@@ -7,7 +7,7 @@ import com.boot.vuevbenadminboot.auth.SessionActivityService;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.util.PasswordUtil;
-import com.boot.vuevbenadminboot.web.dto.LoginRequest;
+import com.boot.vuevbenadminboot.web.dto.req.LoginRequest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -7,7 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.mapper.MallSkuMapper;
-import com.boot.vuevbenadminboot.web.dto.StockManageItemDto;
+import com.boot.vuevbenadminboot.web.dto.resp.StockManageItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;

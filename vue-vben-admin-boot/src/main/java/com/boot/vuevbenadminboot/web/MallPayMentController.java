@@ -3,7 +3,7 @@ package com.boot.vuevbenadminboot.web;
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallPayment;
 import com.boot.vuevbenadminboot.service.MallPaymentService;
-import com.boot.vuevbenadminboot.web.dto.PaymentCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.PaymentCreateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

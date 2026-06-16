@@ -1,9 +1,13 @@
-package com.boot.vuevbenadminboot.web.dto;
+package com.boot.vuevbenadminboot.web.dto.req;
 
+import com.boot.vuevbenadminboot.web.dto.ProductSkuDto;
 import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 商品新增/编辑请求入参
+ */
 @Data
 public class ProductSaveRequest {
     private List<Long> categoryIds;

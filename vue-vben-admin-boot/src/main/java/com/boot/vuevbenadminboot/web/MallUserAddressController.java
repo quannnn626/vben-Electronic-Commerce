@@ -2,7 +2,7 @@ package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
-import com.boot.vuevbenadminboot.web.dto.UserAddressSaveRequest;
+import com.boot.vuevbenadminboot.web.dto.req.UserAddressSaveRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

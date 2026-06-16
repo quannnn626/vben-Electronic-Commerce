@@ -1,9 +1,12 @@
-package com.boot.vuevbenadminboot.web.dto;
+package com.boot.vuevbenadminboot.web.dto.resp;
 
 import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * 订单商品项响应出参
+ */
 @Data
 public class OrderItemDto {
     private Long id;

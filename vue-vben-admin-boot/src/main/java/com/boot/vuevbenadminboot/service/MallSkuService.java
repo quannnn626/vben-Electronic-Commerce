@@ -2,7 +2,7 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.StockManageItemDto;
+import com.boot.vuevbenadminboot.web.dto.resp.StockManageItemDto;
 
 import java.util.List;
 

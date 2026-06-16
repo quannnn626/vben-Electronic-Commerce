@@ -2,8 +2,8 @@ package com.boot.vuevbenadminboot.service;
 
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boot.vuevbenadminboot.web.dto.OrderCreateRequest;
-import com.boot.vuevbenadminboot.web.dto.OrderListItemDto;
+import com.boot.vuevbenadminboot.web.dto.req.OrderCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.OrderListItemDto;
 
 import java.util.List;
 
@@ -20,4 +20,6 @@ public interface MallOrderService extends IService<MallOrder> {
     void cancelOrder(String username, Long orderId);
 
     void finishOrder(String username, Long orderId);
+
+    OrderListItemDto getOrderDetail(Long orderId);
 }

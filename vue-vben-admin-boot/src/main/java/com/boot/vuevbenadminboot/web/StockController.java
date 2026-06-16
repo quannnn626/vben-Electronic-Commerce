@@ -1,7 +1,7 @@
 package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.service.MallSkuService;
-import com.boot.vuevbenadminboot.web.dto.StockOperateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.StockOperateRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

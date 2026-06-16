@@ -6,8 +6,8 @@ import com.boot.vuevbenadminboot.domain.MallProductCategory;
 import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallProductCategoryMapper;
 import com.boot.vuevbenadminboot.service.MallProductCategoryService;
-import com.boot.vuevbenadminboot.web.dto.CategorySaveRequest;
-import com.boot.vuevbenadminboot.web.dto.CategoryTreeNode;
+import com.boot.vuevbenadminboot.web.dto.req.CategorySaveRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.CategoryTreeNode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

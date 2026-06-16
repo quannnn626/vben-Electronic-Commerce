@@ -11,7 +11,7 @@ import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallPaymentService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.mapper.MallPaymentMapper;
-import com.boot.vuevbenadminboot.web.dto.PaymentCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.PaymentCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

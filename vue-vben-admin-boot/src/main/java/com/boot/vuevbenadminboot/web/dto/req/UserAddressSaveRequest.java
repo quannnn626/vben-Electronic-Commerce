@@ -1,7 +1,10 @@
-package com.boot.vuevbenadminboot.web.dto;
+package com.boot.vuevbenadminboot.web.dto.req;
 
 import lombok.Data;
 
+/**
+ * 收货地址新增/编辑请求入参
+ */
 @Data
 public class UserAddressSaveRequest {
     private Long id;
