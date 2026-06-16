@@ -13,6 +13,7 @@ public class OrderItemDto {
     private Long skuId;
     private String productName;
     private String productImage;
+    private String skuSpecName;
     private BigDecimal price;
     private Integer quantity;
     private BigDecimal totalPrice;

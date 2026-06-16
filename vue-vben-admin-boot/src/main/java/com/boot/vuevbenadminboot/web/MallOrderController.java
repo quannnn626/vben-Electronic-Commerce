@@ -24,7 +24,7 @@ public class MallOrderController {
 
     @GetMapping("/list")
     public Map<String, Object> list(HttpServletRequest request) {
-        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
@@ -37,7 +37,7 @@ public class MallOrderController {
 
     @PostMapping("/create")
     public Map<String, Object> create(@RequestBody OrderCreateRequest req, HttpServletRequest request) {
-        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
@@ -50,7 +50,7 @@ public class MallOrderController {
 
     @PostMapping("/cancel")
     public Map<String, Object> cancel(@RequestParam Long orderId, HttpServletRequest request) {
-        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
@@ -64,7 +64,7 @@ public class MallOrderController {
 
     @PostMapping("/finish")
     public Map<String, Object> finish(@RequestParam Long orderId, HttpServletRequest request) {
-        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
@@ -74,5 +74,22 @@ public class MallOrderController {
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
+    }
+
+    @GetMapping("/detail")
+    public Map<String, Object> detail(@RequestParam Long orderId, HttpServletRequest request) {
+        String username = getLoginUsername(request);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        try {
+            return ApiResponse.of(0, orderService.getOrderDetail(username, orderId), "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    private String getLoginUsername(HttpServletRequest request) {
+        return (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
     }
 }

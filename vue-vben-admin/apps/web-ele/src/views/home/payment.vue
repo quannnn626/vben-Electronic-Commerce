@@ -15,14 +15,37 @@ import {
 
 import { requestClient } from '#/api/request';
 
+interface OrderItem {
+  id: number;
+  skuId: number;
+  productName: string;
+  productImage: string;
+  skuSpecName: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
+
+interface OrderDetail {
+  id: number;
+  orderNo: string;
+  totalAmount: number;
+  payAmount: number;
+  status: number;
+  createTime: string;
+  payTime: string | null;
+  deliveryTime: string | null;
+  finishTime: string | null;
+  cancelTime: string | null;
+  items: OrderItem[];
+}
+
 const route = useRoute();
 const router = useRouter();
 
-const paymentNo = ref('');
-const orderId = ref('');
-const orderNo = ref('');
-const amount = ref('0.00');
 const loading = ref(false);
+const submitLoading = ref(false);
+const order = ref<OrderDetail | null>(null);
 
 const payType = ref('alipay');
 const paymentOptions = [
@@ -30,15 +53,45 @@ const paymentOptions = [
   { label: '微信支付', value: 'wechat' },
 ];
 
-function initFromQuery() {
-  paymentNo.value = (route.query.paymentNo as string) ?? '';
-  orderId.value = (route.query.orderId as string) ?? '';
-  orderNo.value = (route.query.orderNo as string) ?? '';
-  amount.value = (route.query.amount as string) ?? '0.00';
+function normalizeImage(url?: string) {
+  if (!url) return '';
+  if (/^https?:\/\//.test(url)) return url;
+  if (url.startsWith('/')) return `/api${url}`;
+  return `/api/${url}`;
 }
 
-function handleConfirmPay() {
-  ElMessage.info('支付接口开发中');
+async function loadOrderDetail() {
+  const orderId = route.query.orderId as string;
+  if (!orderId) return;
+
+  loading.value = true;
+  try {
+    const data = await requestClient.get<OrderDetail>('/mall/order/detail', {
+      params: { orderId: Number(orderId) },
+    });
+    order.value = data;
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '加载订单详情失败');
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleConfirmPay() {
+  if (!order.value) return;
+  submitLoading.value = true;
+  try {
+    const payment = await requestClient.post('/mall/payment/create', {
+      orderId: order.value.id,
+      payType: payType.value,
+    });
+    ElMessage.success(`支付单已创建：${payment.paymentNo}`);
+    router.push({ name: 'myOrderList' });
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '创建支付单失败');
+  } finally {
+    submitLoading.value = false;
+  }
 }
 
 function goBack() {
@@ -46,40 +99,51 @@ function goBack() {
 }
 
 onMounted(() => {
-  initFromQuery();
+  loadOrderDetail();
 });
 </script>
 
 <template>
   <Page description="确认支付信息并完成付款" title="订单支付">
-    <div v-if="!paymentNo" class="flex items-center justify-center py-20">
-      <ElEmpty description="缺少支付参数，请从订单列表进入" />
+    <div v-if="!route.query.orderId" class="flex items-center justify-center py-20">
+      <ElEmpty description="缺少订单参数" />
     </div>
 
-    <div v-else class="payment-layout">
+    <div v-else v-loading="loading" class="payment-layout">
       <div class="payment-main">
+        <!-- 商品明细 -->
         <ElCard shadow="never">
           <template #header>
             <span class="section-title">
-              <span class="step-num">1</span> 支付信息
+              <span class="step-num">1</span> 商品明细
             </span>
           </template>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">支付单号</span>
-              <span class="info-value">{{ paymentNo }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">订单编号</span>
-              <span class="info-value">{{ orderNo }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">应付金额</span>
-              <span class="info-value price">¥{{ Number(amount).toFixed(2) }}</span>
+          <div v-if="order" class="goods-list">
+            <div v-for="item in order.items" :key="item.id" class="goods-item">
+              <div class="goods-image-box">
+                <img
+                  v-if="item.productImage"
+                  :src="normalizeImage(item.productImage)"
+                  class="goods-img"
+                  alt=""
+                />
+                <span v-else class="goods-image-placeholder">图</span>
+              </div>
+              <div class="goods-info">
+                <div class="goods-name">{{ item.productName }}</div>
+                <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
+              </div>
+              <div class="goods-price-col">
+                <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
+                <div class="goods-qty">×{{ item.quantity }}</div>
+              </div>
+              <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
             </div>
           </div>
+          <ElEmpty v-else description="暂无商品信息" />
         </ElCard>
 
+        <!-- 支付方式 -->
         <ElCard class="mt-4" shadow="never">
           <template #header>
             <span class="section-title">
@@ -103,35 +167,38 @@ onMounted(() => {
 
       <aside class="payment-sidebar">
         <ElCard shadow="never" class="summary-card">
-          <h3 class="summary-title">支付摘要</h3>
-
-          <div class="summary-row">
-            <span class="summary-label">支付单号</span>
-            <span class="summary-value summary-no">{{ paymentNo }}</span>
-          </div>
+          <h3 class="summary-title">订单摘要</h3>
 
           <div class="summary-row">
             <span class="summary-label">订单编号</span>
-            <span class="summary-value summary-no">{{ orderNo }}</span>
+            <span class="summary-value summary-no">{{ order?.orderNo }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">商品件数</span>
+            <span class="summary-value">
+              {{ order?.items.reduce((s, i) => s + i.quantity, 0) ?? 0 }} 件
+            </span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">商品金额</span>
+            <span class="summary-value">¥{{ order?.totalAmount?.toFixed(2) }}</span>
           </div>
 
           <ElDivider />
 
           <div class="summary-row summary-total-row">
             <span class="summary-label">应付金额</span>
-            <span class="summary-total-price">¥{{ Number(amount).toFixed(2) }}</span>
+            <span class="summary-total-price">¥{{ order?.payAmount?.toFixed(2) }}</span>
           </div>
 
           <ElDivider />
 
-          <div class="summary-method">
-            <span class="remark-label">支付方式：{{ paymentOptions.find(o => o.value === payType)?.label }}</span>
-          </div>
-
           <div class="summary-actions">
             <ElButton class="action-btn" @click="goBack">返回</ElButton>
             <ElButton
-              :loading="loading"
+              :loading="submitLoading"
               class="action-btn action-submit"
               type="danger"
               @click="handleConfirmPay"
@@ -178,36 +245,99 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.info-grid {
+/* 商品列表 */
+.goods-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-.info-item {
+.goods-item {
   align-items: center;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   display: flex;
-  gap: 12px;
+  gap: 16px;
+  padding: 16px 0;
 }
 
-.info-label {
-  color: var(--el-text-color-secondary);
+.goods-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.goods-item:first-child {
+  padding-top: 0;
+}
+
+.goods-image-box {
+  flex-shrink: 0;
+  align-items: center;
+  background: var(--el-fill-color-lighter);
+  border-radius: 8px;
+  display: flex;
+  height: 80px;
+  justify-content: center;
+  overflow: hidden;
+  width: 80px;
+}
+
+.goods-img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.goods-image-placeholder {
+  color: var(--el-text-color-placeholder);
   font-size: 14px;
+}
+
+.goods-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.goods-name {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goods-spec {
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.goods-price-col {
+  flex-shrink: 0;
+  text-align: right;
   min-width: 80px;
 }
 
-.info-value {
+.goods-unit-price {
+  color: var(--el-text-color-regular);
   font-size: 14px;
-  font-weight: 500;
+}
+
+.goods-qty {
+  color: var(--el-text-color-secondary);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.goods-subtotal {
   color: var(--el-text-color-primary);
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 90px;
+  text-align: right;
 }
 
-.info-value.price {
-  color: var(--el-color-danger);
-  font-size: 20px;
-  font-weight: 700;
-}
-
+/* 支付方式 */
 .payment-options {
   display: flex;
   gap: 12px;
@@ -239,6 +369,7 @@ onMounted(() => {
   font-weight: 500;
 }
 
+/* 右侧摘要 */
 .summary-card {
   position: sticky;
   top: 12px;
@@ -285,16 +416,6 @@ onMounted(() => {
   font-weight: 700;
 }
 
-.summary-method {
-  margin-bottom: 8px;
-}
-
-.remark-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--el-text-color-regular);
-}
-
 .summary-actions {
   display: flex;
   gap: 10px;
@@ -309,7 +430,6 @@ onMounted(() => {
   flex: 2;
 }
 
-/* 响应式 */
 @media (max-width: 960px) {
   .payment-layout {
     grid-template-columns: 1fr;

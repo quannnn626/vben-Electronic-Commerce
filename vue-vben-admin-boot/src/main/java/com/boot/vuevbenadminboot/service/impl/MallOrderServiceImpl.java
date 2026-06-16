@@ -209,15 +209,25 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
     // 查看订单详情
     @Override
-    public OrderListItemDto getOrderDetail(Long orderId) {
+    public OrderListItemDto getOrderDetail(String username, Long orderId) {
+        Long userId = sysUserService.requireUserId(username);
         MallOrder order = this.getById(orderId);
-        if (order == null) {
+        if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
         }
-        return null;
+        List<Long> orderIds = List.of(orderId);
+        Map<Long, List<MallOrderItem>> itemMap = buildItemMap(orderIds);
+
+        Set<Long> skuIds = itemMap.values().stream()
+                .flatMap(List::stream)
+                .map(MallOrderItem::getSkuId)
+                .collect(Collectors.toSet());
+        Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
+        // 组建返回 DTO
+        return buildOrderDto(order, itemMap, skuImageMap);
     }
 
-
+    // 构建订单详情 DTO
     private OrderListItemDto buildOrderDto(MallOrder order,
                                             Map<Long, List<MallOrderItem>> itemMap,
                                             Map<Long, String> imageMap) {
@@ -231,6 +241,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         dto.setPayTime(order.getPayTime());
         dto.setDeliveryTime(order.getDeliveryTime());
         dto.setFinishTime(order.getFinishTime());
+        dto.setCancelTime(order.getCancelTime());
 
         List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
         List<OrderItemDto> itemDtos = new ArrayList<>();
@@ -240,6 +251,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             itemDto.setSkuId(item.getSkuId());
             itemDto.setProductName(item.getProductName());
             itemDto.setProductImage(imageMap.get(item.getSkuId()));
+            itemDto.setSkuSpecName(item.getSkuSpecName());
             itemDto.setPrice(item.getPrice());
             itemDto.setQuantity(item.getQuantity());
             itemDto.setTotalPrice(item.getTotalPrice());

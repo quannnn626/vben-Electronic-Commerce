@@ -21,5 +21,5 @@ public interface MallOrderService extends IService<MallOrder> {
 
     void finishOrder(String username, Long orderId);
 
-    OrderListItemDto getOrderDetail(Long orderId);
+    OrderListItemDto getOrderDetail(String username, Long orderId);
 }

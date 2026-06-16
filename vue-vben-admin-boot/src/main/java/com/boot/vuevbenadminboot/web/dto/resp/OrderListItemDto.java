@@ -20,5 +20,6 @@ public class OrderListItemDto {
     private Date payTime;
     private Date deliveryTime;
     private Date finishTime;
+    private Date cancelTime;
     private List<OrderItemDto> items;
 }

@@ -123,27 +123,12 @@ const tableData = computed(() => {
 const router = useRouter();
 const actionLoading = ref<Record<string, boolean>>({});
 
-async function handlePay(row: OrderItem) {
-  actionLoading.value[row.id] = true;
-  try {
-    const payment = await requestClient.post('/mall/payment/create', {
-      orderId: Number(row.id),
-      payType: 'alipay',
-    });
-    router.push({
-      name: 'OrderPayment',
-      query: {
-        paymentNo: payment.paymentNo,
-        orderId: String(row.id),
-        orderNo: row.orderNo,
-        amount: String(row.actualAmount),
-      },
-    });
-  } catch (e: any) {
-    ElMessage.error(e?.message ?? '创建支付单失败');
-  } finally {
-    actionLoading.value[row.id] = false;
-  }
+function goToPayment(row: OrderItem) {
+  router.push({ name: 'OrderPayment', query: { orderId: row.id } });
+}
+
+function handlePay(row: OrderItem) {
+  goToPayment(row);
 }
 
 async function handleCancel(row: OrderItem) {
@@ -237,7 +222,7 @@ onMounted(() => {
 
           <!-- 订单商品 -->
           <div class="order-body">
-            <div class="goods-image-box">
+            <div class="goods-image-box" @click="goToPayment(item)">
               <img
                 v-if="item.goodsImage"
                 :src="item.goodsImage"
@@ -247,7 +232,7 @@ onMounted(() => {
               <span v-else class="goods-image-placeholder">图</span>
             </div>
             <div class="goods-info">
-              <div class="goods-name">{{ item.goodsName }}</div>
+              <div class="goods-name" @click="goToPayment(item)">{{ item.goodsName }}</div>
               <div class="goods-qty">共 {{ item.goodsCount }} 件</div>
             </div>
             <div class="goods-amount">
@@ -358,6 +343,7 @@ onMounted(() => {
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .goods-img {
@@ -383,6 +369,11 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.goods-name:hover {
+  color: var(--el-color-primary);
 }
 
 .goods-qty {
