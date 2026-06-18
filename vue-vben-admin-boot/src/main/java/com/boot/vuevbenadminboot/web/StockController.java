@@ -1,7 +1,9 @@
 package com.boot.vuevbenadminboot.web;
 
+import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.web.dto.req.StockOperateRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +23,16 @@ public class StockController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> list(@RequestParam(required = false) String keyword) {
+    public Map<String, Object> list(@RequestParam(required = false) String keyword,
+                                    HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         return ApiResponse.of(0, skuService.listForManage(keyword), "success");
     }
 
     @PostMapping("/increase")
-    public Map<String, Object> increase(@RequestBody StockOperateRequest req) {
+    public Map<String, Object> increase(@RequestBody StockOperateRequest req,
+                                        HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             skuService.increaseStock(req.getSkuId(), req.getQuantity());
             return ApiResponse.of(0, null, "success");
@@ -36,7 +42,9 @@ public class StockController {
     }
 
     @PostMapping("/decrease")
-    public Map<String, Object> decrease(@RequestBody StockOperateRequest req) {
+    public Map<String, Object> decrease(@RequestBody StockOperateRequest req,
+                                        HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             skuService.decreaseStock(req.getSkuId(), req.getQuantity());
             return ApiResponse.of(0, null, "success");
@@ -46,7 +54,9 @@ public class StockController {
     }
 
     @PostMapping("/lock")
-    public Map<String, Object> lock(@RequestBody StockOperateRequest req) {
+    public Map<String, Object> lock(@RequestBody StockOperateRequest req,
+                                    HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             skuService.lockStock(req.getSkuId(), req.getQuantity());
             return ApiResponse.of(0, null, "success");
@@ -56,12 +66,18 @@ public class StockController {
     }
 
     @PostMapping("/unlock")
-    public Map<String, Object> unlock(@RequestBody StockOperateRequest req) {
+    public Map<String, Object> unlock(@RequestBody StockOperateRequest req,
+                                      HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             skuService.unlockStock(req.getSkuId(), req.getQuantity());
             return ApiResponse.of(0, null, "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
+    }
+
+    private String getLoginUsername(HttpServletRequest request) {
+        return (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
     }
 }

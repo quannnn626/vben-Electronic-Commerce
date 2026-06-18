@@ -1,7 +1,9 @@
 package com.boot.vuevbenadminboot.web;
 
+import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.service.MallProductService;
 import com.boot.vuevbenadminboot.web.dto.req.ProductSaveRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +25,14 @@ public class ProductController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> list() {
+    public Map<String, Object> list(HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         return ApiResponse.of(0, productService.listProducts(), "success");
     }
 
     @GetMapping("/detail")
-    public Map<String, Object> detail(@RequestParam Long id) {
+    public Map<String, Object> detail(@RequestParam Long id, HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             return ApiResponse.of(0, productService.getProductDetail(id), "success");
         } catch (IllegalArgumentException e) {
@@ -37,7 +41,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public Map<String, Object> create(@RequestBody ProductSaveRequest req) {
+    public Map<String, Object> create(@RequestBody ProductSaveRequest req, HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             return ApiResponse.of(0, productService.createProduct(req), "success");
         } catch (IllegalArgumentException e) {
@@ -46,7 +51,8 @@ public class ProductController {
     }
 
     @PutMapping
-    public Map<String, Object> update(@RequestBody ProductSaveRequest req) {
+    public Map<String, Object> update(@RequestBody ProductSaveRequest req, HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             return ApiResponse.of(0, productService.updateProduct(req), "success");
         } catch (IllegalArgumentException e) {
@@ -55,11 +61,16 @@ public class ProductController {
     }
 
     @DeleteMapping
-    public Map<String, Object> delete(@RequestBody ProductSaveRequest req) {
+    public Map<String, Object> delete(@RequestBody ProductSaveRequest req, HttpServletRequest request) {
+        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
         try {
             return ApiResponse.of(0, productService.deleteProduct(req), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
+    }
+
+    private String getLoginUsername(HttpServletRequest request) {
+        return (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
     }
 }

@@ -50,10 +50,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
     public boolean updateUser(UserSaveRequest request, String username) {
         SysUser sysUser = sysUserMapper.selectByUsername(username);
         if (sysUser != null) {
-            sysUser.setUsername(request.getUsername());
-            sysUser.setUpdateTime(new Date(System.currentTimeMillis()));
-            sysUser.setRole(request.getRoles());
             sysUser.setNickname(request.getRealName());
+            sysUser.setUpdateTime(new Date(System.currentTimeMillis()));
             int i = sysUserMapper.updateById(sysUser);
             return i == 1;
         }
