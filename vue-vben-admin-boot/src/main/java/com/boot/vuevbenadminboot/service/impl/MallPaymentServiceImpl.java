@@ -12,6 +12,7 @@ import com.boot.vuevbenadminboot.service.MallPaymentService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.mapper.MallPaymentMapper;
 import com.boot.vuevbenadminboot.web.dto.req.PaymentCreateRequest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,13 +54,14 @@ public class MallPaymentServiceImpl extends ServiceImpl<MallPaymentMapper, MallP
             throw new IllegalArgumentException("仅待支付订单可发起支付");
         }
 
-        Long existCount = mallPaymentMapper.selectCount(
+        MallPayment existOne = mallPaymentMapper.selectOne(
                 new LambdaQueryWrapper<MallPayment>()
                         .eq(MallPayment::getOrderId, req.getOrderId())
                         .eq(MallPayment::getStatus, PaymentStatusEnum.WAIT_PAY.getCode())
+                        .last("limit 1")
         );
-        if (existCount != null && existCount > 0) {
-            throw new IllegalArgumentException("该订单已有待支付的支付单，请勿重复操作");
+        if (existOne != null) {
+            return existOne;
         }
 
         MallPayment mallPayment = new MallPayment();
@@ -71,11 +73,15 @@ public class MallPaymentServiceImpl extends ServiceImpl<MallPaymentMapper, MallP
         mallPayment.setPaymentNo(generatePaymentNo());
         mallPayment.setStatus(PaymentStatusEnum.WAIT_PAY.getCode());
 
-        int insert = mallPaymentMapper.insert(mallPayment);
-        if (insert > 0) {
+        try {
+            mallPaymentMapper.insert(mallPayment);
             return mallPayment;
-        } else {
-            throw new IllegalArgumentException("支付单创建失败");
+        } catch (DuplicateKeyException e) {
+            return mallPaymentMapper.selectOne(
+                    new LambdaQueryWrapper<MallPayment>()
+                            .eq(MallPayment::getOrderId, req.getOrderId())
+                            .eq(MallPayment::getStatus, PaymentStatusEnum.WAIT_PAY.getCode())
+                            .last("limit 1"));
         }
     }
 
