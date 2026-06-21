@@ -3,6 +3,7 @@ package com.boot.vuevbenadminboot.web;
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallPayment;
 import com.boot.vuevbenadminboot.service.MallPaymentService;
+import com.boot.vuevbenadminboot.web.dto.req.PaymentCallbackRequest;
 import com.boot.vuevbenadminboot.web.dto.req.PaymentCreateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,16 @@ public class MallPayMentController {
             }
             MallPayment mallPayment = mallPaymentService.createPayment(username, req);
             return ApiResponse.of(0, mallPayment, "支付单创建成功");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @PostMapping("/paymentCallback")
+    public Map<String, Object> paymentCallback(@RequestBody PaymentCallbackRequest req) {
+        try {
+            MallPayment result = mallPaymentService.paymentCallback(req);
+            return ApiResponse.of(0, result, "paySuccess");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }

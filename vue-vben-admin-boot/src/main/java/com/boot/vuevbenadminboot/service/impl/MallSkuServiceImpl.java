@@ -134,6 +134,20 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
         this.updateById(sku);
     }
 
+    @Override
+    public void confirmStock(Long skuId, Integer quantity) {
+        int qty = normalizeQuantity(quantity);
+        MallSku sku = getSkuOrThrow(skuId);
+        int locked = sku.getLockedStock() == null ? 0 : sku.getLockedStock();
+        if (locked < qty) {
+            throw new IllegalArgumentException("锁定库存不足");
+        }
+        sku.setLockedStock(locked - qty);
+        sku.setUpdateTime(new Date());
+        this.updateById(sku);
+    }
+
+    // 校验数量
     private int normalizeQuantity(Integer quantity) {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("数量必须大于0");
@@ -141,6 +155,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
         return quantity;
     }
 
+    // 获取商品信息
     private MallSku getSkuOrThrow(Long skuId) {
         if (skuId == null) {
             throw new IllegalArgumentException("SKU ID不能为空");
