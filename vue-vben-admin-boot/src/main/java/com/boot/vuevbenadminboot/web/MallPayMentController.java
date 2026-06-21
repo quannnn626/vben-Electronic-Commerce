@@ -39,9 +39,16 @@ public class MallPayMentController {
     }
 
     @PostMapping("/paymentCallback")
-    public Map<String, Object> paymentCallback(@RequestBody PaymentCallbackRequest req) {
+    public Map<String, Object> paymentCallback(@RequestBody PaymentCallbackRequest req,
+                                               HttpServletRequest request) {
         try {
-            MallPayment result = mallPaymentService.paymentCallback(req);
+            String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+            MallPayment result;
+            if (username != null) {
+                result = mallPaymentService.paymentCallback(username, req);
+            } else {
+                result = mallPaymentService.paymentCallback(req);
+            }
             return ApiResponse.of(0, result, "paySuccess");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());

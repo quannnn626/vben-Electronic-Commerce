@@ -99,6 +99,28 @@ public class MallPaymentServiceImpl extends ServiceImpl<MallPaymentMapper, MallP
         if (mallPayment == null) {
             throw new IllegalArgumentException("支付单不存在");
         }
+        return doCallback(mallPayment, req);
+    }
+
+    @Override
+    @Transactional
+    public MallPayment paymentCallback(String username, PaymentCallbackRequest req) {
+        Long userId = sysUserService.requireUserId(username);
+        MallPayment mallPayment = mallPaymentMapper.selectOne(
+                new LambdaQueryWrapper<MallPayment>()
+                        .eq(MallPayment::getPaymentNo, req.getPaymentNo())
+                        .last("limit 1")
+        );
+        if (mallPayment == null) {
+            throw new IllegalArgumentException("支付单不存在");
+        }
+        if (!mallPayment.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("该支付单不属于当前用户");
+        }
+        return doCallback(mallPayment, req);
+    }
+
+    private MallPayment doCallback(MallPayment mallPayment, PaymentCallbackRequest req) {
         if (Objects.equals(mallPayment.getStatus(), PaymentStatusEnum.PAID.getCode())) {
             return mallPayment;
         }

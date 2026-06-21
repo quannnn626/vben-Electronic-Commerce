@@ -14,4 +14,6 @@ public interface MallPaymentService extends IService<MallPayment> {
     MallPayment createPayment(String username, PaymentCreateRequest paymentCreateRequest);
 
     MallPayment paymentCallback(PaymentCallbackRequest req);
+
+    MallPayment paymentCallback(String username, PaymentCallbackRequest req);
 }
