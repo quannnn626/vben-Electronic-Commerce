@@ -222,6 +222,16 @@ const routes: RouteRecordRaw[] = [
       title: $t('page.auth.orderPayment'),
     },
   },
+  {
+    name: 'SimulatedPay',
+    path: '/order/simulated-pay',
+    component: () => import('#/views/home/simulated-pay.vue'),
+    meta: {
+      icon: 'lucide:credit-card',
+      hideInMenu: true,
+      title: '第三方支付',
+    },
+  },
 ];
 
 export default routes;

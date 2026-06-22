@@ -85,8 +85,14 @@ async function handleConfirmPay() {
       orderId: order.value.id,
       payType: payType.value,
     });
-    ElMessage.success(`支付单已创建：${payment.paymentNo}`);
-    router.push({ name: 'myOrderList' });
+    router.push({
+      name: 'SimulatedPay',
+      query: {
+        paymentNo: payment.paymentNo,
+        orderId: String(order.value.id),
+        amount: String(order.value.payAmount),
+      },
+    });
   } catch (e: any) {
     ElMessage.error(e?.message ?? '创建支付单失败');
   } finally {
