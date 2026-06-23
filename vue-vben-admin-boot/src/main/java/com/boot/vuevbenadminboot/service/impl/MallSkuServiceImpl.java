@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.mapper.MallSkuMapper;
+import com.boot.vuevbenadminboot.util.QuantityUtil;
 import com.boot.vuevbenadminboot.web.dto.resp.StockManageItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,7 +85,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
 
     @Override
     public void increaseStock(Long skuId, Integer quantity) {
-        int qty = normalizeQuantity(quantity);
+        int qty = QuantityUtil.requirePositive(quantity);
         MallSku sku = getSkuOrThrow(skuId);
         sku.setStock((sku.getStock() == null ? 0 : sku.getStock()) + qty);
         sku.setUpdateTime(new Date());
@@ -93,7 +94,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
 
     @Override
     public void decreaseStock(Long skuId, Integer quantity) {
-        int qty = normalizeQuantity(quantity);
+        int qty = QuantityUtil.requirePositive(quantity);
         MallSku sku = getSkuOrThrow(skuId);
         int available = sku.getStock() == null ? 0 : sku.getStock();
         if (available < qty) {
@@ -106,7 +107,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
 
     @Override
     public void lockStock(Long skuId, Integer quantity) {
-        int qty = normalizeQuantity(quantity);
+        int qty = QuantityUtil.requirePositive(quantity);
         MallSku sku = getSkuOrThrow(skuId);
         int available = sku.getStock() == null ? 0 : sku.getStock();
         int locked = sku.getLockedStock() == null ? 0 : sku.getLockedStock();
@@ -121,7 +122,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
 
     @Override
     public void unlockStock(Long skuId, Integer quantity) {
-        int qty = normalizeQuantity(quantity);
+        int qty = QuantityUtil.requirePositive(quantity);
         MallSku sku = getSkuOrThrow(skuId);
         int available = sku.getStock() == null ? 0 : sku.getStock();
         int locked = sku.getLockedStock() == null ? 0 : sku.getLockedStock();
@@ -136,7 +137,7 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
 
     @Override
     public void confirmStock(Long skuId, Integer quantity) {
-        int qty = normalizeQuantity(quantity);
+        int qty = QuantityUtil.requirePositive(quantity);
         MallSku sku = getSkuOrThrow(skuId);
         int locked = sku.getLockedStock() == null ? 0 : sku.getLockedStock();
         if (locked < qty) {
@@ -145,14 +146,6 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
         sku.setLockedStock(locked - qty);
         sku.setUpdateTime(new Date());
         this.updateById(sku);
-    }
-
-    // 校验数量
-    private int normalizeQuantity(Integer quantity) {
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("数量必须大于0");
-        }
-        return quantity;
     }
 
     // 获取商品信息
