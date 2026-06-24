@@ -2,7 +2,11 @@ package com.boot.vuevbenadminboot.mapper;
 
 import com.boot.vuevbenadminboot.domain.MallCart;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.boot.vuevbenadminboot.web.dto.resp.CartItemDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author quannnn
@@ -12,7 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface MallCartMapper extends BaseMapper<MallCart> {
-
+    List<CartItemDto> listCartByUserId(@Param("userId") Long userId);
 }
 
 

@@ -23,5 +23,8 @@
   },
   "stock": {
     "stockManage": "库存管理"
+  },
+  "cart": {
+    "cartManage": "购物车"
   }
 }

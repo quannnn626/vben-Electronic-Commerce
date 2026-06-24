@@ -23,5 +23,8 @@
   },
   "stock": {
     "stockManage": "Stock Management"
+  },
+  "cart": {
+    "cartManage": "Shopping Cart"
   }
 }
