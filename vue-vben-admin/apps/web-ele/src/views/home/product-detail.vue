@@ -170,6 +170,24 @@ function handleBuyNow() {
   });
 }
 
+async function handleAddToCart() {
+  if (!detail.value) return;
+  const sku = selectedSku.value;
+  if (!sku) {
+    ElMessage.warning('请选择商品规格');
+    return;
+  }
+  try {
+    await requestClient.post('/mall/cart/create', {
+      skuId: sku.id,
+      quantity: buyCount.value,
+    });
+    ElMessage.success('已加入购物车');
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '加入购物车失败');
+  }
+}
+
 onMounted(async () => {
   await loadDetail();
 });
@@ -284,7 +302,7 @@ onMounted(async () => {
             </div>
             <ElSpace wrap>
               <ElButton type="danger" @click="handleBuyNow">立即购买</ElButton>
-              <ElButton type="primary" plain>加入购物车</ElButton>
+              <ElButton type="primary" plain @click="handleAddToCart">加入购物车</ElButton>
             </ElSpace>
           </div>
         </section>
