@@ -2,6 +2,7 @@ package com.boot.vuevbenadminboot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.boot.vuevbenadminboot.domain.MallCart;
 import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
@@ -9,6 +10,7 @@ import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
+import com.boot.vuevbenadminboot.service.MallCartService;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
@@ -44,6 +46,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private final MallSkuService skuService;
     private final MallFileService fileService;
     private final MallUserAddressService addressService;
+    private final MallCartService cartService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallOrderServiceImpl(
@@ -51,12 +54,14 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             MallOrderItemService orderItemService,
             MallSkuService skuService,
             MallFileService fileService,
-            MallUserAddressService addressService) {
+            MallUserAddressService addressService,
+            MallCartService cartService) {
         this.sysUserService = sysUserService;
         this.orderItemService = orderItemService;
         this.skuService = skuService;
         this.fileService = fileService;
         this.addressService = addressService;
+        this.cartService = cartService;
     }
 
     // 获取订单列表
@@ -148,6 +153,15 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                 skuService.lockStock(itemReq.getSkuId(), itemReq.getQuantity());
             }
         }
+
+        // 清除购物车中已下单的商品
+        Set<Long> orderedSkuIds = items.stream()
+                .map(OrderCreateRequest.OrderItemRequest::getSkuId)
+                .filter(id -> id != null)
+                .collect(Collectors.toSet());
+        cartService.remove(new LambdaQueryWrapper<MallCart>()
+                .eq(MallCart::getUserId, userId)
+                .in(MallCart::getSkuId, orderedSkuIds));
 
         // 组建返回 DTO
         Set<Long> skuIds = items.stream()
