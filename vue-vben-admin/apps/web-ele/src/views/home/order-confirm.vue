@@ -217,6 +217,13 @@ function goAddressManage() {
 
 /* ---------- 初始化 ---------- */
 
+function normalizeImage(url?: string) {
+  if (!url) return '';
+  if (/^https?:\/\//.test(url)) return url;
+  if (url.startsWith('/')) return `/api${url}`;
+  return `/api/${url}`;
+}
+
 onMounted(async () => {
   loading.value = true;
   try {
@@ -370,13 +377,13 @@ onMounted(async () => {
               <div v-if="goods.productImage" class="goods-image-box">
                 <img
                   v-if="goods.productImageType !== 'video'"
-                  :src="goods.productImage"
+                  :src="normalizeImage(goods.productImage)"
                   alt=""
                   class="goods-img"
                 />
                 <video
                   v-else
-                  :src="goods.productImage"
+                  :src="normalizeImage(goods.productImage)"
                   class="goods-video-cover"
                   muted
                   playsinline
