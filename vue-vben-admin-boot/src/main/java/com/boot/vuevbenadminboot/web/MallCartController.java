@@ -35,6 +35,21 @@ public class MallCartController {
         }
     }
 
+    @PostMapping("/update")
+    public Map<String, Object> update(@RequestBody CartRequest req,
+                                      HttpServletRequest request) {
+        try {
+            String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+            if (username == null) {
+                return ApiResponse.of(-1, null, "未登录");
+            }
+            MallCart mallCart = mallCartService.updateCart(username, req);
+            return ApiResponse.of(0, mallCart, "更新成功");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
     @GetMapping("/list")
     public Map<String, Object> list(HttpServletRequest request) {
         try {

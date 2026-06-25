@@ -95,6 +95,27 @@ public class MallCartServiceImpl extends ServiceImpl<MallCartMapper, MallCart>
     }
 
     @Override
+    @Transactional
+    public MallCart updateCart(String username, CartRequest req) {
+        Long userId = sysUserService.requireUserId(username);
+        int qty = QuantityUtil.requirePositive(req.getQuantity());
+        MallCart existCart = this.getOne(new LambdaQueryWrapper<MallCart>()
+                .eq(MallCart::getUserId, userId)
+                .eq(MallCart::getSkuId, req.getSkuId())
+        );
+        if (existCart == null) {
+            throw new IllegalArgumentException("购物车中不存在该商品");
+        }
+        MallSku sku = mallSkuService.getById(req.getSkuId());
+        if (sku == null || sku.getStock() == null || sku.getStock() < qty) {
+            throw new IllegalArgumentException("库存不足");
+        }
+        existCart.setQuantity(qty);
+        this.updateById(existCart);
+        return existCart;
+    }
+
+    @Override
     public List<CartItemDto> listCart(String username) {
         Long userId = sysUserService.requireUserId(username);
         List<CartItemDto> cartItemDtos = mallCartMapper.listCartByUserId(userId);

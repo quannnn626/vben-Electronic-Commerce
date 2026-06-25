@@ -15,5 +15,7 @@ import java.util.List;
 public interface MallCartService extends IService<MallCart> {
     MallCart createCart(String username, CartRequest req);
 
+    MallCart updateCart(String username, CartRequest req);
+
     List<CartItemDto> listCart(String username);
 }

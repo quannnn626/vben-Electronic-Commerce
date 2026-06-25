@@ -96,7 +96,7 @@ async function handleUpdateQuantity(row: CartItem, newQty: number | undefined) {
     return;
   }
   try {
-    await requestClient.post('/mall/cart/create', {
+    await requestClient.post('/mall/cart/update', {
       skuId: row.skuId,
       quantity: newQty,
     });
