@@ -26,5 +26,8 @@
   },
   "cart": {
     "cartManage": "Shopping Cart"
+  },
+  "order": {
+    "orderManage": "Order Management"
   }
 }

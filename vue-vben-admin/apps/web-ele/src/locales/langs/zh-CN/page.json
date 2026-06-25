@@ -26,5 +26,8 @@
   },
   "cart": {
     "cartManage": "购物车"
+  },
+  "order": {
+    "orderManage": "订单管理"
   }
 }

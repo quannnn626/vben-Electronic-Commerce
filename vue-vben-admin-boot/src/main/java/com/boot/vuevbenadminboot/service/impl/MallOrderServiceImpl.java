@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder>
-    implements MallOrderService{
+        implements MallOrderService {
 
     private final SysUserService sysUserService;
     private final MallOrderItemService orderItemService;
@@ -241,12 +241,49 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         return buildOrderDto(order, itemMap, skuImageMap);
     }
 
+    @Override
+    public List<OrderListItemDto> getAllUserList() {
+        List<MallOrder> orders = this.list(
+                new LambdaQueryWrapper<MallOrder>()
+                        .eq(MallOrder::getDeleted, 0)
+                        .orderByDesc(MallOrder::getId)
+        );
+        if (orders.isEmpty()) {
+            return List.of();
+        }
+        Set<Long> userIds = orders.stream().map(MallOrder::getUserId).collect(Collectors.toSet());
+        Map<Long, String> usernameMap = sysUserService.listByIds(userIds).stream()
+                .collect(Collectors.toMap(
+                        u -> u.getId(),
+                        u -> u.getNickname() != null && !u.getNickname().isBlank()
+                                ? u.getNickname() : u.getUsername(),
+                        (a, b) -> a));
+
+        List<Long> orderIds = orders.stream().map(MallOrder::getId).toList();
+        Map<Long, List<MallOrderItem>> itemMap = buildItemMap(orderIds);
+
+        Set<Long> skuIds = itemMap.values().stream()
+                .flatMap(List::stream)
+                .map(MallOrderItem::getSkuId)
+                .collect(Collectors.toSet());
+        Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
+
+        List<OrderListItemDto> result = new ArrayList<>();
+        for (MallOrder order : orders) {
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap);
+            dto.setUsername(usernameMap.get(order.getUserId()));
+            result.add(dto);
+        }
+        return result;
+    }
+
     // 构建订单详情 DTO
     private OrderListItemDto buildOrderDto(MallOrder order,
-                                            Map<Long, List<MallOrderItem>> itemMap,
-                                            Map<Long, String> imageMap) {
+                                           Map<Long, List<MallOrderItem>> itemMap,
+                                           Map<Long, String> imageMap) {
         OrderListItemDto dto = new OrderListItemDto();
         dto.setId(order.getId());
+        dto.setUserId(order.getUserId());
         dto.setOrderNo(order.getOrderNo());
         dto.setTotalAmount(order.getTotalAmount());
         dto.setPayAmount(order.getPayAmount());
@@ -359,7 +396,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             return converted;
         }
         try {
-            return objectMapper.readValue(String.valueOf(specData), new TypeReference<Map<String, Object>>() {});
+            return objectMapper.readValue(String.valueOf(specData), new TypeReference<Map<String, Object>>() {
+            });
         } catch (Exception e) {
             return Collections.emptyMap();
         }

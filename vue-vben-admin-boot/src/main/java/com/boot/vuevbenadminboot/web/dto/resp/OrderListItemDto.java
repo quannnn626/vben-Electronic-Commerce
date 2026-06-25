@@ -13,6 +13,8 @@ import java.util.List;
 public class OrderListItemDto {
     private Long id;
     private String orderNo;
+    private Long userId;
+    private String username;
     private BigDecimal totalAmount;
     private BigDecimal payAmount;
     private Integer status;

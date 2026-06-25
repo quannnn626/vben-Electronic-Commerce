@@ -1,7 +1,9 @@
 package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.auth.AuthConstants;
+import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.MallOrderService;
+import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.OrderCreateRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,11 @@ import java.util.Map;
 @RequestMapping("/mall/order")
 public class MallOrderController {
     private final MallOrderService orderService;
+    private final SysUserService sysUserService;
 
-    public MallOrderController(MallOrderService orderService) {
+    public MallOrderController(MallOrderService orderService, SysUserService sysUserService) {
         this.orderService = orderService;
+        this.sysUserService = sysUserService;
     }
 
     @GetMapping("/list")
@@ -84,6 +88,23 @@ public class MallOrderController {
         }
         try {
             return ApiResponse.of(0, orderService.getOrderDetail(username, orderId), "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/list")
+    public Map<String, Object> getAllUserList(HttpServletRequest request) {
+        String username = getLoginUsername(request);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        SysUser user = sysUserService.selectByUsername(username);
+        if (user == null || !"super".equals(user.getRole())) {
+            return ApiResponse.of(-1, null, "无权限");
+        }
+        try {
+            return ApiResponse.of(0, orderService.getAllUserList(), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
