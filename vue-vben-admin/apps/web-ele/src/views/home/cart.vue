@@ -260,7 +260,7 @@ onMounted(() => {
 
 <style scoped>
 .cart-wrapper {
-  max-width: 1100px;
+  width: 100%;
 }
 
 .cart-table-card {
