@@ -28,6 +28,8 @@ interface BackendOrder {
   payTime: string | null;
   deliveryTime: string | null;
   finishTime: string | null;
+  logisticsCompany: string;
+  trackingNo: string;
   items: BackendOrderItem[];
 }
 
@@ -41,6 +43,8 @@ interface OrderItem {
   actualAmount: number;
   status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled';
   createTime: string;
+  logisticsCompany: string;
+  trackingNo: string;
 }
 
 // 订单状态码常量
@@ -95,6 +99,8 @@ function transformOrder(backend: BackendOrder): OrderItem {
     actualAmount: backend.payAmount,
     status: backendStatusMap[backend.status] ?? 'pending',
     createTime: backend.createTime,
+    logisticsCompany: backend.logisticsCompany || '',
+    trackingNo: backend.trackingNo || '',
   };
 }
 
@@ -239,6 +245,16 @@ onMounted(() => {
               <div class="amount-label">商品金额</div>
               <div class="amount-value">¥{{ item.amount.toFixed(2) }}</div>
             </div>
+          </div>
+
+          <!-- 物流信息 -->
+          <div
+            v-if="(item.status === 'shipped' || item.status === 'completed') && item.logisticsCompany"
+            class="order-delivery"
+          >
+            <span class="delivery-label">物流</span>
+            <span>{{ item.logisticsCompany }}</span>
+            <span class="delivery-no">{{ item.trackingNo }}</span>
           </div>
 
           <!-- 订单底部 -->
@@ -397,6 +413,26 @@ onMounted(() => {
   font-weight: 500;
   color: var(--el-text-color-regular);
   margin-top: 2px;
+}
+
+.order-delivery {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+}
+
+.delivery-label {
+  color: var(--el-text-color-secondary);
+  margin-right: 4px;
+}
+
+.delivery-no {
+  color: var(--el-color-primary);
+  margin-left: auto;
 }
 
 .order-footer {

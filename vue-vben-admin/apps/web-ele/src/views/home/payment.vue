@@ -40,6 +40,8 @@ interface OrderDetail {
   deliveryTime: string | null;
   finishTime: string | null;
   cancelTime: string | null;
+  logisticsCompany: string;
+  trackingNo: string;
   items: OrderItem[];
 }
 
@@ -191,6 +193,16 @@ onMounted(() => {
           <div v-if="order?.receiverAddress" class="summary-row">
             <span class="summary-label">收货地址</span>
             <span class="summary-value">{{ order?.receiverAddress }}</span>
+          </div>
+
+          <div v-if="order?.logisticsCompany" class="summary-row">
+            <span class="summary-label">物流公司</span>
+            <span class="summary-value">{{ order?.logisticsCompany }}</span>
+          </div>
+
+          <div v-if="order?.trackingNo" class="summary-row">
+            <span class="summary-label">物流单号</span>
+            <span class="summary-value summary-no">{{ order?.trackingNo }}</span>
           </div>
 
           <div class="summary-row">

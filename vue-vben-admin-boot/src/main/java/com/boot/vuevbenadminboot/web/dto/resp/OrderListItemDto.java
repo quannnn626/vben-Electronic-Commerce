@@ -26,5 +26,7 @@ public class OrderListItemDto {
     private Date deliveryTime;
     private Date finishTime;
     private Date cancelTime;
+    private String logisticsCompany;
+    private String trackingNo;
     private List<OrderItemDto> items;
 }
