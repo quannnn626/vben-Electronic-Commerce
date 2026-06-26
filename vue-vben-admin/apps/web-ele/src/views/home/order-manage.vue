@@ -1,14 +1,20 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
 import {
   ElButton,
   ElCard,
+  ElDatePicker,
   ElDialog,
   ElEmpty,
+  ElForm,
+  ElFormItem,
+  ElInput,
   ElMessage,
+  ElSelect,
+  ElOption,
   ElTable,
   ElTableColumn,
   ElTag,
@@ -49,6 +55,23 @@ const list = ref<OrderRecord[]>([]);
 const detailVisible = ref(false);
 const currentOrder = ref<OrderRecord | null>(null);
 
+const queryForm = reactive({
+  orderNo: '',
+  username: '',
+  status: null as number | null,
+  createTime: null as string | null,
+  endCreateTime: null as string | null,
+});
+
+const statusOptions = [
+  { label: '全部', value: null },
+  { label: '待支付', value: 0 },
+  { label: '已支付', value: 1 },
+  { label: '已发货', value: 2 },
+  { label: '已完成', value: 3 },
+  { label: '已取消', value: 4 },
+];
+
 const statusMap: Record<number, { label: string; type: string }> = {
   0: { label: '待支付', type: 'warning' },
   1: { label: '已支付', type: '' },
@@ -64,15 +87,35 @@ function normalizeImage(url?: string) {
   return `/api/${url}`;
 }
 
+function formatDate(date: string | null | undefined) {
+  if (!date) return null;
+  return `${date} 00:00:00`;
+}
+
 async function loadList() {
   loading.value = true;
   try {
-    list.value = await requestClient.get<OrderRecord[]>('/mall/order/admin/list');
+    const payload: Record<string, unknown> = {};
+    if (queryForm.orderNo) payload.orderNo = queryForm.orderNo;
+    if (queryForm.username) payload.username = queryForm.username;
+    if (queryForm.status !== null) payload.status = queryForm.status;
+    if (queryForm.createTime) payload.createTime = formatDate(queryForm.createTime);
+    if (queryForm.endCreateTime) payload.endCreateTime = formatDate(queryForm.endCreateTime);
+    list.value = await requestClient.post<OrderRecord[]>('/mall/order/admin/list', payload);
   } catch (e: any) {
     ElMessage.error(e?.message ?? '加载订单列表失败');
   } finally {
     loading.value = false;
   }
+}
+
+function handleReset() {
+  queryForm.orderNo = '';
+  queryForm.username = '';
+  queryForm.status = null;
+  queryForm.createTime = null;
+  queryForm.endCreateTime = null;
+  loadList();
 }
 
 function showDetail(row: OrderRecord) {
@@ -87,7 +130,48 @@ onMounted(() => {
 
 <template>
   <Page description="查看和管理所有用户订单" title="订单管理">
-    <ElCard shadow="never">
+    <ElCard shadow="never" class="search-card">
+      <ElForm inline>
+        <ElFormItem label="订单编号">
+          <ElInput v-model="queryForm.orderNo" clearable />
+        </ElFormItem>
+        <ElFormItem label="用户昵称">
+          <ElInput v-model="queryForm.username" clearable />
+        </ElFormItem>
+        <ElFormItem label="状态">
+          <ElSelect v-model="queryForm.status" placeholder="全部" clearable style="width:120px">
+            <ElOption
+              v-for="opt in statusOptions"
+              :key="String(opt.value)"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </ElSelect>
+        </ElFormItem>
+        <ElFormItem label="起始时间">
+          <ElDatePicker
+            v-model="queryForm.createTime"
+            type="date"
+            placeholder="选择起始日期"
+            value-format="YYYY-MM-DD"
+          />
+        </ElFormItem>
+        <ElFormItem label="结束时间">
+          <ElDatePicker
+            v-model="queryForm.endCreateTime"
+            type="date"
+            placeholder="选择结束日期"
+            value-format="YYYY-MM-DD"
+          />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton type="primary" @click="loadList">查询</ElButton>
+          <ElButton @click="handleReset">重置</ElButton>
+        </ElFormItem>
+      </ElForm>
+    </ElCard>
+
+    <ElCard shadow="never" class="mt-4">
       <ElTable :data="list" row-key="id" v-loading="loading" stripe>
         <ElTableColumn label="订单编号" prop="orderNo" min-width="180" />
         <ElTableColumn label="用户名" prop="username" width="120" />
@@ -191,6 +275,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.mt-4 {
+  margin-top: 16px;
+}
+
+.search-card {
+  margin-bottom: 0;
+}
+
 .detail-section {
   margin-bottom: 20px;
 }

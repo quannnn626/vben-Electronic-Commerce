@@ -5,6 +5,7 @@ import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.OrderCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.OrderQueryRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -93,8 +94,8 @@ public class MallOrderController {
         }
     }
 
-    @GetMapping("/admin/list")
-    public Map<String, Object> getAllUserList(HttpServletRequest request) {
+    @PostMapping("/admin/list")
+    public Map<String, Object> getAllUserList(@RequestBody OrderQueryRequest req, HttpServletRequest request) {
         String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
@@ -104,7 +105,7 @@ public class MallOrderController {
             return ApiResponse.of(-1, null, "无权限");
         }
         try {
-            return ApiResponse.of(0, orderService.getAllUserList(), "success");
+            return ApiResponse.of(0, orderService.getAllUserList(req), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }

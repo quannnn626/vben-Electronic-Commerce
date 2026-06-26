@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
+import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
@@ -18,6 +19,7 @@ import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.OrderCreateRequest;
+import com.boot.vuevbenadminboot.web.dto.req.OrderQueryRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto;
 import com.boot.vuevbenadminboot.web.dto.resp.OrderListItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -242,12 +244,34 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     }
 
     @Override
-    public List<OrderListItemDto> getAllUserList() {
-        List<MallOrder> orders = this.list(
-                new LambdaQueryWrapper<MallOrder>()
-                        .eq(MallOrder::getDeleted, 0)
-                        .orderByDesc(MallOrder::getId)
-        );
+    public List<OrderListItemDto> getAllUserList(OrderQueryRequest req) {
+        LambdaQueryWrapper<MallOrder> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(MallOrder::getDeleted, 0);
+        if (req.getOrderNo() != null && !req.getOrderNo().isBlank()) {
+            queryWrapper.like(MallOrder::getOrderNo, req.getOrderNo());
+        }
+        if (req.getUsername() != null && !req.getUsername().isBlank()) {
+            List<Long> userIds = sysUserService.list(
+                    new LambdaQueryWrapper<SysUser>()
+                            .like(SysUser::getNickname, req.getUsername())
+            ).stream().map(SysUser::getId).toList();
+            if (userIds.isEmpty()) {
+                return List.of();
+            }
+            queryWrapper.in(MallOrder::getUserId, userIds);
+        }
+        if (req.getStatus() != null) {
+            queryWrapper.eq(MallOrder::getStatus, req.getStatus());
+        }
+        if (req.getCreateTime() != null) {
+            queryWrapper.ge(MallOrder::getCreateTime, req.getCreateTime());
+        }
+        if (req.getEndCreateTime() != null) {
+            queryWrapper.le(MallOrder::getCreateTime, req.getEndCreateTime());
+        }
+        queryWrapper.orderByDesc(MallOrder::getId);
+
+        List<MallOrder> orders = this.list(queryWrapper);
         if (orders.isEmpty()) {
             return List.of();
         }
