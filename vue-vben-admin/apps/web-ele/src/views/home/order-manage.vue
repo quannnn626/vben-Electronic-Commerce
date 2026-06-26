@@ -54,6 +54,14 @@ const loading = ref(false);
 const list = ref<OrderRecord[]>([]);
 const detailVisible = ref(false);
 const currentOrder = ref<OrderRecord | null>(null);
+const deliveryVisible = ref(false);
+const deliveryLoading = ref(false);
+const deliveryForm = reactive({
+  orderNo: '',
+  logisticsCompany: '',
+  trackingNo: '',
+  message: '',
+});
 
 const queryForm = reactive({
   orderNo: '',
@@ -121,6 +129,41 @@ function handleReset() {
 function showDetail(row: OrderRecord) {
   currentOrder.value = row;
   detailVisible.value = true;
+}
+
+function showDelivery(row: OrderRecord) {
+  deliveryForm.orderNo = row.orderNo;
+  deliveryForm.logisticsCompany = '';
+  deliveryForm.trackingNo = '';
+  deliveryForm.message = '';
+  deliveryVisible.value = true;
+}
+
+async function submitDelivery() {
+  if (!deliveryForm.logisticsCompany) {
+    ElMessage.warning('请填写物流公司');
+    return;
+  }
+  if (!deliveryForm.trackingNo) {
+    ElMessage.warning('请填写物流单号');
+    return;
+  }
+  deliveryLoading.value = true;
+  try {
+    await requestClient.post('/mall/order/delivery/create', {
+      orderNo: deliveryForm.orderNo,
+      logisticsCompany: deliveryForm.logisticsCompany,
+      trackingNo: deliveryForm.trackingNo,
+      message: deliveryForm.message || null,
+    });
+    ElMessage.success('发货成功');
+    deliveryVisible.value = false;
+    loadList();
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '发货失败');
+  } finally {
+    deliveryLoading.value = false;
+  }
 }
 
 onMounted(() => {
@@ -193,10 +236,19 @@ onMounted(() => {
           </template>
         </ElTableColumn>
         <ElTableColumn label="创建时间" prop="createTime" width="170" />
-        <ElTableColumn label="操作" width="100" align="center" fixed="right">
+        <ElTableColumn label="操作" width="160" align="center" fixed="right">
           <template #default="{ row }">
             <ElButton size="small" text type="primary" @click="showDetail(row)">
-              查看详情
+              详情
+            </ElButton>
+            <ElButton
+              v-if="row.status === 1"
+              size="small"
+              text
+              type="success"
+              @click="showDelivery(row)"
+            >
+              发货
             </ElButton>
           </template>
         </ElTableColumn>
@@ -269,6 +321,29 @@ onMounted(() => {
             </div>
           </div>
         </div>
+      </template>
+    </ElDialog>
+
+    <ElDialog v-model="deliveryVisible" title="订单发货" width="500px" destroy-on-close>
+      <ElForm :model="deliveryForm" label-width="80px">
+        <ElFormItem label="订单编号">
+          <ElInput :model-value="deliveryForm.orderNo" disabled />
+        </ElFormItem>
+        <ElFormItem label="物流公司">
+          <ElInput v-model="deliveryForm.logisticsCompany" placeholder="请输入物流公司" />
+        </ElFormItem>
+        <ElFormItem label="物流单号">
+          <ElInput v-model="deliveryForm.trackingNo" placeholder="请输入物流单号" />
+        </ElFormItem>
+        <ElFormItem label="备注">
+          <ElInput v-model="deliveryForm.message" placeholder="选填" />
+        </ElFormItem>
+      </ElForm>
+      <template #footer>
+        <ElButton @click="deliveryVisible = false">取消</ElButton>
+        <ElButton type="primary" :loading="deliveryLoading" @click="submitDelivery">
+          确认发货
+        </ElButton>
       </template>
     </ElDialog>
   </Page>
