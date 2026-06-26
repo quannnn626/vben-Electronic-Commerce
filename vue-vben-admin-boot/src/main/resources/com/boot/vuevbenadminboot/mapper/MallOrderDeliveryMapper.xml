@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.vuevbenadminboot.mapper.MallOrderDeliveryMapper">
+
+    <resultMap id="BaseResultMap" type="com.boot.vuevbenadminboot.domain.MallOrderDelivery">
+            <id property="id" column="id" />
+            <result property="orderId" column="order_id" />
+            <result property="logisticsCompany" column="logistics_company" />
+            <result property="trackingNo" column="tracking_no" />
+            <result property="deliveryStatus" column="delivery_status" />
+            <result property="deliveryRemark" column="delivery_remark" />
+            <result property="deliveryUser" column="delivery_user" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleted" column="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,logistics_company,tracking_no,delivery_status,delivery_remark,
+        delivery_user,create_time,update_time,deleted
+    </sql>
+</mapper>
