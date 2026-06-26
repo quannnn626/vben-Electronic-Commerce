@@ -33,6 +33,9 @@ interface OrderRecord {
   totalAmount: number;
   payAmount: number;
   status: number;
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
   createTime: string;
   payTime: string | null;
   deliveryTime: string | null;
@@ -136,6 +139,14 @@ onMounted(() => {
             <ElTag :type="statusMap[currentOrder.status]?.type" size="small">
               {{ statusMap[currentOrder.status]?.label }}
             </ElTag>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">收货人</span>
+            <span>{{ currentOrder.receiverName }} {{ currentOrder.receiverPhone }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">收货地址</span>
+            <span>{{ currentOrder.receiverAddress }}</span>
           </div>
           <div class="detail-row">
             <span class="detail-label">创建时间</span>

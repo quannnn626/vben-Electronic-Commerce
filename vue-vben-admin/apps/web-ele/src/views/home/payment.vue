@@ -32,6 +32,9 @@ interface OrderDetail {
   totalAmount: number;
   payAmount: number;
   status: number;
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
   createTime: string;
   payTime: string | null;
   deliveryTime: string | null;
@@ -178,6 +181,16 @@ onMounted(() => {
           <div class="summary-row">
             <span class="summary-label">订单编号</span>
             <span class="summary-value summary-no">{{ order?.orderNo }}</span>
+          </div>
+
+          <div v-if="order?.receiverName" class="summary-row">
+            <span class="summary-label">收货人</span>
+            <span class="summary-value">{{ order?.receiverName }} {{ order?.receiverPhone }}</span>
+          </div>
+
+          <div v-if="order?.receiverAddress" class="summary-row">
+            <span class="summary-label">收货地址</span>
+            <span class="summary-value">{{ order?.receiverAddress }}</span>
           </div>
 
           <div class="summary-row">

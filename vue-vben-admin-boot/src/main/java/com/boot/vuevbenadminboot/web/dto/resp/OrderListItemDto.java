@@ -18,6 +18,9 @@ public class OrderListItemDto {
     private BigDecimal totalAmount;
     private BigDecimal payAmount;
     private Integer status;
+    private String receiverName;
+    private String receiverPhone;
+    private String receiverAddress;
     private Date createTime;
     private Date payTime;
     private Date deliveryTime;

@@ -288,6 +288,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         dto.setTotalAmount(order.getTotalAmount());
         dto.setPayAmount(order.getPayAmount());
         dto.setStatus(order.getStatus());
+        dto.setReceiverName(order.getReceiverName());
+        dto.setReceiverPhone(order.getReceiverPhone());
+        dto.setReceiverAddress(order.getReceiverAddress());
         dto.setCreateTime(order.getCreateTime());
         dto.setPayTime(order.getPayTime());
         dto.setDeliveryTime(order.getDeliveryTime());
