@@ -14,7 +14,7 @@ import java.util.List;
 * @createDate 2026-04-23 13:48:03
 */
 public interface MallOrderService extends IService<MallOrder> {
-    List<OrderListItemDto> listOrders(String username);
+    List<OrderListItemDto> listOrders(String username, Integer status);
 
     OrderListItemDto createOrder(String username, OrderCreateRequest req);
 

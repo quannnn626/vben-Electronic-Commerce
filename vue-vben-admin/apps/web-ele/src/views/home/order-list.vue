@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { ElButton, ElCard, ElEmpty, ElInput, ElMessage, ElMessageBox, ElTag } from 'element-plus';
+import { ElButton, ElCard, ElEmpty, ElInput, ElMessage, ElMessageBox, ElTabPane, ElTabs, ElTag } from 'element-plus';
 
 import { requestClient } from '#/api/request';
 
@@ -74,6 +74,7 @@ const statusMap: Record<OrderItem['status'], { label: string; type: string }> = 
 
 const keyword = ref('');
 const loading = ref(false);
+const activeTab = ref('all');
 
 function normalizeFileUrl(rawPath?: string) {
   if (!rawPath) return '';
@@ -106,15 +107,30 @@ function transformOrder(backend: BackendOrder): OrderItem {
 
 const orders = ref<OrderItem[]>([]);
 
-async function loadOrders() {
+async function loadOrders(status?: number) {
   loading.value = true;
   try {
-    const data = await requestClient.get<BackendOrder[]>('/mall/order/list');
+    const params: Record<string, any> = {};
+    if (status !== undefined) {
+      params.status = status;
+    }
+    const data = await requestClient.get<BackendOrder[]>('/mall/order/list', { params });
     orders.value = (Array.isArray(data) ? data : []).map(transformOrder);
   } finally {
     loading.value = false;
   }
 }
+
+watch(activeTab, (tab) => {
+  keyword.value = '';
+  if (tab === 'after-sale') {
+    orders.value = [];
+  } else if (tab === 'all') {
+    loadOrders();
+  } else {
+    loadOrders(Number(tab));
+  }
+});
 
 const tableData = computed(() => {
   const key = keyword.value.trim().toLowerCase();
@@ -153,7 +169,7 @@ async function handleCancel(row: OrderItem) {
       params: { orderId: Number(row.id) },
     });
     ElMessage.success('订单已取消');
-    await loadOrders();
+    await loadOrders(activeTab.value === 'all' ? undefined : Number(activeTab.value));
   } catch (e: any) {
     ElMessage.error(e?.message ?? '取消失败');
   } finally {
@@ -177,7 +193,7 @@ async function handleConfirm(row: OrderItem) {
       params: { orderId: Number(row.id) },
     });
     ElMessage.success('确认收货成功');
-    await loadOrders();
+    await loadOrders(activeTab.value === 'all' ? undefined : Number(activeTab.value));
   } catch (e: any) {
     ElMessage.error(e?.message ?? '确认失败');
   } finally {
@@ -197,6 +213,14 @@ onMounted(() => {
 
 <template>
   <Page description="管理您的所有订单" title="我的订单">
+    <ElTabs v-model="activeTab" class="order-tabs">
+      <ElTabPane label="全部订单" name="all" />
+      <ElTabPane label="待付款" name="0" />
+      <ElTabPane label="待发货" name="1" />
+      <ElTabPane label="待收货" name="2" />
+      <ElTabPane label="退换/售后" name="after-sale" />
+    </ElTabs>
+
     <ElCard shadow="never">
       <ElInput
         v-model="keyword"
@@ -302,12 +326,20 @@ onMounted(() => {
           </div>
         </ElCard>
       </template>
-      <ElEmpty v-else description="暂无订单" />
+      <ElEmpty v-else :description="activeTab === 'after-sale' ? '暂无退换/售后订单' : '暂无订单'" />
     </div>
   </Page>
 </template>
 
 <style scoped>
+.order-tabs {
+  margin-bottom: 4px;
+}
+
+.order-tabs :deep(.el-tabs__header) {
+  margin-bottom: 0;
+}
+
 .order-card {
   border: 1px solid var(--el-border-color-lighter);
   transition: box-shadow 0.2s;

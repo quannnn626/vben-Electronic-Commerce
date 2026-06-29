@@ -28,13 +28,13 @@ public class MallOrderController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> list(HttpServletRequest request) {
+    public Map<String, Object> list(@RequestParam(required = false) Integer status, HttpServletRequest request) {
         String username = getLoginUsername(request);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
         try {
-            return ApiResponse.of(0, orderService.listOrders(username), "success");
+            return ApiResponse.of(0, orderService.listOrders(username, status), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }

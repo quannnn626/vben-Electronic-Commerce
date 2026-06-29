@@ -73,14 +73,16 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
     // 获取订单列表
     @Override
-    public List<OrderListItemDto> listOrders(String username) {
+    public List<OrderListItemDto> listOrders(String username, Integer status) {
         Long userId = sysUserService.requireUserId(username);
-        List<MallOrder> orders = this.list(
-                new LambdaQueryWrapper<MallOrder>()
-                        .eq(MallOrder::getUserId, userId)
-                        .eq(MallOrder::getDeleted, 0)
-                        .orderByDesc(MallOrder::getId)
-        );
+        LambdaQueryWrapper<MallOrder> wrapper = new LambdaQueryWrapper<MallOrder>()
+                .eq(MallOrder::getUserId, userId)
+                .eq(MallOrder::getDeleted, 0)
+                .orderByDesc(MallOrder::getId);
+        if (status != null) {
+            wrapper.eq(MallOrder::getStatus, status);
+        }
+        List<MallOrder> orders = this.list(wrapper);
         if (orders.isEmpty()) {
             return List.of();
         }
