@@ -3,6 +3,7 @@ package com.boot.vuevbenadminboot.web.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 商品SKU规格DTO 入参/出参
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 @Data
 public class ProductSkuDto {
     private Long fileId;
+    private List<Long> fileIds;
     private String fileName;
     private String filePath;
     private String fileType;

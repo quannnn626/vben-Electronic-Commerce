@@ -15,6 +15,7 @@ import com.boot.vuevbenadminboot.mapper.MallProductCategoryMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallProductCategoryRelService;
 import com.boot.vuevbenadminboot.service.MallProductService;
+import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.web.dto.resp.ProductListItemDto;
 import com.boot.vuevbenadminboot.web.dto.req.ProductSaveRequest;
@@ -48,17 +49,20 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     private final MallProductCategoryMapper productCategoryMapper;
     private final MallFileService mallFileService;
     private final MallSkuService mallSkuService;
+    private final MallResourceRelService resourceRelService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallProductServiceImpl(
             MallProductCategoryRelService productCategoryRelService,
             MallProductCategoryMapper productCategoryMapper,
             MallFileService mallFileService,
-            MallSkuService mallSkuService) {
+            MallSkuService mallSkuService,
+            MallResourceRelService resourceRelService) {
         this.productCategoryRelService = productCategoryRelService;
         this.productCategoryMapper = productCategoryMapper;
         this.mallFileService = mallFileService;
         this.mallSkuService = mallSkuService;
+        this.resourceRelService = resourceRelService;
     }
 
     @Override
@@ -325,6 +329,10 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         Map<Long, MallFile> fileMap = buildFileMapByIds(fileIds);
 
+        // 从通用资源关联表查询 SKU 的多图
+        List<Long> skuIds = skuList.stream().map(MallSku::getId).toList();
+        Map<Long, List<MallFile>> extraFileMap = resourceRelService.getFileMapByResources("sku", skuIds);
+
         Map<Long, List<ProductSkuDto>> map = new HashMap<>();
         for (MallSku sku : skuList) {
             Map<String, Object> specMap = parsedSpecMap.getOrDefault(sku.getId(), Map.of());
@@ -344,6 +352,9 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
                 dto.setFilePath(file.getFilePath());
                 dto.setFileType(file.getFileType());
             }
+            // 填充多图 ID 列表
+            List<MallFile> extraFiles = extraFileMap.getOrDefault(sku.getId(), Collections.emptyList());
+            dto.setFileIds(extraFiles.stream().map(MallFile::getId).toList());
             map.computeIfAbsent(sku.getProductId(), k -> new ArrayList<>()).add(dto);
         }
         return map;

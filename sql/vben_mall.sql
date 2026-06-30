@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 26/06/2026 14:04:44
+ Date: 30/06/2026 14:21:24
 */
 
 SET NAMES utf8mb4;
@@ -104,10 +104,33 @@ INSERT INTO `mall_order` VALUES (29, '20260515173623241224', 2046463574828482561
 INSERT INTO `mall_order` VALUES (30, '20260515173631957513', 2046463574828482561, 11282.00, 11282.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-05-15 17:36:31', NULL, NULL, NULL, '2026-06-12 14:18:39', '2026-06-12 14:18:39', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (31, '20260612141408359248', 2046463574828482561, 9998.00, 9998.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-12 14:14:08', NULL, NULL, NULL, '2026-06-15 10:01:03', '2026-06-15 10:01:03', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (32, '20260615131913507790', 2046463574828482561, 20.00, 20.00, 0, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-15 13:19:13', NULL, NULL, NULL, NULL, '2026-06-15 13:19:13', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (33, '20260618134637725929', 2046463574828482561, 20.00, 20.00, 1, 'yyy', '16674532231', '浙江省嘉兴市嘉善县浙江省嘉兴市嘉善县', 4, '2026-06-18 13:46:38', '2026-06-22 15:13:58', NULL, NULL, NULL, '2026-06-18 13:46:38', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (34, '20260625141014708880', 2046463574828482561, 20120.00, 20120.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:10:14', '2026-06-25 14:10:30', NULL, NULL, NULL, '2026-06-25 14:10:14', 0, NULL, NULL);
+INSERT INTO `mall_order` VALUES (33, '20260618134637725929', 2046463574828482561, 20.00, 20.00, 1, 'yyy', '16674532231', '浙江省嘉兴市嘉善县浙江省嘉兴市嘉善县', 4, '2026-06-18 13:46:38', '2026-06-22 15:13:58', '2026-06-26 16:04:08', NULL, NULL, '2026-06-26 16:09:17', 0, NULL, NULL);
+INSERT INTO `mall_order` VALUES (34, '20260625141014708880', 2046463574828482561, 20120.00, 20120.00, 2, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:10:14', '2026-06-25 14:10:30', '2026-06-26 16:13:22', NULL, NULL, '2026-06-26 16:13:22', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (37, '20260625141351491940', 2046463574828482561, 20120.00, 20120.00, 0, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:13:52', NULL, NULL, NULL, NULL, '2026-06-25 14:13:52', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (38, '20260625212207982258', 2046463574828482561, 10122.00, 10122.00, 0, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 21:22:08', NULL, NULL, NULL, NULL, '2026-06-25 21:22:08', 0, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for mall_order_delivery
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_order_delivery`;
+CREATE TABLE `mall_order_delivery`  (
+  `id` bigint NOT NULL COMMENT 'ID',
+  `order_id` bigint NOT NULL COMMENT '订单ID',
+  `logistics_company` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '物流公司',
+  `tracking_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '物流单号',
+  `delivery_status` tinyint NULL DEFAULT 0 COMMENT '物流状态',
+  `delivery_remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '发货备注',
+  `delivery_user` bigint NULL DEFAULT NULL COMMENT '发货人',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_order_delivery
+-- ----------------------------
+INSERT INTO `mall_order_delivery` VALUES (2070420136584372226, 34, '顺丰', '20262606141014708880', 0, '测试', 2046463574828482561, '2026-06-26 16:13:22', '2026-06-26 16:13:22', 0);
 
 -- ----------------------------
 -- Table structure for mall_order_item
@@ -574,6 +597,27 @@ INSERT INTO `mall_product_category_rel` VALUES (2066389978256818188, 8, 145);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818189, 8, 151);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818190, 8, 152);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818191, 8, 153);
+
+-- ----------------------------
+-- Table structure for mall_resource_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_resource_rel`;
+CREATE TABLE `mall_resource_rel`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '关联ID',
+  `resource_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '资源类型：product商品 / sku规格 / avatar头像 / after_sale售后 / chat_msg聊天',
+  `resource_id` bigint NOT NULL COMMENT '资源记录ID',
+  `file_id` bigint NOT NULL COMMENT '附件ID',
+  `usage_type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '用途标识：main_image主图 / detail_image详情图 / video视频 / receipt凭证',
+  `sort_order` int NULL DEFAULT 0 COMMENT '排序序号',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
+  INDEX `idx_file_id`(`file_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_resource_rel
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_sku
