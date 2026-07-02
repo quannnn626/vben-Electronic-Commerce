@@ -12,6 +12,7 @@ import java.util.List;
 public class ProductSkuDto {
     private Long fileId;
     private List<Long> fileIds;
+    private List<ProductSkuFileDto> extraFiles;
     private String fileName;
     private String filePath;
     private String fileType;

@@ -20,6 +20,7 @@ import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.web.dto.resp.ProductListItemDto;
 import com.boot.vuevbenadminboot.web.dto.req.ProductSaveRequest;
 import com.boot.vuevbenadminboot.web.dto.ProductSkuDto;
+import com.boot.vuevbenadminboot.web.dto.ProductSkuFileDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -375,9 +376,17 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
                 dto.setFilePath(file.getFilePath());
                 dto.setFileType(file.getFileType());
             }
-            // 填充多图 ID 列表
+            // 填充多图信息
             List<MallFile> extraFiles = extraFileMap.getOrDefault(sku.getId(), Collections.emptyList());
             dto.setFileIds(extraFiles.stream().map(MallFile::getId).toList());
+            dto.setExtraFiles(extraFiles.stream().map(f -> {
+                ProductSkuFileDto fd = new ProductSkuFileDto();
+                fd.setId(f.getId());
+                fd.setFileName(f.getFileName());
+                fd.setFilePath(f.getFilePath());
+                fd.setFileType(f.getFileType());
+                return fd;
+            }).toList());
             map.computeIfAbsent(sku.getProductId(), k -> new ArrayList<>()).add(dto);
         }
         return map;

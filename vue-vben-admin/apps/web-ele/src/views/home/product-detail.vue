@@ -35,6 +35,8 @@ interface ProductItem {
 
 interface ProductSku {
   fileId?: number;
+  fileIds?: number[];
+  extraFiles?: { filePath: string; fileType: string; id: number }[];
   fileName?: string;
   filePath?: string;
   fileType?: string;
@@ -89,27 +91,39 @@ function detectMediaKind(file: MediaItem) {
   return 'other';
 }
 
-const allSkuMediaFiles = computed(() =>
-  (detail.value?.skus ?? [])
-    .filter((sku): sku is ProductSku & { fileId: number; filePath: string } => !!sku.fileId && !!sku.filePath)
-    .map((sku) => ({
-      id: sku.fileId,
-      mediaKind: detectMediaKind({
-        filePath: sku.filePath,
-        fileType: sku.fileType ?? '',
-        id: sku.fileId,
-      }),
-      previewUrl: normalizeFileUrl(sku.filePath),
-    }))
-    .filter((file) => file.mediaKind !== 'other'),
-);
-
-const mediaFiles = computed(() => {
-  if (!selectedSku.value?.fileId) {
-    return [];
+const allSkuMediaFiles = computed(() => {
+  const map = new Map<number, { id: number; mediaKind: string; previewUrl: string }>();
+  for (const sku of detail.value?.skus ?? []) {
+    // 主图
+    if (sku.fileId && sku.filePath) {
+      const kind = detectMediaKind({ filePath: sku.filePath, fileType: sku.fileType ?? '', id: sku.fileId });
+      if (kind !== 'other' && !map.has(sku.fileId)) {
+        map.set(sku.fileId, { id: sku.fileId, mediaKind: kind, previewUrl: normalizeFileUrl(sku.filePath) });
+      }
+    }
+    // 多图
+    for (const f of sku.extraFiles ?? []) {
+      const kind = detectMediaKind({ filePath: f.filePath, fileType: f.fileType ?? '', id: f.id });
+      if (kind !== 'other' && !map.has(f.id)) {
+        map.set(f.id, { id: f.id, mediaKind: kind, previewUrl: normalizeFileUrl(f.filePath) });
+      }
+    }
   }
-  return allSkuMediaFiles.value.filter((item) => item.id === selectedSku.value?.fileId);
+  return Array.from(map.values());
 });
+
+const skuMediaIds = computed(() => {
+  const sku = selectedSku.value;
+  if (!sku) return new Set<number>();
+  const ids = new Set<number>();
+  if (sku.fileId) ids.add(sku.fileId);
+  for (const f of sku.extraFiles ?? []) ids.add(f.id);
+  return ids;
+});
+
+const mediaFiles = computed(() =>
+  allSkuMediaFiles.value.filter((item) => skuMediaIds.value.has(item.id)),
+);
 
 const activeMedia = computed(() => {
   if (mediaFiles.value.length === 0) return null;
