@@ -58,6 +58,7 @@ interface ProductItem {
 
 interface ProductSku {
   fileId?: number;
+  fileIds?: number[];
   fileName?: string;
   filePath?: string;
   fileType?: string;
@@ -120,6 +121,7 @@ function resetForm() {
 
 function createEmptySku(): ProductSku {
   return {
+    fileIds: [],
     price: 0,
     skuCode: '',
     specName: '',
@@ -173,7 +175,7 @@ function validateForm() {
       !sku.specName.trim()
       || sku.price <= 0
       || sku.stock < 0
-      || !sku.fileId,
+      || (!sku.fileId && (!sku.fileIds || sku.fileIds.length === 0)),
   );
   if (hasInvalidSku) {
     ElMessage.warning('请检查SKU规格：规格名不能为空、附件必选、价格需大于0、库存不能小于0');
@@ -212,6 +214,7 @@ function openEditDialog(row: ProductItem) {
   formModel.status = row.status === 1;
   formModel.skus = (row.skus ?? []).map((sku) => ({
     fileId: sku.fileId,
+    fileIds: sku.fileIds ?? [],
     fileName: sku.fileName,
     filePath: sku.filePath,
     fileType: sku.fileType,
@@ -253,15 +256,19 @@ function buildPayload() {
     description: formModel.description.trim(),
     id: currentEditId.value,
     name: formModel.name.trim(),
-    skus: formModel.skus.map((item) => ({
-      fileId: item.fileId,
-      id: item.id,
-      price: item.price,
-      skuCode: item.skuCode.trim(),
-      specName: item.specName.trim(),
-      status: item.status,
-      stock: item.stock,
-    })),
+    skus: formModel.skus.map((item) => {
+      const firstFileId = item.fileId ?? item.fileIds?.[0];
+      return {
+        fileId: firstFileId,
+        fileIds: item.fileIds ?? [],
+        id: item.id,
+        price: item.price,
+        skuCode: item.skuCode.trim(),
+        specName: item.specName.trim(),
+        status: item.status,
+        stock: item.stock,
+      };
+    }),
     status: formModel.status ? 1 : 0,
   };
 }
@@ -365,7 +372,11 @@ function handleUploadRemove(file: UploadUserFile) {
     removedId = Number((file.response as any).id);
   }
   if (Number.isNaN(removedId)) return;
-  formModel.skus = formModel.skus.map((sku) => (sku.fileId === removedId ? { ...sku, fileId: undefined } : sku));
+  formModel.skus = formModel.skus.map((sku) => ({
+    ...sku,
+    fileId: sku.fileId === removedId ? undefined : sku.fileId,
+    fileIds: (sku.fileIds ?? []).filter((id) => id !== removedId),
+  }));
 }
 
 function getAuthHeaders() {
@@ -476,9 +487,9 @@ onMounted(async () => {
                   <ElInputNumber v-model="row.stock" :min="0" :step="1" style="width: 100%" />
                 </template>
               </ElTable.TableColumn>
-              <ElTable.TableColumn label="附件" min-width="180">
+              <ElTable.TableColumn label="附件" min-width="220">
                 <template #default="{ row }">
-                  <ElSelect v-model="row.fileId" clearable placeholder="选择附件">
+                  <ElSelect v-model="row.fileIds" clearable multiple placeholder="选择附件（可多选）">
                     <ElOption
                       v-for="file in uploadedFileOptions"
                       :key="file.id"

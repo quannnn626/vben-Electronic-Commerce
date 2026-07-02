@@ -216,6 +216,14 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     }
 
     private void saveProductSkus(Long productId, List<ProductSkuDto> skus) {
+        // 清理旧的 SKU 资源关联
+        List<MallSku> oldSkus = mallSkuService.list(
+                new LambdaQueryWrapper<MallSku>().eq(MallSku::getProductId, productId)
+        );
+        for (MallSku oldSku : oldSkus) {
+            resourceRelService.removeByResource("sku", oldSku.getId());
+        }
+
         mallSkuService.remove(
                 new LambdaQueryWrapper<MallSku>()
                         .eq(MallSku::getProductId, productId)
@@ -245,6 +253,21 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             entities.add(entity);
         }
         mallSkuService.saveBatch(entities);
+
+        // 写入通用资源关联表
+        for (int i = 0; i < entities.size(); i++) {
+            MallSku entity = entities.get(i);
+            ProductSkuDto skuDto = skus.get(i);
+            // 主图：fileId 作为 main_image
+            if (skuDto.getFileId() != null) {
+                resourceRelService.attach("sku", entity.getId(), skuDto.getFileId(), "main_image", 0);
+            }
+            // 多图：fileIds 作为 detail_image
+            List<Long> extraFileIds = skuDto.getFileIds();
+            if (extraFileIds != null && !extraFileIds.isEmpty()) {
+                resourceRelService.attachBatch("sku", entity.getId(), extraFileIds, "detail_image");
+            }
+        }
     }
 
     private void clearProductRelations(Long productId) {
