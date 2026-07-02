@@ -1,10 +1,12 @@
 package com.boot.vuevbenadminboot.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallFileMapper;
 import com.boot.vuevbenadminboot.service.MallFileService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,11 +71,39 @@ public class MallFileServiceImpl extends ServiceImpl<MallFileMapper, MallFile>
             mallFile.setFileType(file.getContentType());
             mallFile.setCreateTime(new Date());
             mallFile.setUpdateTime(new Date());
-            mallFile.setStatus(CommonStatusEnum.DISABLED.getCode());
+            mallFile.setStatus(CommonStatusEnum.TEMP.getCode());
             this.save(mallFile);
             saved.add(mallFile);
         }
         return saved;
+    }
+
+    @Override
+    public void deleteFile(Long fileId) {
+        MallFile file = this.getById(fileId);
+        if (file == null) return;
+        // 物理删除磁盘文件
+        String filePath = file.getFilePath();
+        if (filePath != null && filePath.startsWith("/upload/")) {
+            Path diskPath = Path.of("").toAbsolutePath().resolve("upload")
+                    .resolve(filePath.substring("/upload/".length()));
+            try { Files.deleteIfExists(diskPath); } catch (IOException ignored) {}
+        }
+        this.removeById(fileId);
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 */1 * * ?")
+    public void cleanOrphanFiles() {
+        LocalDateTime cutoff = LocalDateTime.now().minusHours(1);
+        List<MallFile> orphans = this.list(
+                new LambdaQueryWrapper<MallFile>()
+                        .eq(MallFile::getStatus, CommonStatusEnum.TEMP.getCode())
+                        .lt(MallFile::getCreateTime, cutoff)
+        );
+        for (MallFile file : orphans) {
+            deleteFile(file.getId());
+        }
     }
 }
 

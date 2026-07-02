@@ -255,19 +255,30 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         mallSkuService.saveBatch(entities);
 
-        // 写入通用资源关联表
+        // 写入通用资源关联表 + 激活临时附件
         for (int i = 0; i < entities.size(); i++) {
             MallSku entity = entities.get(i);
             ProductSkuDto skuDto = skus.get(i);
             // 主图：fileId 作为 main_image
             if (skuDto.getFileId() != null) {
                 resourceRelService.attach("sku", entity.getId(), skuDto.getFileId(), "main_image", 0);
+                activateFile(skuDto.getFileId());
             }
             // 多图：fileIds 作为 detail_image
             List<Long> extraFileIds = skuDto.getFileIds();
             if (extraFileIds != null && !extraFileIds.isEmpty()) {
                 resourceRelService.attachBatch("sku", entity.getId(), extraFileIds, "detail_image");
+                extraFileIds.forEach(this::activateFile);
             }
+        }
+    }
+
+    private void activateFile(Long fileId) {
+        MallFile f = mallFileService.getById(fileId);
+        if (f != null && CommonStatusEnum.TEMP.getCode().equals(f.getStatus())) {
+            f.setStatus(CommonStatusEnum.DISABLED.getCode());
+            f.setUpdateTime(new Date());
+            mallFileService.updateById(f);
         }
     }
 

@@ -9,11 +9,14 @@ import lombok.Getter;
 @Getter
 public enum CommonStatusEnum {
 
-    // 禁用/下架
-    DISABLED(0, "禁用"),
+    // 禁用/下架/已关联有效
+    DISABLED(0, "已关联"),
 
-    // 启用/上架
-    ENABLED(1, "启用");
+    // 启用/上架/已删除
+    ENABLED(1, "已删除"),
+
+    // 临时上传，待关联
+    TEMP(2, "临时未关联");
 
     private final int code;
     private final String desc;

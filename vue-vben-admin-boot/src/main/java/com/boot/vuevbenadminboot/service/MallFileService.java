@@ -13,4 +13,14 @@ import java.util.List;
 */
 public interface MallFileService extends IService<MallFile> {
     List<MallFile> uploadFiles(MultipartFile[] files);
+
+    /**
+     * 删除附件（物理删磁盘文件 + 软删数据库记录）
+     */
+    void deleteFile(Long fileId);
+
+    /**
+     * 定时清理超过1小时的临时附件（status=TEMP且未被关联的孤儿文件）
+     */
+    void cleanOrphanFiles();
 }

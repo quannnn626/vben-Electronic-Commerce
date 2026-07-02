@@ -75,14 +75,17 @@ const tableLoading = ref(false);
 const submitLoading = ref(false);
 const dialogVisible = ref(false);
 const isEdit = ref(false);
+const tempFileIds = ref<number[]>([]);
 const currentEditId = ref<null | number>(null);
 const products = ref<ProductItem[]>([]);
 const categoryTree = ref<CategoryNode[]>([]);
 
 const productApiBase = '/mall/product';
 const categoryTreeApi = '/mall/product-category/tree';
+const fileDeleteApi = '/mall/file/delete';
 const fileUploadApi = '/mall/file/upload';
 const maxFileSizeBytes = 100 * 1024 * 1024;
+const DRAFT_KEY = 'product_form_draft';
 
 const formModel = reactive({
   categoryIds: [] as number[],
@@ -157,6 +160,60 @@ const uploadedFileOptions = computed(() => {
   return Array.from(map.values());
 });
 
+// ========== 草稿自动保存 (localStorage) ==========
+function saveDraft() {
+  const draft = {
+    categoryIds: formModel.categoryIds,
+    description: formModel.description,
+    name: formModel.name,
+    skus: formModel.skus.map((s) => ({ ...s, fileIds: undefined })), // 不存临时 fileIds
+    status: formModel.status,
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadDraft(): boolean {
+  const raw = localStorage.getItem(DRAFT_KEY);
+  if (!raw) return false;
+  try {
+    const draft = JSON.parse(raw);
+    if (draft.name) formModel.name = draft.name;
+    if (draft.description) formModel.description = draft.description;
+    if (draft.status !== undefined) formModel.status = draft.status;
+    if (draft.categoryIds) formModel.categoryIds = draft.categoryIds;
+    if (draft.skus?.length) formModel.skus = draft.skus;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+// ========== 临时文件追踪 + 清理 ==========
+async function deleteTempFiles() {
+  for (const id of tempFileIds.value) {
+    try { await requestClient.delete(`${fileDeleteApi}/${id}`); } catch { /* ignore */ }
+  }
+  tempFileIds.value = [];
+}
+
+// 对话框关闭时清理临时文件
+watch(dialogVisible, async (val) => {
+  if (!val && tempFileIds.value.length > 0) {
+    await deleteTempFiles();
+  }
+});
+
+// 草稿自动保存：formModel 变化时 debounce 写入
+watch(
+  () => ({ ...formModel }),
+  () => { saveDraft(); },
+  { deep: true },
+);
+
 function validateForm() {
   if (!formModel.name.trim()) {
     ElMessage.warning('请输入商品名称');
@@ -203,6 +260,9 @@ function openCreateDialog() {
   isEdit.value = false;
   currentEditId.value = null;
   resetForm();
+  if (loadDraft()) {
+    ElMessage.info('已恢复上次未保存的草稿');
+  }
   dialogVisible.value = true;
 }
 
@@ -302,6 +362,8 @@ async function submitProduct() {
       await requestClient.post(productApiBase, payload);
       ElMessage.success('商品新增成功');
     }
+    tempFileIds.value = [];
+    clearDraft();
     dialogVisible.value = false;
     await loadProducts();
   } finally {
@@ -364,6 +426,7 @@ async function uploadFile(option: UploadRequestOptions) {
 function handleUploadSuccess(response: ProductFile, file: UploadUserFile) {
   file.uid = response.id;
   file.url = response.filePath;
+  tempFileIds.value.push(response.id);
 }
 
 function handleUploadRemove(file: UploadUserFile) {

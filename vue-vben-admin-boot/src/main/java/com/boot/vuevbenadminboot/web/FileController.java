@@ -4,6 +4,8 @@ import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -33,5 +35,13 @@ public class FileController {
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
+    }
+
+    @DeleteMapping("/delete/{fileId}")
+    public Map<String, Object> delete(@PathVariable Long fileId, HttpServletRequest request) {
+        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        if (username == null) return ApiResponse.of(-1, null, "未登录");
+        mallFileService.deleteFile(fileId);
+        return ApiResponse.of(0, null, "success");
     }
 }
