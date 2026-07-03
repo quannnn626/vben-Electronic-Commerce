@@ -275,7 +275,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
 
     private void activateFile(Long fileId) {
         MallFile f = mallFileService.getById(fileId);
-        if (f != null && CommonStatusEnum.TEMP.getCode().equals(f.getStatus())) {
+        if (f != null && Objects.equals(CommonStatusEnum.TEMP.getCode(),(f.getStatus()))) {
             f.setStatus(CommonStatusEnum.DISABLED.getCode());
             f.setUpdateTime(new Date());
             mallFileService.updateById(f);
