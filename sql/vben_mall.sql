@@ -11,11 +11,39 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 30/06/2026 14:21:24
+ Date: 03/07/2026 15:11:05
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for mall_after_sale
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_after_sale`;
+CREATE TABLE `mall_after_sale`  (
+  `id` bigint NOT NULL COMMENT '主键ID',
+  `after_sale_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '售后单号',
+  `order_id` bigint NOT NULL COMMENT '订单ID',
+  `order_item_id` bigint NOT NULL COMMENT '订单商品ID',
+  `user_id` bigint NOT NULL COMMENT '申请用户ID',
+  `type` tinyint NOT NULL COMMENT '售后类型',
+  `status` tinyint NOT NULL COMMENT '售后状态',
+  `reason` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '售后原因',
+  `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '问题描述',
+  `refund_amount` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '退款金额',
+  `audit_remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '审核备注',
+  `audit_user` bigint NULL DEFAULT NULL COMMENT '审核人ID',
+  `audit_time` datetime NULL DEFAULT NULL COMMENT '审核时间',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '订单售后表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_after_sale
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_cart
@@ -33,7 +61,7 @@ CREATE TABLE `mall_cart`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_product_id`(`product_id` ASC) USING BTREE,
   INDEX `idx_sku_id`(`sku_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_cart
@@ -53,7 +81,7 @@ CREATE TABLE `mall_file`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `status` int NULL DEFAULT 0 COMMENT '状态：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_file
@@ -67,6 +95,18 @@ INSERT INTO `mall_file` VALUES (16, '微信图片_20250413113719.png', '/upload/
 INSERT INTO `mall_file` VALUES (17, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'image/jpeg', '2026-04-24 17:43:59', '2026-04-24 17:43:59', 0);
 INSERT INTO `mall_file` VALUES (18, '10月31日 (1).mp4', '/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'video/mp4', '2026-04-24 17:44:06', '2026-04-24 17:44:06', 0);
 INSERT INTO `mall_file` VALUES (19, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', 'image/png', '2026-06-15 13:18:48', '2026-06-15 13:18:48', 0);
+INSERT INTO `mall_file` VALUES (20, '71cf3bc79f3df8dc5e63917aca2b738446102843.png', '/upload/20260630143458_1617db2e8041412a96873ffb03104485.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
+INSERT INTO `mall_file` VALUES (21, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260630143458_14838869cb954658b91ee465ffd97d52.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
+INSERT INTO `mall_file` VALUES (22, '微信图片_20250329220729.png', '/upload/20260630143458_2ded372cca434af88e322d403709a5ce.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
+INSERT INTO `mall_file` VALUES (23, 'QQ图片20230426170644.jpg', '/upload/20260630143458_c19914c061654efda6636886caa744f6.jpg', 'image/jpeg', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
+INSERT INTO `mall_file` VALUES (24, '09c00d5f6e46051f3213f4fd36234136.png', '/upload/20260630143458_19b6af21e9ec48a0aac64fadc0081e61.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
+INSERT INTO `mall_file` VALUES (25, '微信图片_20250413113719.png', '/upload/20260630143458_de34f6d94be4400aa697191ba891b943.png', 'image/png', '2026-06-30 14:34:59', '2026-06-30 14:34:59', 0);
+INSERT INTO `mall_file` VALUES (26, '71cf3bc79f3df8dc5e63917aca2b738446102843.png', '/upload/20260702101152_a0fd21111f8b48cda27e7b85fd926fe1.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
+INSERT INTO `mall_file` VALUES (27, 'QQ图片20230426170644.jpg', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', 'image/jpeg', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
+INSERT INTO `mall_file` VALUES (28, '09c00d5f6e46051f3213f4fd36234136.png', '/upload/20260702101152_36afa86fd56f446984f4b5bdcf485b3b.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
+INSERT INTO `mall_file` VALUES (29, '微信图片_20250329220729.png', '/upload/20260702101152_cb29fb1d73d34f58a2b9471c0834b8b2.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
+INSERT INTO `mall_file` VALUES (30, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260702101152_e0c304c33e8848029873e144b9380c4c.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
+INSERT INTO `mall_file` VALUES (31, '个人照片.jpg', '/upload/20260702164619_1fab67a48e4042c381159100114203cf.jpg', 'image/jpeg', '2026-07-02 16:46:19', '2026-07-02 16:46:19', 0);
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -125,7 +165,7 @@ CREATE TABLE `mall_order_delivery`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_order_delivery
@@ -211,13 +251,14 @@ CREATE TABLE `mall_product`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
 INSERT INTO `mall_product` VALUES (7, 'ROG', 'ROG魔霸系列', 1, '2026-04-24 17:45:22', '2026-04-24 17:45:22', 0);
 INSERT INTO `mall_product` VALUES (8, '测试修改枚举类后新增商品', '', 1, '2026-06-15 13:18:57', '2026-06-15 13:18:57', 0);
+INSERT INTO `mall_product` VALUES (9, '华硕天选4', '', 1, '2026-07-02 10:12:22', '2026-07-02 10:12:22', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -550,7 +591,7 @@ CREATE TABLE `mall_product_category_rel`  (
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `category_id` bigint NOT NULL COMMENT '类目ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2066389978256818192 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2072503618387124226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product_category_rel
@@ -597,6 +638,27 @@ INSERT INTO `mall_product_category_rel` VALUES (2066389978256818188, 8, 145);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818189, 8, 151);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818190, 8, 152);
 INSERT INTO `mall_product_category_rel` VALUES (2066389978256818191, 8, 153);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618299043842, 9, 111);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618299043843, 9, 112);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618299043844, 9, 113);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618299043845, 9, 114);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015362, 9, 115);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015363, 9, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015364, 9, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015365, 9, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015366, 9, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015367, 9, 131);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015368, 9, 132);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015369, 9, 133);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015370, 9, 134);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015371, 9, 141);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015372, 9, 142);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015373, 9, 143);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015374, 9, 144);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015375, 9, 145);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015376, 9, 151);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618320015377, 9, 152);
+INSERT INTO `mall_product_category_rel` VALUES (2072503618387124225, 9, 153);
 
 -- ----------------------------
 -- Table structure for mall_resource_rel
@@ -613,11 +675,19 @@ CREATE TABLE `mall_resource_rel`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
   INDEX `idx_file_id`(`file_id` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_resource_rel
 -- ----------------------------
+INSERT INTO `mall_resource_rel` VALUES (1, 'sku', 10, 28, 'main_image', 0, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (2, 'sku', 10, 28, 'detail_image', 0, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (3, 'sku', 10, 26, 'detail_image', 1, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (4, 'sku', 10, 27, 'detail_image', 2, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (5, 'sku', 11, 27, 'main_image', 0, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (6, 'sku', 11, 27, 'detail_image', 0, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 11, 30, 'detail_image', 1, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 11, 29, 'detail_image', 2, '2026-07-02 10:12:23');
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -636,7 +706,7 @@ CREATE TABLE `mall_sku`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_product_id`(`product_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_sku
@@ -645,6 +715,8 @@ INSERT INTO `mall_sku` VALUES (6, 7, 11282.00, 98, 2, '{\"name\": \"U7 255HX/306
 INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 98, 1, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-06-25 14:13:52');
 INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 91, 2, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-06-25 21:22:08');
 INSERT INTO `mall_sku` VALUES (9, 8, 20.00, 0, 1, '{\"name\": \"1\", \"fileId\": 19}', '', 1, '2026-06-15 13:18:57', '2026-06-22 15:13:59');
+INSERT INTO `mall_sku` VALUES (10, 9, 5000.00, 20, 0, '{\"name\": \"规格1\", \"fileId\": 28}', '', 1, '2026-07-02 10:12:22', '2026-07-02 10:12:22');
+INSERT INTO `mall_sku` VALUES (11, 9, 6000.00, 20, 0, '{\"name\": \"规格2\", \"fileId\": 27}', '', 1, '2026-07-02 10:12:22', '2026-07-02 10:12:22');
 
 -- ----------------------------
 -- Table structure for mall_user_address
@@ -665,7 +737,7 @@ CREATE TABLE `mall_user_address`  (
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_user_address
