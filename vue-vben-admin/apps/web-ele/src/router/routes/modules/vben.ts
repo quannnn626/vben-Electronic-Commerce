@@ -232,6 +232,15 @@ const routes: RouteRecordRaw[] = [
       title: '第三方支付',
     },
   },
+  {
+    name: 'AfterSaleForm',
+    path: '/order/after-sale/create',
+    component: () => import('#/views/home/after-sale-form.vue'),
+    meta: {
+      hideInMenu: true,
+      title: '申请售后',
+    },
+  },
 ];
 
 export default routes;
