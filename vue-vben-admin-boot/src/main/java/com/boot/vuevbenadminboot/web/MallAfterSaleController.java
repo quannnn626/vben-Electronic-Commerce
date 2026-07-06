@@ -4,13 +4,16 @@ import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,6 +38,20 @@ public class MallAfterSaleController {
             return ApiResponse.of(0, resp, "售后申请成功");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(-1, null, e.getMessage());
+        }
+    }
+
+    @GetMapping("/list")
+    public Map<String, Object> list(HttpServletRequest request) {
+        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "用户未登录");
+        }
+        try {
+            List<AfterSaleDetailDto> list = mallAfterSaleService.listAfterSales(username);
+            return ApiResponse.of(0, list, "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
         }
     }
 

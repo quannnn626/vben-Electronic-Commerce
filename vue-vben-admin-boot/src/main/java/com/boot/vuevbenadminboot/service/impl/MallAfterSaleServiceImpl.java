@@ -16,15 +16,20 @@ import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * @author quannnn
@@ -126,6 +131,72 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             resourceRelService.attachBatch("after_sale", afterSale.getId(), fileIds, "proof");
         }
         return afterSale;
+    }
+
+    @Override
+    public List<AfterSaleDetailDto> listAfterSales(String userName) {
+        Long userId = sysUserService.requireUserId(userName);
+        List<MallAfterSale> afterSales = this.list(
+                new LambdaQueryWrapper<MallAfterSale>()
+                        .eq(MallAfterSale::getUserId, userId)
+                        .eq(MallAfterSale::getDeleted, 0)
+                        .orderByDesc(MallAfterSale::getId)
+        );
+        if (afterSales.isEmpty()) {
+            return List.of();
+        }
+        List<Long> orderIds = afterSales.stream().map(MallAfterSale::getOrderId).distinct().toList();
+        Map<Long, MallOrder> orderMap = mallOrderService.listByIds(orderIds).stream()
+                .collect(Collectors.toMap(MallOrder::getId, o -> o, (a, b) -> a));
+
+        Map<Long, List<MallOrderItem>> itemMap = new LinkedHashMap<>();
+        for (Long orderId : orderIds) {
+            List<MallOrderItem> items = mallOrderItemService.list(
+                    new LambdaQueryWrapper<MallOrderItem>()
+                            .eq(MallOrderItem::getOrderId, orderId)
+                            .eq(MallOrderItem::getDeleted, 0)
+            );
+            itemMap.put(orderId, items);
+        }
+
+        List<AfterSaleDetailDto> result = new ArrayList<>();
+        for (MallAfterSale as : afterSales) {
+            AfterSaleDetailDto dto = new AfterSaleDetailDto();
+            dto.setId(as.getId());
+            dto.setAfterSaleNo(as.getAfterSaleNo());
+            dto.setType(as.getType());
+            dto.setStatus(as.getStatus());
+            dto.setRefundAmount(as.getRefundAmount());
+            dto.setApplyTime(as.getCreateTime());
+            dto.setAuditTime(as.getAuditTime());
+
+            MallOrder order = orderMap.get(as.getOrderId());
+            if (order != null) {
+                dto.setOrderNo(order.getOrderNo());
+                dto.setUserId(order.getUserId());
+                dto.setPayAmount(order.getPayAmount());
+                dto.setReceiverName(order.getReceiverName());
+                dto.setReceiverPhone(order.getReceiverPhone());
+                dto.setReceiverAddress(order.getReceiverAddress());
+
+                List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
+                List<com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto> itemDtos = new ArrayList<>();
+                for (MallOrderItem item : items) {
+                    com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto itemDto = new com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto();
+                    itemDto.setId(item.getId());
+                    itemDto.setSkuId(item.getSkuId());
+                    itemDto.setProductName(item.getProductName());
+                    itemDto.setProductImage(item.getProductImage());
+                    itemDto.setPrice(item.getPrice());
+                    itemDto.setQuantity(item.getQuantity());
+                    itemDto.setTotalPrice(item.getTotalPrice());
+                    itemDtos.add(itemDto);
+                }
+                dto.setItems(itemDtos);
+            }
+            result.add(dto);
+        }
+        return result;
     }
 
     private String generateAfterSaleNo() {

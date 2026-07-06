@@ -107,7 +107,44 @@ function transformOrder(backend: BackendOrder): OrderItem {
   };
 }
 
+interface AfterSaleItem {
+  id: number;
+  afterSaleNo: string;
+  type: number;
+  status: number;
+  refundAmount: number;
+  applyTime: string;
+  items: { productName: string; productImage: string; quantity: number; price: number }[];
+}
+
 const orders = ref<OrderItem[]>([]);
+const afterSales = ref<AfterSaleItem[]>([]);
+
+async function loadAfterSales() {
+  loading.value = true;
+  try {
+    const data = await requestClient.get<AfterSaleItem[]>('/mall/afterSale/list');
+    afterSales.value = Array.isArray(data) ? data : [];
+  } finally {
+    loading.value = false;
+  }
+}
+
+const afterSaleStatusMap: Record<number, { label: string; type: string }> = {
+  0: { label: '申请中', type: 'warning' },
+  1: { label: '审核中', type: 'warning' },
+  2: { label: '已通过', type: 'success' },
+  3: { label: '已拒绝', type: 'info' },
+  4: { label: '退款中', type: 'warning' },
+  5: { label: '已完成', type: 'success' },
+  6: { label: '已取消', type: 'info' },
+};
+
+const afterSaleTypeMap: Record<number, string> = {
+  0: '仅退款',
+  1: '退货退款',
+  2: '换货',
+};
 
 async function loadOrders(status?: number) {
   loading.value = true;
@@ -126,7 +163,7 @@ async function loadOrders(status?: number) {
 watch(activeTab, (tab) => {
   keyword.value = '';
   if (tab === 'after-sale') {
-    orders.value = [];
+    loadAfterSales();
   } else if (tab === 'all') {
     loadOrders();
   } else {
@@ -243,7 +280,46 @@ onMounted(() => {
       />
     </ElCard>
 
-    <div v-loading="loading" class="mt-4 space-y-4">
+    <!-- 退换/售后列表 -->
+    <div v-if="activeTab === 'after-sale'" v-loading="loading" class="mt-4 space-y-4">
+      <template v-if="afterSales.length > 0">
+        <ElCard
+          v-for="item in afterSales"
+          :key="item.id"
+          shadow="never"
+          class="order-card"
+        >
+          <div class="order-header">
+            <div class="flex items-center gap-4">
+              <span class="order-no-label">售后单号</span>
+              <span class="order-no-value">{{ item.afterSaleNo }}</span>
+              <span class="order-time">{{ item.applyTime }}</span>
+            </div>
+            <ElTag :type="afterSaleStatusMap[item.status]?.type ?? 'info'" size="small">
+              {{ afterSaleStatusMap[item.status]?.label ?? '未知' }}
+            </ElTag>
+          </div>
+          <div class="order-body">
+            <div class="goods-info">
+              <div class="goods-name">{{ item.items?.[0]?.productName ?? '未知商品' }}</div>
+              <div class="goods-qty">{{ afterSaleTypeMap[item.type] ?? '售后' }} · {{ item.reasonDesc ?? '' }}</div>
+            </div>
+          </div>
+          <div class="order-footer">
+            <div class="total-info">
+              <span class="total-label">退款金额：</span>
+              <span class="total-price">
+                {{ item.refundAmount ? `¥${item.refundAmount.toFixed(2)}` : '待定' }}
+              </span>
+            </div>
+          </div>
+        </ElCard>
+      </template>
+      <ElEmpty v-else description="暂无退换/售后订单" />
+    </div>
+
+    <!-- 订单列表 -->
+    <div v-else v-loading="loading" class="mt-4 space-y-4">
       <template v-if="tableData.length > 0">
         <ElCard
           v-for="item in tableData"
@@ -346,7 +422,7 @@ onMounted(() => {
           </div>
         </ElCard>
       </template>
-      <ElEmpty v-else :description="activeTab === 'after-sale' ? '暂无退换/售后订单' : '暂无订单'" />
+      <ElEmpty v-else description="暂无订单" />
     </div>
   </Page>
 </template>
