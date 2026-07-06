@@ -18,8 +18,11 @@ import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author quannnn
@@ -89,6 +92,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             throw new IllegalArgumentException("该商品已申请售后，不能重复申请");
         }
         MallAfterSale afterSale = new MallAfterSale();
+        afterSale.setAfterSaleNo(generateAfterSaleNo());
         afterSale.setOrderId(request.getOrderId());
         afterSale.setOrderItemId(request.getOrderItemId());
         afterSale.setUserId(userId);
@@ -107,6 +111,12 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             resourceRelService.attachBatch("after_sale", afterSale.getId(), fileIds, "proof");
         }
         return afterSale;
+    }
+
+    private String generateAfterSaleNo() {
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        int rand = ThreadLocalRandom.current().nextInt(100_000, 999_999);
+        return "AS" + now + rand;
     }
 }
 
