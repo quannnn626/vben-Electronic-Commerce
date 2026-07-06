@@ -46,6 +46,7 @@ const form = reactive({
 const refundTypes = [
   { label: '仅退款', value: 0 },
   { label: '退货退款', value: 1 },
+  { label: '换货', value: 2 },
 ];
 
 const reasonOptions = [
@@ -165,6 +166,12 @@ onMounted(() => {
               :value="item.value"
             />
           </ElSelect>
+          <span v-if="form.type === 2" class="text-gray-500 text-sm">
+            换货无需退款，审核通过后将为您补发商品
+          </span>
+          <span v-else-if="form.type !== null" class="text-gray-500 text-sm">
+            退款金额将按订单实付金额自动计算
+          </span>
         </ElFormItem>
 
         <ElFormItem label="售后原因" required>

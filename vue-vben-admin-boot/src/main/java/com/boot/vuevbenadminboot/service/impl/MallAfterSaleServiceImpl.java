@@ -6,6 +6,7 @@ import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleStatusEnum;
+import com.boot.vuevbenadminboot.domain.enums.AfterSaleTypeEnum;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderItemMapper;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
@@ -18,6 +19,7 @@ import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -70,6 +72,18 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (mallOrder.getStatus().equals(OrderStatusEnum.CANCELLED.getCode())) {
             throw new IllegalArgumentException("订单已取消，不能申请售后");
         }
+        // 校验售后类型
+        AfterSaleTypeEnum typeEnum = AfterSaleTypeEnum.of(request.getType());
+        if (typeEnum == null) {
+            throw new IllegalArgumentException("售后类型无效");
+        }
+        // 智能计算退款金额：仅退款/退货退款 = 订单实付金额，换货 = 0
+        BigDecimal refundAmount;
+        if (typeEnum == AfterSaleTypeEnum.EXCHANGE) {
+            refundAmount = BigDecimal.ZERO;
+        } else {
+            refundAmount = mallOrder.getPayAmount() != null ? mallOrder.getPayAmount() : BigDecimal.ZERO;
+        }
         MallOrderItem mallOrderItem = mallOrderItemMapper.selectOne(
                 new LambdaQueryWrapper<MallOrderItem>()
                         .eq(MallOrderItem::getOrderId, request.getOrderId())
@@ -99,6 +113,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         afterSale.setType(request.getType());
         afterSale.setReason(request.getReason());
         afterSale.setDescription(request.getDescription());
+        afterSale.setRefundAmount(refundAmount);
         afterSale.setStatus(AfterSaleStatusEnum.APPLYING.getCode());
         afterSale.setCreateTime(new Date());
         afterSale.setUpdateTime(new Date());
