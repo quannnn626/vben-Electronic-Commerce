@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 03/07/2026 15:11:05
+ Date: 07/07/2026 14:32:31
 */
 
 SET NAMES utf8mb4;
@@ -44,6 +44,8 @@ CREATE TABLE `mall_after_sale`  (
 -- ----------------------------
 -- Records of mall_after_sale
 -- ----------------------------
+INSERT INTO `mall_after_sale` VALUES (2073964892266487809, 'AS20260706105857128085', 34, 8, 2046463574828482561, 1, 0, '不想要了', '测试售后', 0.00, NULL, NULL, NULL, '2026-07-06 10:58:57', '2026-07-06 10:58:57', 0);
+INSERT INTO `mall_after_sale` VALUES (2074044816176308225, 'AS20260706161632220355', 33, 9, 2046463574828482561, 2, 0, '尺码/规格不合适', '', 0.00, NULL, NULL, NULL, '2026-07-06 16:16:33', '2026-07-06 16:16:33', 0);
 
 -- ----------------------------
 -- Table structure for mall_cart
@@ -81,7 +83,7 @@ CREATE TABLE `mall_file`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `status` int NULL DEFAULT 0 COMMENT '状态：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_file
@@ -675,7 +677,7 @@ CREATE TABLE `mall_resource_rel`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
   INDEX `idx_file_id`(`file_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_resource_rel
@@ -688,6 +690,8 @@ INSERT INTO `mall_resource_rel` VALUES (5, 'sku', 11, 27, 'main_image', 0, '2026
 INSERT INTO `mall_resource_rel` VALUES (6, 'sku', 11, 27, 'detail_image', 0, '2026-07-02 10:12:23');
 INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 11, 30, 'detail_image', 1, '2026-07-02 10:12:23');
 INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 11, 29, 'detail_image', 2, '2026-07-02 10:12:23');
+INSERT INTO `mall_resource_rel` VALUES (9, 'after_sale', 2073964892266487809, 36, 'proof', 0, '2026-07-06 10:58:57');
+INSERT INTO `mall_resource_rel` VALUES (10, 'after_sale', 2074044816176308225, 37, 'proof', 0, '2026-07-06 16:16:33');
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -737,7 +741,7 @@ CREATE TABLE `mall_user_address`  (
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_user_address

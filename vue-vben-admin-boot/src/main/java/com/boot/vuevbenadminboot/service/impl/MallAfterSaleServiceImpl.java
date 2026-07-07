@@ -17,6 +17,7 @@ import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
+import com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -180,9 +181,9 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setReceiverAddress(order.getReceiverAddress());
 
                 List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
-                List<com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto> itemDtos = new ArrayList<>();
+                List<OrderItemDto> itemDtos = new ArrayList<>();
                 for (MallOrderItem item : items) {
-                    com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto itemDto = new com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto();
+                    OrderItemDto itemDto = new OrderItemDto();
                     itemDto.setId(item.getId());
                     itemDto.setSkuId(item.getSkuId());
                     itemDto.setProductName(item.getProductName());
