@@ -16,4 +16,6 @@ public interface MallAfterSaleService extends IService<MallAfterSale> {
     MallAfterSale createAfterSale(AfterSaleRequest request, String userName);
 
     List<AfterSaleDetailDto> listAfterSales(String userName);
+
+    AfterSaleDetailDto getAfterSaleDetail(Long id, String userName);
 }

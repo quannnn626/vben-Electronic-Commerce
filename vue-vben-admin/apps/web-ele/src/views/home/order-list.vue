@@ -302,7 +302,7 @@ onMounted(() => {
           <div class="order-body">
             <div class="goods-info">
               <div class="goods-name">{{ item.items?.[0]?.productName ?? '未知商品' }}</div>
-              <div class="goods-qty">{{ afterSaleTypeMap[item.type] ?? '售后' }} · {{ item.reasonDesc ?? '' }}</div>
+              <div class="goods-qty">{{ afterSaleTypeMap[item.type] ?? '售后' }} · {{ item.reason ?? '' }}</div>
             </div>
           </div>
           <div class="order-footer">

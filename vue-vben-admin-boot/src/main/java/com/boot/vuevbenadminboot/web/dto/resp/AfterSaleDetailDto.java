@@ -13,8 +13,8 @@ public class AfterSaleDetailDto {
     private Long id;
     private String afterSaleNo;
     private Integer type;
-    private Integer reason;
-    private String reasonDesc;
+    private String reason;
+    private String description;
     private Integer status;
     private BigDecimal refundAmount;
     private Date applyTime;

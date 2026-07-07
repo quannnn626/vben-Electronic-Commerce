@@ -135,6 +135,56 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
     }
 
     @Override
+    public AfterSaleDetailDto getAfterSaleDetail(Long id, String userName) {
+        Long userId = sysUserService.requireUserId(userName);
+        MallAfterSale as = this.getById(id);
+        if (as == null || !as.getUserId().equals(userId) || as.getDeleted() == 1) {
+            throw new IllegalArgumentException("售后单不存在");
+        }
+        MallOrder order = mallOrderService.getById(as.getOrderId());
+        List<MallOrderItem> items = mallOrderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .eq(MallOrderItem::getOrderId, as.getOrderId())
+                        .eq(MallOrderItem::getDeleted, 0)
+        );
+
+        AfterSaleDetailDto dto = new AfterSaleDetailDto();
+        dto.setId(as.getId());
+        dto.setAfterSaleNo(as.getAfterSaleNo());
+        dto.setType(as.getType());
+        dto.setStatus(as.getStatus());
+        dto.setReason(as.getReason());
+        dto.setDescription(as.getDescription());
+        dto.setRefundAmount(as.getRefundAmount());
+        dto.setApplyTime(as.getCreateTime());
+        dto.setAuditTime(as.getAuditTime());
+
+        if (order != null) {
+            dto.setOrderNo(order.getOrderNo());
+            dto.setUserId(order.getUserId());
+            dto.setPayAmount(order.getPayAmount());
+            dto.setReceiverName(order.getReceiverName());
+            dto.setReceiverPhone(order.getReceiverPhone());
+            dto.setReceiverAddress(order.getReceiverAddress());
+
+            List<com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto> itemDtos = new ArrayList<>();
+            for (MallOrderItem item : items) {
+                com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto itemDto = new com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto();
+                itemDto.setId(item.getId());
+                itemDto.setSkuId(item.getSkuId());
+                itemDto.setProductName(item.getProductName());
+                itemDto.setProductImage(item.getProductImage());
+                itemDto.setPrice(item.getPrice());
+                itemDto.setQuantity(item.getQuantity());
+                itemDto.setTotalPrice(item.getTotalPrice());
+                itemDtos.add(itemDto);
+            }
+            dto.setItems(itemDtos);
+        }
+        return dto;
+    }
+
+    @Override
     public List<AfterSaleDetailDto> listAfterSales(String userName) {
         Long userId = sysUserService.requireUserId(userName);
         List<MallAfterSale> afterSales = this.list(
@@ -167,6 +217,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             dto.setAfterSaleNo(as.getAfterSaleNo());
             dto.setType(as.getType());
             dto.setStatus(as.getStatus());
+            dto.setReason(as.getReason());
+            dto.setDescription(as.getDescription());
             dto.setRefundAmount(as.getRefundAmount());
             dto.setApplyTime(as.getCreateTime());
             dto.setAuditTime(as.getAuditTime());
