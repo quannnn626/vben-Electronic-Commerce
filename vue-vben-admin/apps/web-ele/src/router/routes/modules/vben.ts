@@ -241,6 +241,15 @@ const routes: RouteRecordRaw[] = [
       title: '申请售后',
     },
   },
+  {
+    name: 'AfterSaleDetail',
+    path: '/order/after-sale/detail',
+    component: () => import('#/views/home/after-sale-detail.vue'),
+    meta: {
+      hideInMenu: true,
+      title: '售后详情',
+    },
+  },
 ];
 
 export default routes;

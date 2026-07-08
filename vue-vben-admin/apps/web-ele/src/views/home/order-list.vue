@@ -108,7 +108,7 @@ function transformOrder(backend: BackendOrder): OrderItem {
 }
 
 interface AfterSaleItem {
-  id: number;
+  id: string;
   afterSaleNo: string;
   type: number;
   status: number;
@@ -287,7 +287,8 @@ onMounted(() => {
           v-for="item in afterSales"
           :key="item.id"
           shadow="never"
-          class="order-card"
+          class="order-card cursor-pointer"
+          @click="router.push({ path: '/order/after-sale/detail', query: { id: item.id } })"
         >
           <div class="order-header">
             <div class="flex items-center gap-4">
