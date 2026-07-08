@@ -45,7 +45,7 @@ interface OrderItem {
   createTime: string;
   logisticsCompany: string;
   trackingNo: string;
-  firstSkuId?: number;
+  orderItemId?: number;
 }
 
 // 订单状态码常量
@@ -103,7 +103,7 @@ function transformOrder(backend: BackendOrder): OrderItem {
     createTime: backend.createTime,
     logisticsCompany: backend.logisticsCompany || '',
     trackingNo: backend.trackingNo || '',
-    firstSkuId: firstItem?.skuId,
+    orderItemId: firstItem?.id,
   };
 }
 
@@ -241,13 +241,13 @@ async function handleConfirm(row: OrderItem) {
 }
 
 function handleAfterSale(row: OrderItem) {
-  if (!row.firstSkuId) {
+  if (!row.orderItemId) {
     ElMessage.warning('无法获取商品信息');
     return;
   }
   router.push({
     path: '/order/after-sale/create',
-    query: { orderId: row.id, orderItemId: row.firstSkuId },
+    query: { orderId: row.id, orderItemId: row.orderItemId },
   });
 }
 
@@ -403,6 +403,12 @@ onMounted(() => {
                 @click="handleConfirm(item)"
               >
                 确认收货
+              </ElButton>
+              <ElButton
+                v-if="(item.status === 'shipped' || item.status === 'completed') && item.orderItemId"
+                @click="handleAfterSale(item)"
+              >
+                申请售后
               </ElButton>
               <ElButton
                 v-if="['paid', 'shipped', 'completed'].includes(item.status)"

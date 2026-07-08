@@ -15,6 +15,7 @@ public class AfterSaleDetailDto {
     private Long id;
     private String afterSaleNo;
     private Integer type;
+    private Integer quantity;
     private String reason;
     private String description;
     private Integer status;

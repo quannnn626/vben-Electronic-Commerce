@@ -39,6 +39,7 @@ const orderItemId = Number(route.query.orderItemId ?? 0);
 
 const form = reactive({
   description: '',
+  quantity: 1,
   reason: '',
   type: null as number | null,
 });
@@ -123,6 +124,7 @@ async function submitForm() {
     await requestClient.post(afterSaleApi, {
       orderId,
       orderItemId,
+      quantity: form.quantity,
       type: form.type,
       reason: form.reason.trim(),
       description: form.description.trim(),
@@ -172,6 +174,10 @@ onMounted(() => {
           <span v-else-if="form.type !== null" class="text-gray-500 text-sm">
             退款金额将按订单实付金额自动计算
           </span>
+        </ElFormItem>
+
+        <ElFormItem label="售后数量" required>
+          <ElInputNumber v-model="form.quantity" :min="1" :step="1" />
         </ElFormItem>
 
         <ElFormItem label="售后原因" required>

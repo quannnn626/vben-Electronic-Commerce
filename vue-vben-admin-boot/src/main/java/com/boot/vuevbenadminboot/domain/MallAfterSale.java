@@ -47,6 +47,11 @@ public class MallAfterSale {
     private Integer type;
 
     /**
+     * 售后数量
+     */
+    private Integer quantity;
+
+    /**
      * 售后状态
      */
     private Integer status;

@@ -93,12 +93,21 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         MallOrderItem mallOrderItem = mallOrderItemMapper.selectOne(
                 new LambdaQueryWrapper<MallOrderItem>()
                         .eq(MallOrderItem::getOrderId, request.getOrderId())
-                        .eq(MallOrderItem::getSkuId, request.getOrderItemId())
+                        .eq(MallOrderItem::getId, request.getOrderItemId())
         );
         if (mallOrderItem == null) {
-            throw new IllegalArgumentException("该商品不存在");
+            throw new IllegalArgumentException("该订单商品不存在");
         }
-        Long count = mallAfterSaleMapper.selectCount(
+        // 校验退货数量
+        Integer quantity = request.getQuantity();
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("售后数量必须大于0");
+        }
+        if (quantity > mallOrderItem.getQuantity()) {
+            throw new IllegalArgumentException("售后数量不能超过购买数量");
+        }
+        // 累加已申请数量，防止超退
+        List<MallAfterSale> activeSales = mallAfterSaleMapper.selectList(
                 new LambdaQueryWrapper<MallAfterSale>()
                         .eq(MallAfterSale::getOrderItemId, request.getOrderItemId())
                         .in(MallAfterSale::getStatus,
@@ -108,13 +117,15 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                                 AfterSaleStatusEnum.REFUNDED.getCode()
                         )
         );
-        if (count > 0) {
-            throw new IllegalArgumentException("该商品已申请售后，不能重复申请");
+        int total = activeSales.stream().mapToInt(s -> s.getQuantity() != null ? s.getQuantity() : 0).sum();
+        if (total + quantity > mallOrderItem.getQuantity()) {
+            throw new IllegalArgumentException("累计售后数量超过购买数量");
         }
         MallAfterSale afterSale = new MallAfterSale();
         afterSale.setAfterSaleNo(generateAfterSaleNo());
         afterSale.setOrderId(request.getOrderId());
         afterSale.setOrderItemId(request.getOrderItemId());
+        afterSale.setQuantity(quantity);
         afterSale.setUserId(userId);
         afterSale.setType(request.getType());
         afterSale.setReason(request.getReason());
@@ -152,6 +163,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         dto.setId(as.getId());
         dto.setAfterSaleNo(as.getAfterSaleNo());
         dto.setType(as.getType());
+        dto.setQuantity(as.getQuantity());
         dto.setStatus(as.getStatus());
         dto.setReason(as.getReason());
         dto.setDescription(as.getDescription());
@@ -216,6 +228,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             dto.setId(as.getId());
             dto.setAfterSaleNo(as.getAfterSaleNo());
             dto.setType(as.getType());
+            dto.setQuantity(as.getQuantity());
             dto.setStatus(as.getStatus());
             dto.setReason(as.getReason());
             dto.setDescription(as.getDescription());
