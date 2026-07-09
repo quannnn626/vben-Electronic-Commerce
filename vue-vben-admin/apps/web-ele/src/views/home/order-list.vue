@@ -185,6 +185,7 @@ const router = useRouter();
 const actionLoading = ref<Record<string, boolean>>({});
 
 function goToPayment(row: OrderItem) {
+  if (row.status !== 'pending') return;
   router.push({ name: 'OrderPayment', query: { orderId: row.id } });
 }
 

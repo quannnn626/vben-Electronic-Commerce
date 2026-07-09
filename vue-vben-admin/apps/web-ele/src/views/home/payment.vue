@@ -75,12 +75,20 @@ async function loadOrderDetail() {
       params: { orderId: Number(orderId) },
     });
     order.value = data;
+    if (data.status !== 0) {
+      ElMessage.warning('订单已支付或已取消，无需重复支付');
+      canPay.value = false;
+    } else {
+      canPay.value = true;
+    }
   } catch (e: any) {
     ElMessage.error(e?.message ?? '加载订单详情失败');
   } finally {
     loading.value = false;
   }
 }
+
+const canPay = ref(false);
 
 async function handleConfirmPay() {
   if (!order.value) return;
@@ -229,6 +237,7 @@ onMounted(() => {
           <div class="summary-actions">
             <ElButton class="action-btn" @click="goBack">返回</ElButton>
             <ElButton
+              v-if="canPay"
               :loading="submitLoading"
               class="action-btn action-submit"
               type="danger"
