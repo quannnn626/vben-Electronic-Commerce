@@ -28,7 +28,8 @@ interface AfterSaleDetail {
   afterSaleNo: string;
   type: number;
   status: number;
-  reason: string;
+  reason: number;
+  reasonDesc: string;
   description: string;
   refundAmount: number;
   applyTime: string;
@@ -105,7 +106,7 @@ onMounted(() => { loadDetail(); });
             <span class="info-label">售后类型</span><span>{{ typeMap[detail.type] ?? '-' }}</span>
             <span class="info-label">当前状态</span>
             <span><ElTag :type="statusMap[detail.status]?.type ?? 'info'">{{ statusMap[detail.status]?.label ?? '-' }}</ElTag></span>
-            <span class="info-label">申请原因</span><span>{{ detail.reason || '-' }}</span>
+            <span class="info-label">申请原因</span><span>{{ detail.reasonDesc || '-' }}</span>
             <span class="info-label">问题描述</span><span>{{ detail.description || '-' }}</span>
             <span class="info-label">退款金额</span>
             <span class="price-text">¥{{ (detail.refundAmount ?? 0).toFixed(2) }}</span>

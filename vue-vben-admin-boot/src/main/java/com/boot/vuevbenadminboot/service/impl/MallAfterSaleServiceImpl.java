@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
+import com.boot.vuevbenadminboot.domain.enums.AfterSaleReasonEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleStatusEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleTypeEnum;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
@@ -82,6 +83,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         AfterSaleTypeEnum typeEnum = AfterSaleTypeEnum.of(request.getType());
         if (typeEnum == null) {
             throw new IllegalArgumentException("售后类型无效");
+        }
+        AfterSaleReasonEnum reasonEnum = AfterSaleReasonEnum.of(request.getReason());
+        if (reasonEnum == null) {
+            throw new IllegalArgumentException("售后原因无效");
         }
         // 智能计算退款金额：仅退款/退货退款 = 订单实付金额，换货 = 0
         BigDecimal refundAmount;
@@ -166,6 +171,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         dto.setQuantity(as.getQuantity());
         dto.setStatus(as.getStatus());
         dto.setReason(as.getReason());
+        dto.setReasonDesc(AfterSaleReasonEnum.of(as.getReason()).getDesc());
         dto.setDescription(as.getDescription());
         dto.setRefundAmount(as.getRefundAmount());
         dto.setApplyTime(as.getCreateTime());
@@ -231,6 +237,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             dto.setQuantity(as.getQuantity());
             dto.setStatus(as.getStatus());
             dto.setReason(as.getReason());
+            dto.setReasonDesc(AfterSaleReasonEnum.of(as.getReason()).getDesc());
             dto.setDescription(as.getDescription());
             dto.setRefundAmount(as.getRefundAmount());
             dto.setApplyTime(as.getCreateTime());

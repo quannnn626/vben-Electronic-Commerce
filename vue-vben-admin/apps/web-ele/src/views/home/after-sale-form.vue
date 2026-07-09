@@ -40,7 +40,7 @@ const orderItemId = Number(route.query.orderItemId ?? 0);
 const form = reactive({
   description: '',
   quantity: 1,
-  reason: '',
+  reason: null as number | null,
   type: null as number | null,
 });
 
@@ -51,13 +51,13 @@ const refundTypes = [
 ];
 
 const reasonOptions = [
-  '质量问题',
-  '商品与描述不符',
-  '发错货',
-  '商品破损',
-  '尺码/规格不合适',
-  '不想要了',
-  '其他',
+  { label: '质量问题', value: 0 },
+  { label: '商品与描述不符', value: 1 },
+  { label: '发错货', value: 2 },
+  { label: '商品破损', value: 3 },
+  { label: '尺码/规格不合适', value: 4 },
+  { label: '不想要了', value: 5 },
+  { label: '其他', value: 6 },
 ];
 
 const fileUploadApi = '/mall/file/upload';
@@ -78,7 +78,7 @@ function validateForm() {
     ElMessage.warning('请选择售后类型');
     return false;
   }
-  if (!form.reason.trim()) {
+  if (form.reason === null) {
     ElMessage.warning('请选择售后原因');
     return false;
   }
@@ -126,7 +126,7 @@ async function submitForm() {
       orderItemId,
       quantity: form.quantity,
       type: form.type,
-      reason: form.reason.trim(),
+      reason: form.reason,
       description: form.description.trim(),
       fileIds: tempFileIds.value,
     });
@@ -184,9 +184,9 @@ onMounted(() => {
           <ElSelect v-model="form.reason" placeholder="请选择售后原因">
             <ElOption
               v-for="r in reasonOptions"
-              :key="r"
-              :label="r"
-              :value="r"
+              :key="r.value"
+              :label="r.label"
+              :value="r.value"
             />
           </ElSelect>
         </ElFormItem>

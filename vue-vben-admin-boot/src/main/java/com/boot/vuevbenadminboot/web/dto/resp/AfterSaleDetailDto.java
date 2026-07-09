@@ -16,7 +16,8 @@ public class AfterSaleDetailDto {
     private String afterSaleNo;
     private Integer type;
     private Integer quantity;
-    private String reason;
+    private Integer reason;
+    private String reasonDesc;
     private String description;
     private Integer status;
     private BigDecimal refundAmount;

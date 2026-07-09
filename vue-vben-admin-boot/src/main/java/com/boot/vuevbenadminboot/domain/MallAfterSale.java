@@ -57,9 +57,9 @@ public class MallAfterSale {
     private Integer status;
 
     /**
-     * 售后原因
+     * 售后原因：0质量问题 1描述不符 2发错货 3商品破损 4尺码不合适 5不想要了 6其他
      */
-    private String reason;
+    private Integer reason;
 
     /**
      * 问题描述

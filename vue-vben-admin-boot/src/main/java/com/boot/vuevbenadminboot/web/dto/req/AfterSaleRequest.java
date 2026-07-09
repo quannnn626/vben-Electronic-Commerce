@@ -10,7 +10,7 @@ public class AfterSaleRequest {
     private Long orderId;
     private Long orderItemId;
     private Integer type;
-    private String reason;
+    private Integer reason;
     private String description;
     private Integer quantity;
     private BigDecimal refundAmount;

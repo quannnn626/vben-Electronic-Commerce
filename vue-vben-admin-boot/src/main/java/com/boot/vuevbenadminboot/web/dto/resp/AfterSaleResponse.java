@@ -13,7 +13,7 @@ public class AfterSaleResponse {
     private Long orderItemId;
     private Integer type;
     private Integer status;
-    private String reason;
+    private Integer reason;
     private String description;
     private BigDecimal refundAmount;
     private Date createTime;
