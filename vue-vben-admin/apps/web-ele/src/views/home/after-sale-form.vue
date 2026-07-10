@@ -300,7 +300,7 @@ onMounted(() => {
       </div>
     </ElCard>
 
-    <ElCard v-if="selectedCount > 0" class="mt-4" shadow="never">
+    <ElCard v-if="order" class="mt-4" shadow="never">
       <template #header>
         <div class="flex items-center gap-2 flex-wrap">
           <span class="font-medium">售后信息</span>
