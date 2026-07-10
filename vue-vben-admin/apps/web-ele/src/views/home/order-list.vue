@@ -260,13 +260,9 @@ async function handleConfirm(row: OrderItem) {
 }
 
 function handleAfterSale(row: OrderItem) {
-  if (!row.orderItemId) {
-    ElMessage.warning('无法获取商品信息');
-    return;
-  }
   router.push({
     path: '/order/after-sale/create',
-    query: { orderId: row.id, orderItemId: row.orderItemId },
+    query: { orderId: row.id },
   });
 }
 

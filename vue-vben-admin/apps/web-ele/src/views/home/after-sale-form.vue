@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { UploadRequestOptions, UploadUserFile } from 'element-plus';
+import type { UploadRequestOptions } from 'element-plus';
 
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -9,6 +9,8 @@ import { Page } from '@vben/common-ui';
 import {
   ElButton,
   ElCard,
+  ElCheckbox,
+  ElEmpty,
   ElForm,
   ElFormItem,
   ElInput,
@@ -16,6 +18,7 @@ import {
   ElMessage,
   ElOption,
   ElSelect,
+  ElTag,
   ElUpload,
 } from 'element-plus';
 
@@ -28,18 +31,51 @@ interface ProductFile {
   id: number;
 }
 
+interface OrderItemDto {
+  id: number;
+  skuId: number;
+  productName: string;
+  productImage: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
+
+interface OrderDetail {
+  id: number;
+  orderNo: string;
+  totalAmount: number;
+  payAmount: number;
+  status: number;
+  items: OrderItemDto[];
+}
+
 const route = useRoute();
 const router = useRouter();
-const submitting = ref(false);
-const tempFileIds = ref<number[]>([]);
-const uploadedFiles = ref<{ id: number; name: string; url: string }[]>([]);
-
 const orderId = Number(route.query.orderId ?? 0);
-const orderItemId = Number(route.query.orderItemId ?? 0);
+
+const loading = ref(false);
+const submitting = ref(false);
+const order = ref<OrderDetail | null>(null);
+const tempFileIds = ref<number[]>([]);
+
+// 已选商品 key=orderItemId, value=售后数量
+const selectedItems = reactive<Record<number, number>>({});
+
+const selectedDetails = computed(() =>
+  Object.entries(selectedItems)
+    .filter(([, qty]) => qty > 0)
+    .map(([itemId, qty]) => ({
+      item: order.value?.items?.find((it) => it.id === Number(itemId))!,
+      quantity: qty,
+    }))
+    .filter((d) => d.item),
+);
+
+const selectedCount = computed(() => selectedDetails.value.length);
 
 const form = reactive({
   description: '',
-  quantity: 1,
   reason: null as number | null,
   type: null as number | null,
 });
@@ -60,10 +96,6 @@ const reasonOptions = [
   { label: '其他', value: 6 },
 ];
 
-const fileUploadApi = '/mall/file/upload';
-const fileDeleteApi = '/mall/file/delete';
-const afterSaleApi = '/mall/afterSale/create';
-
 function normalizeFileUrl(rawPath?: string) {
   if (!rawPath) return '';
   if (/^https?:\/\//.test(rawPath)) return rawPath;
@@ -73,7 +105,40 @@ function normalizeFileUrl(rawPath?: string) {
   return `/api/${rawPath}`;
 }
 
-function validateForm() {
+// 加载订单详情
+async function loadOrderDetail() {
+  loading.value = true;
+  try {
+    const data = await requestClient.get<OrderDetail>('/mall/order/detail', {
+      params: { orderId },
+    });
+    order.value = data;
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '加载订单失败');
+  } finally {
+    loading.value = false;
+  }
+}
+
+// 切换商品选中状态
+function toggleItem(itemId: number) {
+  if (selectedItems[itemId] !== undefined) {
+    delete selectedItems[itemId];
+  } else {
+    selectedItems[itemId] = 1;
+  }
+}
+
+function isItemSelected(itemId: number): boolean {
+  return selectedItems[itemId] !== undefined;
+}
+
+// 校验表单
+function validateForm(): boolean {
+  if (selectedCount.value === 0) {
+    ElMessage.warning('请选择售后商品');
+    return false;
+  }
   if (form.type === null) {
     ElMessage.warning('请选择售后类型');
     return false;
@@ -82,15 +147,26 @@ function validateForm() {
     ElMessage.warning('请选择售后原因');
     return false;
   }
+  for (const d of selectedDetails.value) {
+    if (!d.quantity || d.quantity <= 0) {
+      ElMessage.warning(`"${d.item.productName}" 售后数量必须大于0`);
+      return false;
+    }
+    if (d.quantity > d.item.quantity) {
+      ElMessage.warning(`"${d.item.productName}" 售后数量不能超过购买数量`);
+      return false;
+    }
+  }
   return true;
 }
 
+// 上传凭证文件
 async function uploadFile(option: UploadRequestOptions) {
-  const { file, onError, onSuccess } = option;
+  const { file, onSuccess, onError } = option;
   const formData = new FormData();
   formData.append('files', file);
   try {
-    const data = await requestClient.post<ProductFile[]>(fileUploadApi, formData, {
+    const data = await requestClient.post<ProductFile[]>('/mall/file/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     const saved = Array.isArray(data) ? data[0] : null;
@@ -101,30 +177,27 @@ async function uploadFile(option: UploadRequestOptions) {
   }
 }
 
-function handleUploadSuccess(response: ProductFile, file: UploadUserFile) {
-  file.uid = response.id;
-  file.url = response.filePath;
+function handleUploadSuccess(response: ProductFile) {
   tempFileIds.value.push(response.id);
 }
 
-function handleUploadRemove(file: UploadUserFile) {
+function handleUploadRemove(file: any) {
   const id = Number(file.uid);
   if (Number.isNaN(id)) return;
   tempFileIds.value = tempFileIds.value.filter((fid) => fid !== id);
 }
 
-function goBack() {
-  router.back();
-}
-
+// 提交售后申请
 async function submitForm() {
   if (!validateForm()) return;
   submitting.value = true;
   try {
-    await requestClient.post(afterSaleApi, {
+    await requestClient.post('/mall/afterSale/create', {
       orderId,
-      orderItemId,
-      quantity: form.quantity,
+      items: selectedDetails.value.map((d) => ({
+        orderItemId: d.item.id,
+        quantity: d.quantity,
+      })),
       type: form.type,
       reason: form.reason,
       description: form.description.trim(),
@@ -139,45 +212,125 @@ async function submitForm() {
   }
 }
 
+function goBack() {
+  router.back();
+}
+
 onMounted(() => {
-  if (!orderId || !orderItemId) {
+  if (!orderId) {
     ElMessage.error('缺少订单信息');
     router.back();
+    return;
   }
+  loadOrderDetail();
 });
 </script>
 
 <template>
-  <Page description="提交售后申请" title="申请售后">
+  <Page description="选择售后商品并提交申请" title="申请售后">
     <ElCard shadow="never">
       <ElButton @click="goBack">返回</ElButton>
     </ElCard>
 
-    <ElCard class="mt-4" shadow="never">
-      <ElForm label-width="100px">
-        <ElFormItem label="订单编号">
-          <span class="text-gray-600">#{{ orderId }}</span>
-        </ElFormItem>
+    <ElCard v-if="order" class="mt-4" shadow="never">
+      <div class="order-info">
+        <span class="text-gray-500">订单编号：</span>
+        <span class="font-medium">{{ order.orderNo }}</span>
+      </div>
+    </ElCard>
 
+    <ElCard v-loading="loading" class="mt-4" shadow="never">
+      <template #header>
+        <div class="flex items-center justify-between">
+          <span class="font-medium">选择售后商品（可多选）</span>
+          <ElTag v-if="selectedCount > 0" type="primary" size="small">
+            已选 {{ selectedCount }} 件商品
+          </ElTag>
+        </div>
+      </template>
+
+      <ElEmpty
+        v-if="!loading && (!order?.items || order.items.length === 0)"
+        description="暂无商品"
+      />
+
+      <div v-if="order?.items?.length" class="item-list">
+        <div
+          v-for="item in order.items"
+          :key="item.id"
+          class="item-card"
+          :class="{ 'item-card--selected': isItemSelected(item.id) }"
+        >
+          <ElCheckbox
+            :model-value="isItemSelected(item.id)"
+            class="item-checkbox"
+            @change="toggleItem(item.id)"
+          />
+
+          <div class="item-image" @click="toggleItem(item.id)">
+            <img
+              v-if="item.productImage"
+              :src="normalizeFileUrl(item.productImage)"
+              alt=""
+            />
+            <span v-else class="item-image-placeholder">图</span>
+          </div>
+
+          <div class="item-info" @click="toggleItem(item.id)">
+            <div class="item-name">{{ item.productName }}</div>
+            <div class="item-meta">
+              <span class="text-gray-500">数量：{{ item.quantity }}</span>
+              <span class="text-gray-500">单价：¥{{ item.price?.toFixed(2) }}</span>
+              <span class="text-gray-500">小计：¥{{ item.totalPrice?.toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <div v-if="isItemSelected(item.id)" class="item-qty" @click.stop>
+            <span class="text-sm text-gray-500 mr-2">售后数量</span>
+            <ElInputNumber
+              v-model="selectedItems[item.id]"
+              :min="1"
+              :max="item.quantity"
+              :step="1"
+              size="small"
+              style="width: 120px"
+            />
+          </div>
+        </div>
+      </div>
+    </ElCard>
+
+    <ElCard v-if="selectedCount > 0" class="mt-4" shadow="never">
+      <template #header>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-medium">售后信息</span>
+          <ElTag
+            v-for="d in selectedDetails"
+            :key="d.item.id"
+            type="info"
+            size="small"
+          >
+            {{ d.item.productName }} × {{ d.quantity }}
+          </ElTag>
+        </div>
+      </template>
+
+      <ElForm label-width="100px">
         <ElFormItem label="售后类型" required>
           <ElSelect v-model="form.type" placeholder="请选择售后类型">
             <ElOption
-              v-for="item in refundTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="t in refundTypes"
+              :key="t.value"
+              :label="t.label"
+              :value="t.value"
             />
           </ElSelect>
-          <span v-if="form.type === 2" class="text-gray-500 text-sm">
+          <span v-if="form.type === 2" class="text-gray-500 text-sm ml-2">
             换货无需退款，审核通过后将为您补发商品
           </span>
-          <span v-else-if="form.type !== null" class="text-gray-500 text-sm">
-            退款金额将按订单实付金额自动计算
+          <span v-else-if="form.type !== null" class="text-gray-500 text-sm ml-2">
+            退款金额将按退款商品金额自动计算
           </span>
-        </ElFormItem>
-
-        <ElFormItem label="售后数量" required>
-          <ElInputNumber v-model="form.quantity" :min="1" :step="1" />
         </ElFormItem>
 
         <ElFormItem label="售后原因" required>
@@ -207,7 +360,6 @@ onMounted(() => {
             :http-request="uploadFile"
             :on-remove="handleUploadRemove"
             :on-success="handleUploadSuccess"
-            :file-list="uploadedFiles"
             multiple
           >
             <ElButton type="primary">上传凭证</ElButton>
@@ -226,3 +378,91 @@ onMounted(() => {
     </ElCard>
   </Page>
 </template>
+
+<style scoped>
+.order-info {
+  font-size: 15px;
+}
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border: 2px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.item-card:hover {
+  border-color: var(--el-color-primary-light-3);
+}
+
+.item-card--selected {
+  border-color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+}
+
+.item-checkbox {
+  flex-shrink: 0;
+}
+
+.item-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: var(--el-fill-color-lighter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-image-placeholder {
+  font-size: 14px;
+  color: var(--el-text-color-placeholder);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--el-text-color-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.item-qty {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+</style>
