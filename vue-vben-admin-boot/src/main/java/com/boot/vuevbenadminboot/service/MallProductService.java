@@ -17,7 +17,7 @@ public interface MallProductService extends IService<MallProduct> {
 
     ProductListItemDto getProductDetail(Long id);
 
-    Long createProduct(ProductSaveRequest req);
+    Long createProduct(ProductSaveRequest req, String userName);
 
     boolean updateProduct(ProductSaveRequest req);
 

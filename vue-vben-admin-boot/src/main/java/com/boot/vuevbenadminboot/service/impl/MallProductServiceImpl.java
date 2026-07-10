@@ -17,6 +17,7 @@ import com.boot.vuevbenadminboot.service.MallProductCategoryRelService;
 import com.boot.vuevbenadminboot.service.MallProductService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
+import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.resp.ProductListItemDto;
 import com.boot.vuevbenadminboot.web.dto.req.ProductSaveRequest;
 import com.boot.vuevbenadminboot.web.dto.ProductSkuDto;
@@ -51,6 +52,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     private final MallFileService mallFileService;
     private final MallSkuService mallSkuService;
     private final MallResourceRelService resourceRelService;
+    private final SysUserService sysUserService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallProductServiceImpl(
@@ -58,12 +60,14 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             MallProductCategoryMapper productCategoryMapper,
             MallFileService mallFileService,
             MallSkuService mallSkuService,
-            MallResourceRelService resourceRelService) {
+            MallResourceRelService resourceRelService,
+            SysUserService sysUserService) {
         this.productCategoryRelService = productCategoryRelService;
         this.productCategoryMapper = productCategoryMapper;
         this.mallFileService = mallFileService;
         this.mallSkuService = mallSkuService;
         this.resourceRelService = resourceRelService;
+        this.sysUserService = sysUserService;
     }
 
     @Override
@@ -133,12 +137,14 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long createProduct(ProductSaveRequest req) {
+    public Long createProduct(ProductSaveRequest req, String userName) {
         validateRequest(req, false);
+        Long userId = sysUserService.requireUserId(userName);
         MallProduct product = new MallProduct();
         product.setName(req.getName().trim());
         product.setDescription(req.getDescription());
         product.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
+        product.setCreateUser(userId);
         product.setDeleted(0);
         product.setCreateTime(new Date());
         product.setUpdateTime(new Date());

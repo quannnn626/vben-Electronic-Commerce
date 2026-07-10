@@ -42,9 +42,10 @@ public class ProductController {
 
     @PostMapping
     public Map<String, Object> create(@RequestBody ProductSaveRequest req, HttpServletRequest request) {
-        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
+        String username = getLoginUsername(request);
+        if (username == null) return ApiResponse.of(-1, null, "未登录");
         try {
-            return ApiResponse.of(0, productService.createProduct(req), "success");
+            return ApiResponse.of(0, productService.createProduct(req, username), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
