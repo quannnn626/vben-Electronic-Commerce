@@ -7,7 +7,7 @@
     "forgetPassword": "Forget Password",
     "profile": "Profile",
     "myOrderList" : "MyOrder",
-    "orderPayment": "Payment"
+    "orderDetail": "Order Detail"
   },
   "dashboard": {
     "title": "Dashboard",

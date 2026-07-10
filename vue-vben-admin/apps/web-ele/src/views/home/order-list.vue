@@ -202,13 +202,12 @@ const tableData = computed(() => {
 const router = useRouter();
 const actionLoading = ref<Record<string, boolean>>({});
 
-function goToPayment(row: OrderItem) {
-  if (row.status !== 'pending') return;
+function goToOrderDetail(row: OrderItem) {
   router.push({ name: 'OrderPayment', query: { orderId: row.id } });
 }
 
 function handlePay(row: OrderItem) {
-  goToPayment(row);
+  goToOrderDetail(row);
 }
 
 async function handleCancel(row: OrderItem) {
@@ -267,8 +266,7 @@ function handleAfterSale(row: OrderItem) {
 }
 
 function handleViewDetail(row: OrderItem) {
-  const backendId = Number(row.id);
-  router.push({ path: '/product/detail', params: { id: backendId } });
+  router.push({ name: 'OrderPayment', query: { orderId: row.id } });
 }
 
 onMounted(() => {
@@ -358,7 +356,7 @@ onMounted(() => {
 
           <!-- 订单商品 -->
           <div class="order-body">
-            <div class="goods-image-box" @click="goToPayment(item)">
+            <div class="goods-image-box" @click="goToOrderDetail(item)">
               <img
                 v-if="item.goodsImage"
                 :src="item.goodsImage"
@@ -368,7 +366,7 @@ onMounted(() => {
               <span v-else class="goods-image-placeholder">图</span>
             </div>
             <div class="goods-info">
-              <div class="goods-name" @click="goToPayment(item)">{{ item.goodsName }}</div>
+              <div class="goods-name" @click="goToOrderDetail(item)">{{ item.goodsName }}</div>
               <div class="goods-qty">共 {{ item.goodsCount }} 件</div>
             </div>
             <div class="goods-amount">
@@ -429,7 +427,7 @@ onMounted(() => {
               </ElButton>
               <ElButton
                 v-if="
-                  ['completed', 'paid', 'cancelled'].includes(item.status)
+                  ['completed', 'paid', 'cancelled', 'shipped'].includes(item.status)
                 "
                 @click="handleViewDetail(item)"
               >

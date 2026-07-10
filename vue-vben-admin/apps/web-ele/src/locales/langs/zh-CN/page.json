@@ -7,7 +7,7 @@
     "forgetPassword": "忘记密码",
     "profile": "个人中心",
     "myOrderList" : "我的订单",
-    "orderPayment": "订单支付"
+    "orderDetail": "订单详情"
   },
   "dashboard": {
     "title": "概览",

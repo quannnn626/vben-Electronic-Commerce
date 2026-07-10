@@ -76,7 +76,6 @@ async function loadOrderDetail() {
     });
     order.value = data;
     if (data.status !== 0) {
-      ElMessage.warning('订单已支付或已取消，无需重复支付');
       canPay.value = false;
     } else {
       canPay.value = true;
@@ -123,7 +122,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Page description="确认支付信息并完成付款" title="订单支付">
+  <Page description="查看订单详细信息" title="订单详情">
     <div v-if="!route.query.orderId" class="flex items-center justify-center py-20">
       <ElEmpty description="缺少订单参数" />
     </div>
@@ -162,8 +161,8 @@ onMounted(() => {
           <ElEmpty v-else description="暂无商品信息" />
         </ElCard>
 
-        <!-- 支付方式 -->
-        <ElCard class="mt-4" shadow="never">
+        <!-- 支付方式（仅未支付时显示） -->
+        <ElCard v-if="canPay" class="mt-4" shadow="never">
           <template #header>
             <span class="section-title">
               <span class="step-num">2</span> 支付方式

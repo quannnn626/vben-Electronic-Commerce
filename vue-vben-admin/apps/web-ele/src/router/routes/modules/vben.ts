@@ -219,7 +219,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       icon: 'lucide:credit-card',
       hideInMenu: true,
-      title: $t('page.auth.orderPayment'),
+      title: $t('page.auth.orderDetail'),
     },
   },
   {
