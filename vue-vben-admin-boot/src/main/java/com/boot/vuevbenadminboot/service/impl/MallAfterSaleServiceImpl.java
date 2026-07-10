@@ -65,6 +65,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MallAfterSale createAfterSale(AfterSaleRequest request, String userName) {
+        // 校验
         Long userId = sysUserService.requireUserId(userName);
         MallOrder mallOrder = mallOrderService.getById(request.getOrderId());
         if (mallOrder == null) {
@@ -88,13 +89,15 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (reasonEnum == null) {
             throw new IllegalArgumentException("售后原因无效");
         }
-        // 智能计算退款金额：仅退款/退货退款 = 订单实付金额，换货 = 0
+        // 智能计算退款金额
         BigDecimal refundAmount;
         if (typeEnum == AfterSaleTypeEnum.EXCHANGE) {
             refundAmount = BigDecimal.ZERO;
         } else {
             refundAmount = mallOrder.getPayAmount() != null ? mallOrder.getPayAmount() : BigDecimal.ZERO;
         }
+
+        // 查询订单商品并校验
         MallOrderItem mallOrderItem = mallOrderItemMapper.selectOne(
                 new LambdaQueryWrapper<MallOrderItem>()
                         .eq(MallOrderItem::getOrderId, request.getOrderId())
@@ -103,7 +106,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (mallOrderItem == null) {
             throw new IllegalArgumentException("该订单商品不存在");
         }
-        // 校验退货数量
+
+        // 校验售后数量
         Integer quantity = request.getQuantity();
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("售后数量必须大于0");
@@ -142,7 +146,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         afterSale.setDeleted(0);
         this.save(afterSale);
 
-        // 写入凭证附件关联
+        // 关联凭证附件
         List<Long> fileIds = request.getFileIds();
         if (fileIds != null && !fileIds.isEmpty()) {
             resourceRelService.attachBatch("after_sale", afterSale.getId(), fileIds, "proof");
@@ -152,6 +156,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
 
     @Override
     public AfterSaleDetailDto getAfterSaleDetail(Long id, String userName) {
+        // 校验
         Long userId = sysUserService.requireUserId(userName);
         MallAfterSale as = this.getById(id);
         if (as == null || !as.getUserId().equals(userId) || as.getDeleted() == 1) {
@@ -164,9 +169,12 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                         .eq(MallOrderItem::getDeleted, 0)
         );
 
+        // 组装售后详情
         AfterSaleDetailDto dto = new AfterSaleDetailDto();
         dto.setId(as.getId());
         dto.setAfterSaleNo(as.getAfterSaleNo());
+        dto.setOrderId(as.getOrderId());
+        dto.setOrderItemId(as.getOrderItemId());
         dto.setType(as.getType());
         dto.setQuantity(as.getQuantity());
         dto.setStatus(as.getStatus());
@@ -177,6 +185,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         dto.setApplyTime(as.getCreateTime());
         dto.setAuditTime(as.getAuditTime());
 
+        // 填充订单信息
         if (order != null) {
             dto.setOrderNo(order.getOrderNo());
             dto.setUserId(order.getUserId());
@@ -185,6 +194,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             dto.setReceiverPhone(order.getReceiverPhone());
             dto.setReceiverAddress(order.getReceiverAddress());
 
+            // 转换订单商品列表
             List<com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto> itemDtos = new ArrayList<>();
             for (MallOrderItem item : items) {
                 com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto itemDto = new com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto();
@@ -204,6 +214,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
 
     @Override
     public List<AfterSaleDetailDto> listAfterSales(String userName) {
+        // 校验
         Long userId = sysUserService.requireUserId(userName);
         List<MallAfterSale> afterSales = this.list(
                 new LambdaQueryWrapper<MallAfterSale>()
@@ -214,10 +225,13 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (afterSales.isEmpty()) {
             return List.of();
         }
+
+        // 批量查询关联订单构建 orderId -> MallOrder 映射
         List<Long> orderIds = afterSales.stream().map(MallAfterSale::getOrderId).distinct().toList();
         Map<Long, MallOrder> orderMap = mallOrderService.listByIds(orderIds).stream()
                 .collect(Collectors.toMap(MallOrder::getId, o -> o, (a, b) -> a));
 
+        // 批量查询关联订单商品，构建 orderId -> List<MallOrderItem> 映射
         Map<Long, List<MallOrderItem>> itemMap = new LinkedHashMap<>();
         for (Long orderId : orderIds) {
             List<MallOrderItem> items = mallOrderItemService.list(
@@ -228,11 +242,14 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             itemMap.put(orderId, items);
         }
 
+        // 逐条组装售后列表DTO
         List<AfterSaleDetailDto> result = new ArrayList<>();
         for (MallAfterSale as : afterSales) {
             AfterSaleDetailDto dto = new AfterSaleDetailDto();
             dto.setId(as.getId());
             dto.setAfterSaleNo(as.getAfterSaleNo());
+            dto.setOrderId(as.getOrderId());
+            dto.setOrderItemId(as.getOrderItemId());
             dto.setType(as.getType());
             dto.setQuantity(as.getQuantity());
             dto.setStatus(as.getStatus());
@@ -243,6 +260,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             dto.setApplyTime(as.getCreateTime());
             dto.setAuditTime(as.getAuditTime());
 
+            // 填充订单信息
             MallOrder order = orderMap.get(as.getOrderId());
             if (order != null) {
                 dto.setOrderNo(order.getOrderNo());
@@ -252,6 +270,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setReceiverPhone(order.getReceiverPhone());
                 dto.setReceiverAddress(order.getReceiverAddress());
 
+                // 转换订单商品列表
                 List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
                 List<OrderItemDto> itemDtos = new ArrayList<>();
                 for (MallOrderItem item : items) {
@@ -272,13 +291,12 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         return result;
     }
 
+    /**
+     * 生成售后单号：AS + 年月日时分秒 + 6位随机数
+     */
     private String generateAfterSaleNo() {
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         int rand = ThreadLocalRandom.current().nextInt(100_000, 999_999);
         return "AS" + now + rand;
     }
 }
-
-
-
-

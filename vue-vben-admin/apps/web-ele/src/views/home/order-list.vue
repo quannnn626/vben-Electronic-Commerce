@@ -110,6 +110,8 @@ function transformOrder(backend: BackendOrder): OrderItem {
 interface AfterSaleItem {
   id: string;
   afterSaleNo: string;
+  orderId: string;
+  orderItemId: string;
   type: number;
   status: number;
   reason: number;
@@ -121,6 +123,20 @@ interface AfterSaleItem {
 
 const orders = ref<OrderItem[]>([]);
 const afterSales = ref<AfterSaleItem[]>([]);
+
+// 活跃售后状态：申请中0、审核中1、已通过2、退款中4（与后端createAfterSale校验逻辑一致）
+const ACTIVE_AFTER_SALE_STATUSES = new Set([0, 1, 2, 4]);
+
+// 已存在活跃售后申请的 orderItemId 集合
+const activeAfterSaleOrderItemIds = computed(() => {
+  const ids = new Set<string>();
+  for (const item of afterSales.value) {
+    if (item.orderItemId && ACTIVE_AFTER_SALE_STATUSES.has(item.status)) {
+      ids.add(String(item.orderItemId));
+    }
+  }
+  return ids;
+});
 
 async function loadAfterSales() {
   loading.value = true;
@@ -261,6 +277,7 @@ function handleViewDetail(row: OrderItem) {
 
 onMounted(() => {
   loadOrders();
+  loadAfterSales();
 });
 </script>
 
@@ -408,13 +425,7 @@ onMounted(() => {
                 确认收货
               </ElButton>
               <ElButton
-                v-if="(item.status === 'shipped' || item.status === 'completed') && item.orderItemId"
-                @click="handleAfterSale(item)"
-              >
-                申请售后
-              </ElButton>
-              <ElButton
-                v-if="['paid', 'shipped', 'completed'].includes(item.status)"
+                v-if="['paid', 'shipped', 'completed'].includes(item.status) && item.orderItemId && !activeAfterSaleOrderItemIds.has(String(item.orderItemId))"
                 type="warning"
                 @click="handleAfterSale(item)"
               >

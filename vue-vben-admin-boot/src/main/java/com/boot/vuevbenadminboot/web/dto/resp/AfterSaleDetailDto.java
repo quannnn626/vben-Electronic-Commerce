@@ -14,6 +14,8 @@ public class AfterSaleDetailDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
     private String afterSaleNo;
+    private Long orderId;
+    private Long orderItemId;
     private Integer type;
     private Integer quantity;
     private Integer reason;
