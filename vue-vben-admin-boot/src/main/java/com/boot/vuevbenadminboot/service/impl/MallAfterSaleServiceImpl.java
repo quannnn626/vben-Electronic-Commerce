@@ -16,6 +16,7 @@ import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
+import com.boot.vuevbenadminboot.web.dto.req.AfterSaleItemRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
 import com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto;
@@ -97,61 +98,71 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             refundAmount = mallOrder.getPayAmount() != null ? mallOrder.getPayAmount() : BigDecimal.ZERO;
         }
 
-        // 查询订单商品并校验
-        MallOrderItem mallOrderItem = mallOrderItemMapper.selectOne(
-                new LambdaQueryWrapper<MallOrderItem>()
-                        .eq(MallOrderItem::getOrderId, request.getOrderId())
-                        .eq(MallOrderItem::getId, request.getOrderItemId())
-        );
-        if (mallOrderItem == null) {
-            throw new IllegalArgumentException("该订单商品不存在");
+        // 校验商品列表
+        List<AfterSaleItemRequest> items = request.getItems();
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("请选择售后商品");
         }
 
-        // 校验售后数量
-        Integer quantity = request.getQuantity();
-        if (quantity == null || quantity <= 0) {
-            throw new IllegalArgumentException("售后数量必须大于0");
-        }
-        if (quantity > mallOrderItem.getQuantity()) {
-            throw new IllegalArgumentException("售后数量不能超过购买数量");
-        }
-        // 累加已申请数量，防止超退
-        List<MallAfterSale> activeSales = mallAfterSaleMapper.selectList(
-                new LambdaQueryWrapper<MallAfterSale>()
-                        .eq(MallAfterSale::getOrderItemId, request.getOrderItemId())
-                        .in(MallAfterSale::getStatus,
-                                AfterSaleStatusEnum.APPLYING.getCode(),
-                                AfterSaleStatusEnum.APPROVING.getCode(),
-                                AfterSaleStatusEnum.APPROVED.getCode(),
-                                AfterSaleStatusEnum.REFUNDED.getCode()
-                        )
-        );
-        int total = activeSales.stream().mapToInt(s -> s.getQuantity() != null ? s.getQuantity() : 0).sum();
-        if (total + quantity > mallOrderItem.getQuantity()) {
-            throw new IllegalArgumentException("累计售后数量超过购买数量");
-        }
-        MallAfterSale afterSale = new MallAfterSale();
-        afterSale.setAfterSaleNo(generateAfterSaleNo());
-        afterSale.setOrderId(request.getOrderId());
-        afterSale.setOrderItemId(request.getOrderItemId());
-        afterSale.setQuantity(quantity);
-        afterSale.setUserId(userId);
-        afterSale.setType(request.getType());
-        afterSale.setReason(request.getReason());
-        afterSale.setDescription(request.getDescription());
-        afterSale.setRefundAmount(refundAmount);
-        afterSale.setStatus(AfterSaleStatusEnum.APPLYING.getCode());
-        afterSale.setCreateTime(new Date());
-        afterSale.setUpdateTime(new Date());
-        afterSale.setDeleted(0);
-        this.save(afterSale);
+        MallAfterSale first = null;
+        for (AfterSaleItemRequest reqItem : items) {
+            MallOrderItem orderItem = mallOrderItemMapper.selectOne(
+                    new LambdaQueryWrapper<MallOrderItem>()
+                            .eq(MallOrderItem::getOrderId, request.getOrderId())
+                            .eq(MallOrderItem::getId, reqItem.getOrderItemId())
+            );
+            if (orderItem == null) {
+                throw new IllegalArgumentException("商品不存在");
+            }
+            Integer qty = reqItem.getQuantity();
+            if (qty == null || qty <= 0) {
+                throw new IllegalArgumentException("售后数量必须大于0");
+            }
+            if (qty > orderItem.getQuantity()) {
+                throw new IllegalArgumentException("售后数量不能超过购买数量");
+            }
+            // 累加校验
+            List<MallAfterSale> activeSales = mallAfterSaleMapper.selectList(
+                    new LambdaQueryWrapper<MallAfterSale>()
+                            .eq(MallAfterSale::getOrderItemId, reqItem.getOrderItemId())
+                            .in(MallAfterSale::getStatus,
+                                    AfterSaleStatusEnum.APPLYING.getCode(),
+                                    AfterSaleStatusEnum.APPROVING.getCode(),
+                                    AfterSaleStatusEnum.APPROVED.getCode(),
+                                    AfterSaleStatusEnum.REFUNDED.getCode()
+                            )
+            );
+            int total = activeSales.stream().mapToInt(s -> s.getQuantity() != null ? s.getQuantity() : 0).sum();
+            if (total + qty > orderItem.getQuantity()) {
+                throw new IllegalArgumentException("累计售后数量超过购买数量");
+            }
 
-        // 关联凭证附件
-        List<Long> fileIds = request.getFileIds();
-        if (fileIds != null && !fileIds.isEmpty()) {
-            resourceRelService.attachBatch("after_sale", afterSale.getId(), fileIds, "proof");
+            MallAfterSale afterSale = new MallAfterSale();
+            afterSale.setAfterSaleNo(generateAfterSaleNo());
+            afterSale.setOrderId(request.getOrderId());
+            afterSale.setOrderItemId(reqItem.getOrderItemId());
+            afterSale.setQuantity(qty);
+            afterSale.setUserId(userId);
+            afterSale.setType(request.getType());
+            afterSale.setReason(request.getReason());
+            afterSale.setDescription(request.getDescription());
+            afterSale.setRefundAmount(refundAmount);
+            afterSale.setStatus(AfterSaleStatusEnum.APPLYING.getCode());
+            afterSale.setCreateTime(new Date());
+            afterSale.setUpdateTime(new Date());
+            afterSale.setDeleted(0);
+            this.save(afterSale);
+
+            // 凭证附件仅关联第一条
+            List<Long> fileIds = request.getFileIds();
+            if (first == null && fileIds != null && !fileIds.isEmpty()) {
+                resourceRelService.attachBatch("after_sale", afterSale.getId(), fileIds, "proof");
+            }
+            if (first == null) {
+                first = afterSale;
+            }
         }
-        return afterSale;
+        return first;
     }
 
     @Override

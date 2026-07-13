@@ -13,6 +13,7 @@ public class AfterSaleRequest {
     private Integer reason;
     private String description;
     private Integer quantity;
+    private List<AfterSaleItemRequest> items;
     private BigDecimal refundAmount;
     private List<Long> fileIds;
 }
