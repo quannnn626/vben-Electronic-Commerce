@@ -2,8 +2,11 @@ package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
+import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
+import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +24,11 @@ import java.util.Map;
 @RequestMapping("/mall/afterSale")
 public class MallAfterSaleController {
     private final MallAfterSaleService mallAfterSaleService;
+    private final SysUserService sysUserService;
 
-    public MallAfterSaleController(MallAfterSaleService mallAfterSaleService) {
+    public MallAfterSaleController(MallAfterSaleService mallAfterSaleService, SysUserService sysUserService) {
         this.mallAfterSaleService = mallAfterSaleService;
+        this.sysUserService = sysUserService;
     }
 
     @PostMapping("/create")
@@ -64,6 +69,24 @@ public class MallAfterSaleController {
         }
         try {
             List<AfterSaleDetailDto> list = mallAfterSaleService.listAfterSales(username);
+            return ApiResponse.of(0, list, "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @GetMapping("/admin/list")
+    public Map<String, Object> adminList(HttpServletRequest request) {
+        String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        SysUser user = sysUserService.selectByUsername(username);
+        if (user == null || !"super".equals(user.getRole())) {
+            return ApiResponse.of(-1, null, "无权限");
+        }
+        try {
+            List<AfterSaleAdminListDto> list = mallAfterSaleService.listAfterSalesAdmin();
             return ApiResponse.of(0, list, "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());

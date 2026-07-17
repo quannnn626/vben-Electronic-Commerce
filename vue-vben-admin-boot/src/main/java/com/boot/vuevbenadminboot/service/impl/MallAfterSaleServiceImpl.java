@@ -18,6 +18,7 @@ import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleItemRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
+import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
 import com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto;
 import org.springframework.stereotype.Service;
@@ -282,6 +283,73 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setReceiverAddress(order.getReceiverAddress());
 
                 // 转换订单商品列表
+                List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
+                List<OrderItemDto> itemDtos = new ArrayList<>();
+                for (MallOrderItem item : items) {
+                    OrderItemDto itemDto = new OrderItemDto();
+                    itemDto.setId(item.getId());
+                    itemDto.setSkuId(item.getSkuId());
+                    itemDto.setProductName(item.getProductName());
+                    itemDto.setProductImage(item.getProductImage());
+                    itemDto.setPrice(item.getPrice());
+                    itemDto.setQuantity(item.getQuantity());
+                    itemDto.setTotalPrice(item.getTotalPrice());
+                    itemDtos.add(itemDto);
+                }
+                dto.setItems(itemDtos);
+            }
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    public List<AfterSaleAdminListDto> listAfterSalesAdmin() {
+        List<MallAfterSale> afterSales = this.list(
+                new LambdaQueryWrapper<MallAfterSale>()
+                        .eq(MallAfterSale::getDeleted, 0)
+                        .orderByDesc(MallAfterSale::getId)
+        );
+        if (afterSales.isEmpty()) {
+            return List.of();
+        }
+        // 查关联订单
+        List<Long> orderIds = afterSales.stream().map(MallAfterSale::getOrderId).distinct().toList();
+        Map<Long, MallOrder> orderMap = mallOrderService.listByIds(orderIds).stream()
+                .collect(Collectors.toMap(MallOrder::getId, o -> o, (a, b) -> a));
+        // 查用户名
+        List<Long> userIds = afterSales.stream().map(MallAfterSale::getUserId).distinct().toList();
+        Map<Long, String> usernameMap = sysUserService.listByIds(userIds).stream()
+                .collect(Collectors.toMap(
+                        u -> u.getId(),
+                        u -> u.getNickname() != null && !u.getNickname().isBlank() ? u.getNickname() : u.getUsername(),
+                        (a, b) -> a));
+        // 查订单商品
+        Map<Long, List<MallOrderItem>> itemMap = new LinkedHashMap<>();
+        for (Long orderId : orderIds) {
+            List<MallOrderItem> items = mallOrderItemService.list(
+                    new LambdaQueryWrapper<MallOrderItem>()
+                            .eq(MallOrderItem::getOrderId, orderId)
+                            .eq(MallOrderItem::getDeleted, 0)
+            );
+            itemMap.put(orderId, items);
+        }
+
+        List<AfterSaleAdminListDto> result = new ArrayList<>();
+        for (MallAfterSale as : afterSales) {
+            AfterSaleAdminListDto dto = new AfterSaleAdminListDto();
+            dto.setId(as.getId());
+            dto.setAfterSaleNo(as.getAfterSaleNo());
+            dto.setType(as.getType());
+            dto.setStatus(as.getStatus());
+            dto.setRefundAmount(as.getRefundAmount());
+            dto.setCreateTime(as.getCreateTime());
+
+            MallOrder order = orderMap.get(as.getOrderId());
+            if (order != null) {
+                dto.setOrderNo(order.getOrderNo());
+                dto.setUsername(usernameMap.getOrDefault(as.getUserId(), "-"));
+
                 List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
                 List<OrderItemDto> itemDtos = new ArrayList<>();
                 for (MallOrderItem item : items) {
