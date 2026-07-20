@@ -58,9 +58,16 @@ const loading = ref(false);
 const submitting = ref(false);
 const order = ref<OrderDetail | null>(null);
 const tempFileIds = ref<number[]>([]);
+// 已申请数量
+const claimedMap = ref<Record<number, number>>({});
 
 // 已选商品 key=orderItemId, value=售后数量
 const selectedItems = reactive<Record<number, number>>({});
+
+// 每个订单项还可申请的数量
+function availableQty(item: OrderItemDto): number {
+  return Math.max(0, item.quantity - (claimedMap.value[item.id] ?? 0));
+}
 
 const selectedDetails = computed(() =>
   Object.entries(selectedItems)
@@ -109,10 +116,19 @@ function normalizeFileUrl(rawPath?: string) {
 async function loadOrderDetail() {
   loading.value = true;
   try {
-    const data = await requestClient.get<OrderDetail>('/mall/order/detail', {
-      params: { orderId },
-    });
-    order.value = data;
+    const [orderData, afterSales] = await Promise.all([
+      requestClient.get<OrderDetail>('/mall/order/detail', { params: { orderId } }),
+      requestClient.get<any[]>('/mall/afterSale/list').catch(() => [] as any[]),
+    ]);
+    order.value = orderData;
+    // 计算每个订单项已申请数量
+    const map: Record<number, number> = {};
+    for (const as of (Array.isArray(afterSales) ? afterSales : [])) {
+      if (as.orderId === orderId && (as.status === 0 || as.status === 1 || as.status === 2)) {
+        map[as.orderItemId] = (map[as.orderItemId] ?? 0) + (as.quantity ?? 0);
+      }
+    }
+    claimedMap.value = map;
   } catch (e: any) {
     ElMessage.error(e?.message ?? '加载订单失败');
   } finally {
@@ -152,8 +168,9 @@ function validateForm(): boolean {
       ElMessage.warning(`"${d.item.productName}" 售后数量必须大于0`);
       return false;
     }
-    if (d.quantity > d.item.quantity) {
-      ElMessage.warning(`"${d.item.productName}" 售后数量不能超过购买数量`);
+    const max = availableQty(d.item);
+    if (d.quantity > max) {
+      ElMessage.warning(`"${d.item.productName}" 最多可申请 ${max} 件`);
       return false;
     }
   }
@@ -263,6 +280,7 @@ onMounted(() => {
         >
           <ElCheckbox
             :model-value="isItemSelected(item.id)"
+            :disabled="availableQty(item) <= 0"
             class="item-checkbox"
             @change="toggleItem(item.id)"
           />
@@ -276,12 +294,13 @@ onMounted(() => {
             <span v-else class="item-image-placeholder">图</span>
           </div>
 
-          <div class="item-info" @click="toggleItem(item.id)">
+          <div class="item-info" @click="availableQty(item) > 0 ? toggleItem(item.id) : undefined">
             <div class="item-name">{{ item.productName }}</div>
             <div class="item-meta">
-              <span class="text-gray-500">数量：{{ item.quantity }}</span>
+              <span class="text-gray-500">购买：{{ item.quantity }} 件</span>
+              <span v-if="claimedMap[item.id]" class="text-orange-500">已申请：{{ claimedMap[item.id] }} 件</span>
+              <span v-if="availableQty(item) <= 0" class="text-red-500">不可申请</span>
               <span class="text-gray-500">单价：¥{{ item.price?.toFixed(2) }}</span>
-              <span class="text-gray-500">小计：¥{{ item.totalPrice?.toFixed(2) }}</span>
             </div>
           </div>
 
@@ -290,11 +309,14 @@ onMounted(() => {
             <ElInputNumber
               v-model="selectedItems[item.id]"
               :min="1"
-              :max="item.quantity"
+              :max="availableQty(item)"
               :step="1"
               size="small"
-              style="width: 120px"
+              style="width: 90px"
             />
+            <span class="text-xs text-gray-400 ml-1">
+              最多 {{ availableQty(item) }} 件
+            </span>
           </div>
         </div>
       </div>

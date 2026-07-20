@@ -419,7 +419,7 @@ onMounted(() => {
                 确认收货
               </ElButton>
               <ElButton
-                v-if="['paid', 'shipped', 'completed'].includes(item.status) && item.orderItemId && !activeAfterSaleOrderItemIds.has(String(item.orderItemId))"
+                v-if="['paid', 'shipped', 'completed'].includes(item.status) && item.orderItemId"
                 type="warning"
                 @click="handleAfterSale(item)"
               >
