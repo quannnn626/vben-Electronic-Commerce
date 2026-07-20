@@ -17,6 +17,7 @@ import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
+import com.boot.vuevbenadminboot.web.dto.req.AfterSaleBatchAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleItemRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
@@ -392,6 +393,29 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         as.setAuditRemark(request.getAuditRemark());
         as.setUpdateTime(new Date());
         this.updateById(as);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAudit(AfterSaleBatchAuditRequest request, String userName) {
+        Long userId = sysUserService.requireUserId(userName);
+        List<AfterSaleBatchAuditRequest.AuditItem> items = request.getItems();
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("请选择售后单");
+        }
+        for (AfterSaleBatchAuditRequest.AuditItem item : items) {
+            MallAfterSale as = this.getById(item.getId());
+            if (as == null || as.getDeleted() == 1) continue;
+            if (!as.getStatus().equals(AfterSaleStatusEnum.APPLYING.getCode())) continue;
+            AfterSaleStatusEnum target = AfterSaleStatusEnum.of(item.getStatus());
+            if (target != AfterSaleStatusEnum.APPROVED && target != AfterSaleStatusEnum.REJECTED) continue;
+            as.setStatus(target.getCode());
+            as.setAuditUser(userId);
+            as.setAuditTime(new Date());
+            as.setAuditRemark(item.getAuditRemark());
+            as.setUpdateTime(new Date());
+            this.updateById(as);
+        }
     }
 
     /**

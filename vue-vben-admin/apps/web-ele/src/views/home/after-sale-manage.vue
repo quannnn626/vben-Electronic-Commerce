@@ -7,11 +7,11 @@ import { Page } from '@vben/common-ui';
 import {
   ElButton,
   ElCard,
+  ElCheckbox,
   ElForm,
   ElFormItem,
   ElInput,
   ElMessage,
-  ElMessageBox,
   ElSelect,
   ElOption,
   ElSpace,
@@ -48,6 +48,44 @@ const loading = ref(false);
 const list = ref<AfterSaleItem[]>([]);
 const keyword = ref('');
 const statusFilter = ref<number | null>(null);
+const selectedIds = ref<Set<string>>(new Set());
+
+function toggleSelect(id: string) {
+  const s = new Set(selectedIds.value);
+  if (s.has(id)) { s.delete(id); } else { s.add(id); }
+  selectedIds.value = s;
+}
+
+function selectable(row: AfterSaleItem) {
+  return row.status === 0;
+}
+
+const selectableIds = computed(() =>
+  tableData.value.filter(selectable).map((r) => r.id),
+);
+
+const isAllSelected = computed(() =>
+  selectableIds.value.length > 0 && selectableIds.value.every((id) => selectedIds.value.has(id)),
+);
+
+function toggleAll() {
+  const s = new Set(selectedIds.value);
+  if (isAllSelected.value) {
+    for (const id of selectableIds.value) s.delete(id);
+  } else {
+    for (const id of selectableIds.value) s.add(id);
+  }
+  selectedIds.value = s;
+}
+
+function goBatchAudit() {
+  if (selectedIds.value.size === 0) {
+    ElMessage.warning('请选择售后单');
+    return;
+  }
+  const ids = Array.from(selectedIds.value);
+  router.push({ path: '/after-sale/batch-audit', query: { ids: ids.join(',') } });
+}
 
 const typeMap: Record<number, string> = { 0: '仅退款', 1: '退货退款', 2: '换货' };
 const statusMap: Record<number, { label: string; type: string }> = {
@@ -130,6 +168,7 @@ onMounted(() => { loadList(); });
           <ElSpace>
             <ElButton type="primary" @click="loadList">查询</ElButton>
             <ElButton @click="keyword = ''; statusFilter = null">重置</ElButton>
+            <ElButton type="warning" @click="goBatchAudit">批量审核</ElButton>
           </ElSpace>
         </ElFormItem>
       </ElForm>
@@ -137,6 +176,22 @@ onMounted(() => { loadList(); });
 
     <ElCard class="mt-4" shadow="never">
       <ElTable :data="tableData" border row-key="id" v-loading="loading">
+        <ElTable.TableColumn width="55" align="center">
+          <template #header>
+            <ElCheckbox
+              :model-value="isAllSelected"
+              :indeterminate="selectedIds.size > 0 && !isAllSelected"
+              @change="toggleAll"
+            />
+          </template>
+          <template #default="{ row }">
+            <ElCheckbox
+              v-if="selectable(row)"
+              :model-value="selectedIds.has(row.id)"
+              @change="toggleSelect(row.id)"
+            />
+          </template>
+        </ElTable.TableColumn>
         <ElTable.TableColumn label="售后单号" min-width="200" prop="afterSaleNo" />
         <ElTable.TableColumn label="订单号" min-width="180" prop="orderNo" />
         <ElTable.TableColumn label="用户名" min-width="100" prop="username" />

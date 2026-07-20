@@ -3,6 +3,7 @@ package com.boot.vuevbenadminboot.service;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
+import com.boot.vuevbenadminboot.web.dto.req.AfterSaleBatchAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
@@ -24,4 +25,6 @@ public interface MallAfterSaleService extends IService<MallAfterSale> {
     List<AfterSaleAdminListDto> listAfterSalesAdmin();
 
     void audit(AfterSaleAuditRequest request, String userName);
+
+    void batchAudit(AfterSaleBatchAuditRequest request, String userName);
 }
