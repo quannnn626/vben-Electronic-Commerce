@@ -16,6 +16,7 @@ import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
+import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleItemRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
@@ -368,6 +369,29 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             result.add(dto);
         }
         return result;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void audit(AfterSaleAuditRequest request, String userName) {
+        Long userId = sysUserService.requireUserId(userName);
+        MallAfterSale as = this.getById(request.getId());
+        if (as == null || as.getDeleted() == 1) {
+            throw new IllegalArgumentException("售后单不存在");
+        }
+        if (!as.getStatus().equals(AfterSaleStatusEnum.APPLYING.getCode())) {
+            throw new IllegalArgumentException("当前状态不可审核");
+        }
+        AfterSaleStatusEnum targetStatus = AfterSaleStatusEnum.of(request.getStatus());
+        if (targetStatus != AfterSaleStatusEnum.APPROVED && targetStatus != AfterSaleStatusEnum.REJECTED) {
+            throw new IllegalArgumentException("审核状态无效");
+        }
+        as.setStatus(targetStatus.getCode());
+        as.setAuditUser(userId);
+        as.setAuditTime(new Date());
+        as.setAuditRemark(request.getAuditRemark());
+        as.setUpdateTime(new Date());
+        this.updateById(as);
     }
 
     /**

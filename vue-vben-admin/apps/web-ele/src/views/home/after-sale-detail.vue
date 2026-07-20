@@ -8,6 +8,9 @@ import {
   ElButton,
   ElCard,
   ElImage,
+  ElInput,
+  ElMessage,
+  ElMessageBox,
   ElTag,
 } from 'element-plus';
 
@@ -83,6 +86,27 @@ async function loadDetail() {
   }
 }
 
+const auditLoading = ref(false);
+const auditRemark = ref('');
+
+async function handleAudit(status: number) {
+  auditLoading.value = true;
+  try {
+    await requestClient.post('/mall/afterSale/audit', {
+      id: detail.value?.id,
+      status,
+      auditRemark: auditRemark.value,
+    });
+    ElMessage.success(status === 2 ? '审核通过' : '已拒绝');
+    await loadDetail();
+    auditRemark.value = '';
+  } catch (e: any) {
+    ElMessage.error(e?.message ?? '审核失败');
+  } finally {
+    auditLoading.value = false;
+  }
+}
+
 function goBack() {
   router.back();
 }
@@ -143,6 +167,20 @@ onMounted(() => { loadDetail(); });
             <div class="item-total">¥{{ item.totalPrice.toFixed(2) }}</div>
           </div>
         </div>
+
+        <!-- 审核操作 -->
+        <div v-if="detail.status === 0" class="section">
+          <div class="section-title">审核操作</div>
+          <div class="audit-row">
+            <ElInput
+              v-model="auditRemark"
+              placeholder="审核备注（选填）"
+              style="flex:1"
+            />
+            <ElButton type="success" :loading="auditLoading" @click="handleAudit(2)">通过</ElButton>
+            <ElButton type="danger" :loading="auditLoading" @click="handleAudit(3)">拒绝</ElButton>
+          </div>
+        </div>
       </div>
     </ElCard>
   </Page>
@@ -187,4 +225,6 @@ onMounted(() => { loadDetail(); });
 .item-total { font-weight: 600; }
 
 .text-gray { color: #999; font-size: 12px; }
+
+.audit-row { display: flex; gap: 10px; align-items: center; }
 </style>

@@ -5,6 +5,7 @@ import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
 import com.boot.vuevbenadminboot.service.SysUserService;
+import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleAdminListDto;
 import com.boot.vuevbenadminboot.web.dto.resp.AfterSaleDetailDto;
@@ -70,6 +71,24 @@ public class MallAfterSaleController {
         try {
             List<AfterSaleDetailDto> list = mallAfterSaleService.listAfterSales(username);
             return ApiResponse.of(0, list, "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @PostMapping("/audit")
+    public Map<String, Object> audit(@RequestBody AfterSaleAuditRequest request, HttpServletRequest httpRequest) {
+        String username = (String) httpRequest.getAttribute(AuthConstants.REQUEST_USERNAME);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        SysUser user = sysUserService.selectByUsername(username);
+        if (user == null || !"super".equals(user.getRole())) {
+            return ApiResponse.of(-1, null, "无权限");
+        }
+        try {
+            mallAfterSaleService.audit(request, username);
+            return ApiResponse.of(0, null, "审核完成");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
