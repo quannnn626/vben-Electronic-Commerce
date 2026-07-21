@@ -14,6 +14,7 @@ import com.boot.vuevbenadminboot.service.MallAfterSaleService;
 import com.boot.vuevbenadminboot.mapper.MallAfterSaleMapper;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
+import com.boot.vuevbenadminboot.service.MallRefundService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
@@ -51,19 +52,22 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
     private final MallOrderItemMapper mallOrderItemMapper;
     private final MallAfterSaleMapper mallAfterSaleMapper;
     private final MallResourceRelService resourceRelService;
+    private final MallRefundService refundService;
 
     public MallAfterSaleServiceImpl(SysUserService sysUserService,
                                     MallOrderService mallOrderService,
                                     MallOrderItemService mallOrderItemService,
                                     MallOrderItemMapper mallOrderItemMapper,
                                     MallAfterSaleMapper mallAfterSaleMapper,
-                                    MallResourceRelService resourceRelService) {
+                                    MallResourceRelService resourceRelService,
+                                    MallRefundService refundService) {
         this.sysUserService = sysUserService;
         this.mallOrderService = mallOrderService;
         this.mallOrderItemService = mallOrderItemService;
         this.mallOrderItemMapper = mallOrderItemMapper;
         this.mallAfterSaleMapper = mallAfterSaleMapper;
         this.resourceRelService = resourceRelService;
+        this.refundService = refundService;
     }
 
     @Override
@@ -423,6 +427,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         switch (type) {
             case REFUND_ONLY:
                 as.setStatus(AfterSaleStatusEnum.REFUNDING.getCode());
+                refundService.createRefund(as);
                 break;
             case REFUND_RETURN:
                 as.setStatus(AfterSaleStatusEnum.WAIT_RETURN.getCode());
