@@ -54,12 +54,12 @@ const detail = ref<AfterSaleDetail | null>(null);
 const typeMap: Record<number, string> = { 0: '仅退款', 1: '退货退款', 2: '换货' };
 const statusMap: Record<number, { label: string; type: string }> = {
   0: { label: '申请中', type: 'warning' },
-  1: { label: '审核中', type: 'warning' },
-  2: { label: '已通过', type: 'success' },
-  3: { label: '已拒绝', type: 'danger' },
-  4: { label: '退款中', type: 'warning' },
-  5: { label: '已完成', type: 'success' },
-  6: { label: '已取消', type: 'info' },
+  1: { label: '已通过', type: 'success' },
+  2: { label: '已拒绝', type: 'danger' },
+  3: { label: '退款中', type: 'warning' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '已取消', type: 'info' },
+  6: { label: '待退货', type: 'warning' },
 };
 
 function normalizeFileUrl(rawPath?: string) {
@@ -97,7 +97,7 @@ async function handleAudit(status: number) {
       status,
       auditRemark: auditRemark.value,
     });
-    ElMessage.success(status === 2 ? '审核通过' : '已拒绝');
+    ElMessage.success(status === 1 ? '审核通过' : '已拒绝');
     await loadDetail();
     auditRemark.value = '';
   } catch (e: any) {
@@ -177,8 +177,8 @@ onMounted(() => { loadDetail(); });
               placeholder="审核备注（选填）"
               style="flex:1"
             />
-            <ElButton type="success" :loading="auditLoading" @click="handleAudit(2)">通过</ElButton>
-            <ElButton type="danger" :loading="auditLoading" @click="handleAudit(3)">拒绝</ElButton>
+            <ElButton type="success" :loading="auditLoading" @click="handleAudit(1)">通过</ElButton>
+            <ElButton type="danger" :loading="auditLoading" @click="handleAudit(2)">拒绝</ElButton>
           </div>
         </div>
       </div>

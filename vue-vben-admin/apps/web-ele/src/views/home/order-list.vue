@@ -124,8 +124,8 @@ interface AfterSaleItem {
 const orders = ref<OrderItem[]>([]);
 const afterSales = ref<AfterSaleItem[]>([]);
 
-// 活跃售后状态：申请中0、审核中1、已通过2、退款中4（与后端createAfterSale校验逻辑一致）
-const ACTIVE_AFTER_SALE_STATUSES = new Set([0, 1, 2, 4]);
+// 活跃售后状态：申请中0、已通过1、待退货6、退款中3
+const ACTIVE_AFTER_SALE_STATUSES = new Set([0, 1, 6, 3]);
 
 // 已存在活跃售后申请的 orderItemId 集合
 const activeAfterSaleOrderItemIds = computed(() => {
@@ -150,12 +150,12 @@ async function loadAfterSales() {
 
 const afterSaleStatusMap: Record<number, { label: string; type: string }> = {
   0: { label: '申请中', type: 'warning' },
-  1: { label: '审核中', type: 'warning' },
-  2: { label: '已通过', type: 'success' },
-  3: { label: '已拒绝', type: 'info' },
-  4: { label: '退款中', type: 'warning' },
-  5: { label: '已完成', type: 'success' },
-  6: { label: '已取消', type: 'info' },
+  1: { label: '已通过', type: 'success' },
+  2: { label: '已拒绝', type: 'danger' },
+  3: { label: '退款中', type: 'warning' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '已取消', type: 'info' },
+  6: { label: '待退货', type: 'warning' },
 };
 
 const afterSaleTypeMap: Record<number, string> = {

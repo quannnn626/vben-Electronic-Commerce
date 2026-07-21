@@ -39,17 +39,17 @@ const auditRemarks = ref<Record<string, string>>({});
 
 function initAuditRow(id: string) {
   if (auditStatus.value[id] === undefined) {
-    auditStatus.value[id] = 3; // 默认不通过
+    auditStatus.value[id] = 2; // 默认不通过
     auditRemarks.value[id] = '';
   }
 }
 
 function isApproved(id: string) {
-  return auditStatus.value[id] === 2;
+  return auditStatus.value[id] === 1;
 }
 
 const rejectCount = computed(() =>
-  Object.values(auditStatus.value).filter((v) => v === 3).length,
+  Object.values(auditStatus.value).filter((v) => v === 2).length,
 );
 
 async function loadItems() {
@@ -75,7 +75,7 @@ async function loadItems() {
 async function submitBatch() {
   // 校验：不通过必须填原因
   for (const item of list.value) {
-    if (auditStatus.value[item.id] === 3 && !(auditRemarks.value[item.id] || '').trim()) {
+    if (auditStatus.value[item.id] === 2 && !(auditRemarks.value[item.id] || '').trim()) {
       ElMessage.warning(`售后单 ${item.afterSaleNo} 不通过原因必填`);
       return;
     }
@@ -126,8 +126,8 @@ onMounted(() => { loadItems(); });
         </div>
         <div class="audit-actions">
           <ElRadioGroup v-model="auditStatus[item.id]" class="mr-4">
-            <ElRadio :value="2">通过</ElRadio>
-            <ElRadio :value="3">不通过</ElRadio>
+            <ElRadio :value="1">通过</ElRadio>
+            <ElRadio :value="2">不通过</ElRadio>
           </ElRadioGroup>
           <ElInput
             v-if="!isApproved(item.id)"

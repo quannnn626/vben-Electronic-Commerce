@@ -90,22 +90,22 @@ function goBatchAudit() {
 const typeMap: Record<number, string> = { 0: '仅退款', 1: '退货退款', 2: '换货' };
 const statusMap: Record<number, { label: string; type: string }> = {
   0: { label: '申请中', type: 'warning' },
-  1: { label: '审核中', type: 'warning' },
-  2: { label: '已通过', type: 'success' },
-  3: { label: '已拒绝', type: 'danger' },
-  4: { label: '退款中', type: 'warning' },
-  5: { label: '已完成', type: 'success' },
-  6: { label: '已取消', type: 'info' },
+  1: { label: '已通过', type: 'success' },
+  2: { label: '已拒绝', type: 'danger' },
+  3: { label: '退款中', type: 'warning' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '已取消', type: 'info' },
+  6: { label: '待退货', type: 'warning' },
 };
 
 const filterStatusOptions = [
   { label: '全部', value: null },
   { label: '申请中', value: 0 },
-  { label: '审核中', value: 1 },
-  { label: '已通过', value: 2 },
-  { label: '已拒绝', value: 3 },
-  { label: '退款中', value: 4 },
-  { label: '已完成', value: 5 },
+  { label: '已通过', value: 1 },
+  { label: '已拒绝', value: 2 },
+  { label: '退款中', value: 3 },
+  { label: '已完成', value: 4 },
+  { label: '待退货', value: 6 },
 ];
 
 const tableData = computed(() => {

@@ -124,7 +124,7 @@ async function loadOrderDetail() {
     // 计算每个订单项已申请数量
     const map: Record<number, number> = {};
     for (const as of (Array.isArray(afterSales) ? afterSales : [])) {
-      if (as.orderId === orderId && (as.status === 0 || as.status === 1 || as.status === 2)) {
+      if (as.orderId === orderId && [0, 1, 6, 3].includes(as.status)) {
         map[as.orderItemId] = (map[as.orderItemId] ?? 0) + (as.quantity ?? 0);
       }
     }
