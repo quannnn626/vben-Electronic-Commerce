@@ -89,17 +89,13 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (typeEnum == null) {
             throw new IllegalArgumentException("售后类型无效");
         }
+        // 校验是否可申请
+        validateAfterSaleType(typeEnum, mallOrder.getStatus());
         AfterSaleReasonEnum reasonEnum = AfterSaleReasonEnum.of(request.getReason());
         if (reasonEnum == null) {
             throw new IllegalArgumentException("售后原因无效");
         }
-        // 智能计算退款金额
-        BigDecimal refundAmount;
-        if (typeEnum == AfterSaleTypeEnum.EXCHANGE) {
-            refundAmount = BigDecimal.ZERO;
-        } else {
-            refundAmount = mallOrder.getPayAmount() != null ? mallOrder.getPayAmount() : BigDecimal.ZERO;
-        }
+        BigDecimal refundAmount = calcRefundAmount(typeEnum, mallOrder.getPayAmount());
 
         // 校验商品列表
         List<AfterSaleItemRequest> items = request.getItems();
@@ -416,6 +412,38 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             as.setUpdateTime(new Date());
             this.updateById(as);
         }
+    }
+
+    /**
+     * 校验售后类型是否适用于当前订单状态
+     */
+    private void validateAfterSaleType(AfterSaleTypeEnum type, Integer orderStatus) {
+        boolean valid;
+        switch (type) {
+            case REFUND_ONLY:
+                valid = orderStatus.equals(OrderStatusEnum.PAID.getCode());
+                break;
+            case REFUND_RETURN:
+            case EXCHANGE:
+                valid = orderStatus.equals(OrderStatusEnum.SHIPPED.getCode())
+                        || orderStatus.equals(OrderStatusEnum.COMPLETED.getCode());
+                break;
+            default:
+                throw new IllegalArgumentException("不支持的售后类型");
+        }
+        if (!valid) {
+            throw new IllegalArgumentException("当前订单状态不可申请该售后类型");
+        }
+    }
+
+    /**
+     * 计算退款金额
+     */
+    private BigDecimal calcRefundAmount(AfterSaleTypeEnum type, BigDecimal payAmount) {
+        if (type == AfterSaleTypeEnum.EXCHANGE) {
+            return BigDecimal.ZERO;
+        }
+        return payAmount != null ? payAmount : BigDecimal.ZERO;
     }
 
     /**
