@@ -9,12 +9,12 @@ import lombok.Getter;
 @Getter
 public enum AfterSaleStatusEnum {
     APPLYING(0, "申请中"),
-    APPROVING(1, "审核中"),
-    APPROVED(2, "已通过"),
-    REJECTED(3, "已拒绝"),
-    REFUNDED(4, "退款中"),
-    COMPLETED(5, "已完成"),
-    CANCELLED(6, "已取消");
+    APPROVED(1, "已通过"),
+    REJECTED(2, "已拒绝"),
+    REFUNDING(3, "退款中"),
+    COMPLETED(4, "已完成"),
+    CANCELLED(5, "已取消"),
+    WAIT_RETURN(6, "待退货");
 
     private final int code;
     private final String desc;

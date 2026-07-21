@@ -120,15 +120,15 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             if (qty > orderItem.getQuantity()) {
                 throw new IllegalArgumentException("售后数量不能超过购买数量");
             }
-            // 累加校验
+            // 累加校验 查询订单项所有进行中的售后
             List<MallAfterSale> activeSales = mallAfterSaleMapper.selectList(
                     new LambdaQueryWrapper<MallAfterSale>()
                             .eq(MallAfterSale::getOrderItemId, reqItem.getOrderItemId())
                             .in(MallAfterSale::getStatus,
                                     AfterSaleStatusEnum.APPLYING.getCode(),
-                                    AfterSaleStatusEnum.APPROVING.getCode(),
                                     AfterSaleStatusEnum.APPROVED.getCode(),
-                                    AfterSaleStatusEnum.REFUNDED.getCode()
+                                    AfterSaleStatusEnum.REFUNDING.getCode(),
+                                    AfterSaleStatusEnum.WAIT_RETURN.getCode()
                             )
             );
             int total = activeSales.stream().mapToInt(s -> s.getQuantity() != null ? s.getQuantity() : 0).sum();
@@ -383,11 +383,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (targetStatus != AfterSaleStatusEnum.APPROVED && targetStatus != AfterSaleStatusEnum.REJECTED) {
             throw new IllegalArgumentException("审核状态无效");
         }
-        as.setStatus(targetStatus.getCode());
-        as.setAuditUser(userId);
-        as.setAuditTime(new Date());
-        as.setAuditRemark(request.getAuditRemark());
-        as.setUpdateTime(new Date());
+        applyAuditResult(as, targetStatus, userId, request.getAuditRemark());
         this.updateById(as);
     }
 
@@ -405,12 +401,35 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             if (!as.getStatus().equals(AfterSaleStatusEnum.APPLYING.getCode())) continue;
             AfterSaleStatusEnum target = AfterSaleStatusEnum.of(item.getStatus());
             if (target != AfterSaleStatusEnum.APPROVED && target != AfterSaleStatusEnum.REJECTED) continue;
-            as.setStatus(target.getCode());
-            as.setAuditUser(userId);
-            as.setAuditTime(new Date());
-            as.setAuditRemark(item.getAuditRemark());
-            as.setUpdateTime(new Date());
+            applyAuditResult(as, target, userId, item.getAuditRemark());
             this.updateById(as);
+        }
+    }
+
+    /**
+     * 审核分流：根据售后类型和审核结果设置对应状态
+     */
+    private void applyAuditResult(MallAfterSale as, AfterSaleStatusEnum target, Long auditUser, String remark) {
+        as.setAuditUser(auditUser);
+        as.setAuditTime(new Date());
+        as.setAuditRemark(remark);
+        as.setUpdateTime(new Date());
+        if (target == AfterSaleStatusEnum.REJECTED) {
+            as.setStatus(AfterSaleStatusEnum.REJECTED.getCode());
+            return;
+        }
+        AfterSaleTypeEnum type = AfterSaleTypeEnum.of(as.getType());
+        if (type == null) return;
+        switch (type) {
+            case REFUND_ONLY:
+                as.setStatus(AfterSaleStatusEnum.REFUNDING.getCode());
+                break;
+            case REFUND_RETURN:
+                as.setStatus(AfterSaleStatusEnum.WAIT_RETURN.getCode());
+                break;
+            case EXCHANGE:
+                as.setStatus(AfterSaleStatusEnum.APPROVED.getCode());
+                break;
         }
     }
 
