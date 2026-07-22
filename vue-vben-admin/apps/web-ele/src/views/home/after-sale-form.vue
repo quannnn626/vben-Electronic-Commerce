@@ -17,6 +17,8 @@ import {
   ElInputNumber,
   ElMessage,
   ElOption,
+  ElRadio,
+  ElRadioGroup,
   ElSelect,
   ElTag,
   ElUpload,
@@ -83,9 +85,13 @@ const selectedCount = computed(() => selectedDetails.value.length);
 
 const form = reactive({
   description: '',
+  received: null as boolean | null,
   reason: null as number | null,
   type: null as number | null,
 });
+
+// 是否支持换货类型
+const canExchange = computed(() => order.value?.status === 2 || order.value?.status === 3);
 
 const refundTypes = [
   { label: '仅退款', value: 0 },
@@ -93,7 +99,7 @@ const refundTypes = [
   { label: '换货', value: 2 },
 ];
 
-const reasonOptions = [
+const allReasonOptions = [
   { label: '质量问题', value: 0 },
   { label: '商品与描述不符', value: 1 },
   { label: '发错货', value: 2 },
@@ -102,6 +108,25 @@ const reasonOptions = [
   { label: '不想要了', value: 5 },
   { label: '其他', value: 6 },
 ];
+
+// 未收到货、收到货
+const availableReasons = computed(() => {
+  if (form.received === null) return allReasonOptions;
+  if (!form.received) {
+    return allReasonOptions.filter((r) => r.value === 5 || r.value === 6);
+  }
+  return allReasonOptions;
+});
+
+const availableTypes = computed(() => {
+  if (form.received === null) return refundTypes;
+  if (!form.received) {
+    return refundTypes.filter((t) => t.value === 0);
+  }
+  const types = [...refundTypes];
+  if (!canExchange.value) types.splice(2, 1); // 仅已发货的订单才能换货
+  return types;
+});
 
 function normalizeFileUrl(rawPath?: string) {
   if (!rawPath) return '';
@@ -153,6 +178,10 @@ function isItemSelected(itemId: number): boolean {
 function validateForm(): boolean {
   if (selectedCount.value === 0) {
     ElMessage.warning('请选择售后商品');
+    return false;
+  }
+  if (form.received === null) {
+    ElMessage.warning('请选择是否收到货');
     return false;
   }
   if (form.type === null) {
@@ -337,11 +366,18 @@ onMounted(() => {
         </div>
       </template>
 
-      <ElForm label-width="100px">
+      <ElForm label-width="110px">
+        <ElFormItem label="是否收到货" required>
+          <ElRadioGroup v-model="form.received" @change="form.type = null; form.reason = null">
+            <ElRadio :value="true">已收到货</ElRadio>
+            <ElRadio :value="false">未收到货</ElRadio>
+          </ElRadioGroup>
+        </ElFormItem>
+
         <ElFormItem label="售后类型" required>
           <ElSelect v-model="form.type" placeholder="请选择售后类型">
             <ElOption
-              v-for="t in refundTypes"
+              v-for="t in availableTypes"
               :key="t.value"
               :label="t.label"
               :value="t.value"
@@ -358,7 +394,7 @@ onMounted(() => {
         <ElFormItem label="售后原因" required>
           <ElSelect v-model="form.reason" placeholder="请选择售后原因">
             <ElOption
-              v-for="r in reasonOptions"
+              v-for="r in availableReasons"
               :key="r.value"
               :label="r.label"
               :value="r.value"
