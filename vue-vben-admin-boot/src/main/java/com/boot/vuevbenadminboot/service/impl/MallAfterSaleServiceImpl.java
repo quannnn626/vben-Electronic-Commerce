@@ -177,9 +177,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             throw new IllegalArgumentException("售后单不存在");
         }
         MallOrder order = mallOrderService.getById(as.getOrderId());
-        List<MallOrderItem> items = mallOrderItemService.list(
+        MallOrderItem orderItem = mallOrderItemService.getOne(
                 new LambdaQueryWrapper<MallOrderItem>()
                         .eq(MallOrderItem::getOrderId, as.getOrderId())
+                        .eq(MallOrderItem::getId, as.getOrderItemId())
                         .eq(MallOrderItem::getDeleted, 0)
         );
 
@@ -210,15 +211,15 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
 
             // 转换订单商品列表
             List<com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto> itemDtos = new ArrayList<>();
-            for (MallOrderItem item : items) {
+            if (orderItem != null) {
                 com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto itemDto = new com.boot.vuevbenadminboot.web.dto.resp.OrderItemDto();
-                itemDto.setId(item.getId());
-                itemDto.setSkuId(item.getSkuId());
-                itemDto.setProductName(item.getProductName());
-                itemDto.setProductImage(item.getProductImage());
-                itemDto.setPrice(item.getPrice());
-                itemDto.setQuantity(item.getQuantity());
-                itemDto.setTotalPrice(item.getTotalPrice());
+                itemDto.setId(orderItem.getId());
+                itemDto.setSkuId(orderItem.getSkuId());
+                itemDto.setProductName(orderItem.getProductName());
+                itemDto.setProductImage(orderItem.getProductImage());
+                itemDto.setPrice(orderItem.getPrice());
+                itemDto.setQuantity(orderItem.getQuantity());
+                itemDto.setTotalPrice(orderItem.getTotalPrice());
                 itemDtos.add(itemDto);
             }
             dto.setItems(itemDtos);
@@ -245,16 +246,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         Map<Long, MallOrder> orderMap = mallOrderService.listByIds(orderIds).stream()
                 .collect(Collectors.toMap(MallOrder::getId, o -> o, (a, b) -> a));
 
-        // 批量查询关联订单商品，构建 orderId -> List<MallOrderItem> 映射
-        Map<Long, List<MallOrderItem>> itemMap = new LinkedHashMap<>();
-        for (Long orderId : orderIds) {
-            List<MallOrderItem> items = mallOrderItemService.list(
-                    new LambdaQueryWrapper<MallOrderItem>()
-                            .eq(MallOrderItem::getOrderId, orderId)
-                            .eq(MallOrderItem::getDeleted, 0)
-            );
-            itemMap.put(orderId, items);
-        }
+        // 批量查售后对应的订单商品
+        List<Long> orderItemIds = afterSales.stream().map(MallAfterSale::getOrderItemId).distinct().toList();
+        Map<Long, MallOrderItem> orderItemMap = mallOrderItemService.listByIds(orderItemIds).stream()
+                .collect(Collectors.toMap(MallOrderItem::getId, i -> i, (a, b) -> a));
 
         // 逐条组装售后列表DTO
         List<AfterSaleDetailDto> result = new ArrayList<>();
@@ -284,18 +279,18 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setReceiverPhone(order.getReceiverPhone());
                 dto.setReceiverAddress(order.getReceiverAddress());
 
-                // 转换订单商品列表
-                List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
+                // 只展示售后单对应的那个商品
+                MallOrderItem oi = orderItemMap.get(as.getOrderItemId());
                 List<OrderItemDto> itemDtos = new ArrayList<>();
-                for (MallOrderItem item : items) {
+                if (oi != null) {
                     OrderItemDto itemDto = new OrderItemDto();
-                    itemDto.setId(item.getId());
-                    itemDto.setSkuId(item.getSkuId());
-                    itemDto.setProductName(item.getProductName());
-                    itemDto.setProductImage(item.getProductImage());
-                    itemDto.setPrice(item.getPrice());
-                    itemDto.setQuantity(item.getQuantity());
-                    itemDto.setTotalPrice(item.getTotalPrice());
+                    itemDto.setId(oi.getId());
+                    itemDto.setSkuId(oi.getSkuId());
+                    itemDto.setProductName(oi.getProductName());
+                    itemDto.setProductImage(oi.getProductImage());
+                    itemDto.setPrice(oi.getPrice());
+                    itemDto.setQuantity(oi.getQuantity());
+                    itemDto.setTotalPrice(oi.getTotalPrice());
                     itemDtos.add(itemDto);
                 }
                 dto.setItems(itemDtos);
@@ -326,16 +321,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                         u -> u.getId(),
                         u -> u.getNickname() != null && !u.getNickname().isBlank() ? u.getNickname() : u.getUsername(),
                         (a, b) -> a));
-        // 查订单商品
-        Map<Long, List<MallOrderItem>> itemMap = new LinkedHashMap<>();
-        for (Long orderId : orderIds) {
-            List<MallOrderItem> items = mallOrderItemService.list(
-                    new LambdaQueryWrapper<MallOrderItem>()
-                            .eq(MallOrderItem::getOrderId, orderId)
-                            .eq(MallOrderItem::getDeleted, 0)
-            );
-            itemMap.put(orderId, items);
-        }
+        // 批量查售后对应的订单商品
+        List<Long> adminOrderItemIds = afterSales.stream().map(MallAfterSale::getOrderItemId).distinct().toList();
+        Map<Long, MallOrderItem> adminOrderItemMap = mallOrderItemService.listByIds(adminOrderItemIds).stream()
+                .collect(Collectors.toMap(MallOrderItem::getId, i -> i, (a, b) -> a));
 
         List<AfterSaleAdminListDto> result = new ArrayList<>();
         for (MallAfterSale as : afterSales) {
@@ -352,17 +341,17 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setOrderNo(order.getOrderNo());
                 dto.setUsername(usernameMap.getOrDefault(as.getUserId(), "-"));
 
-                List<MallOrderItem> items = itemMap.getOrDefault(order.getId(), List.of());
+                MallOrderItem oi = adminOrderItemMap.get(as.getOrderItemId());
                 List<OrderItemDto> itemDtos = new ArrayList<>();
-                for (MallOrderItem item : items) {
+                if (oi != null) {
                     OrderItemDto itemDto = new OrderItemDto();
-                    itemDto.setId(item.getId());
-                    itemDto.setSkuId(item.getSkuId());
-                    itemDto.setProductName(item.getProductName());
-                    itemDto.setProductImage(item.getProductImage());
-                    itemDto.setPrice(item.getPrice());
-                    itemDto.setQuantity(item.getQuantity());
-                    itemDto.setTotalPrice(item.getTotalPrice());
+                    itemDto.setId(oi.getId());
+                    itemDto.setSkuId(oi.getSkuId());
+                    itemDto.setProductName(oi.getProductName());
+                    itemDto.setProductImage(oi.getProductImage());
+                    itemDto.setPrice(oi.getPrice());
+                    itemDto.setQuantity(oi.getQuantity());
+                    itemDto.setTotalPrice(oi.getTotalPrice());
                     itemDtos.add(itemDto);
                 }
                 dto.setItems(itemDtos);
