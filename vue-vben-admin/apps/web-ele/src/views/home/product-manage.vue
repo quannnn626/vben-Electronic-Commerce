@@ -49,6 +49,7 @@ interface ProductItem {
   createTime: string;
   description: string;
   id: number;
+  merchantId?: number;
   name: string;
   price: number;
   skus?: ProductSku[];
@@ -91,6 +92,7 @@ const formModel = reactive({
   categoryIds: [] as number[],
   description: '',
   files: [] as UploadUserFile[],
+  merchantId: null as number | null,
   name: '',
   skus: [] as ProductSku[],
   status: true,
@@ -117,6 +119,7 @@ function resetForm() {
   formModel.name = '';
   formModel.description = '';
   formModel.status = true;
+  formModel.merchantId = null;
   formModel.skus = [createEmptySku()];
   formModel.categoryIds = [];
   formModel.files = [];
@@ -271,6 +274,7 @@ function openEditDialog(row: ProductItem) {
   currentEditId.value = row.id;
   formModel.name = row.name;
   formModel.description = row.description ?? '';
+  formModel.merchantId = row.merchantId ?? null;
   formModel.status = row.status === 1;
   formModel.skus = (row.skus ?? []).map((sku) => ({
     fileId: sku.fileId,
@@ -315,6 +319,7 @@ function buildPayload() {
     categoryIds: formModel.categoryIds,
     description: formModel.description.trim(),
     id: currentEditId.value,
+    merchantId: formModel.merchantId,
     name: formModel.name.trim(),
     skus: formModel.skus.map((item) => {
       const firstFileId = item.fileId ?? item.fileIds?.[0];

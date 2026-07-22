@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 21/07/2026 14:34:00
+ Date: 22/07/2026 15:01:31
 */
 
 SET NAMES utf8mb4;
@@ -54,6 +54,9 @@ INSERT INTO `mall_after_sale` VALUES (2075400338834010113, 'AS202607101002546776
 INSERT INTO `mall_after_sale` VALUES (2079131676854534146, 'AS20260720170954982226', 39, 39, 2046463574828482561, 1, 0, 5, '', 2, 63806.00, NULL, NULL, NULL, '2026-07-20 17:09:55', '2026-07-20 17:09:55', 0);
 INSERT INTO `mall_after_sale` VALUES (2079132436954693633, 'AS20260720171256708200', 39, 38, 2046463574828482561, 1, 6, 5, '', 1, 63806.00, '', 2046463574828482561, '2026-07-21 14:30:01', '2026-07-20 17:12:56', '2026-07-21 14:30:01', 0);
 INSERT INTO `mall_after_sale` VALUES (2079454496138539009, 'AS20260721143240397506', 32, 29, 2046463574828482561, 0, 3, 5, '', 1, 20.00, '', 2046463574828482561, '2026-07-21 14:32:49', '2026-07-21 14:32:41', '2026-07-21 14:32:49', 0);
+INSERT INTO `mall_after_sale` VALUES (2079800645982703617, 'AS20260722132809951689', 40, 45, 2046463574828482561, 0, 0, 5, '买多了', 1, 25998.00, NULL, NULL, NULL, '2026-07-22 13:28:09', '2026-07-22 13:28:09', 0);
+INSERT INTO `mall_after_sale` VALUES (2079800756171264001, 'AS20260722132835984515', 40, 44, 2046463574828482561, 0, 0, 5, '不想要了', 1, 25998.00, NULL, NULL, NULL, '2026-07-22 13:28:36', '2026-07-22 13:28:36', 0);
+INSERT INTO `mall_after_sale` VALUES (2079805805240852481, 'AS20260722134839949551', 40, 45, 2046463574828482561, 1, 6, 4, '收到后发现质量不行', 1, 25998.00, '', 2046463574828482561, '2026-07-22 13:49:34', '2026-07-22 13:48:40', '2026-07-22 13:49:34', 0);
 
 -- ----------------------------
 -- Table structure for mall_cart
@@ -158,6 +161,7 @@ INSERT INTO `mall_order` VALUES (34, '20260625141014708880', 2046463574828482561
 INSERT INTO `mall_order` VALUES (37, '20260625141351491940', 2046463574828482561, 20120.00, 20120.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:13:52', '2026-07-08 14:16:46', NULL, NULL, NULL, '2026-06-25 14:13:52', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (38, '20260625212207982258', 2046463574828482561, 10122.00, 10122.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 21:22:08', '2026-07-08 14:16:39', NULL, NULL, NULL, '2026-06-25 21:22:08', 0, NULL, NULL);
 INSERT INTO `mall_order` VALUES (39, '20260710105218664074', 2046463574828482561, 63806.00, 63806.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-07-10 10:52:19', '2026-07-10 10:52:25', NULL, NULL, NULL, '2026-07-10 10:52:19', 0, NULL, NULL);
+INSERT INTO `mall_order` VALUES (40, '20260722132653379640', 2046463574828482561, 25998.00, 25998.00, 2, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-07-22 13:26:54', '2026-07-22 13:27:18', '2026-07-22 13:48:06', NULL, NULL, '2026-07-22 13:48:06', 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for mall_order_delivery
@@ -181,6 +185,7 @@ CREATE TABLE `mall_order_delivery`  (
 -- Records of mall_order_delivery
 -- ----------------------------
 INSERT INTO `mall_order_delivery` VALUES (2070420136584372226, 34, '顺丰', '20262606141014708880', 0, '测试', 2046463574828482561, '2026-06-26 16:13:22', '2026-06-26 16:13:22', 0);
+INSERT INTO `mall_order_delivery` VALUES (2079805663414657025, 40, '中国邮政', 'yz20260722132653379640', 0, NULL, 2046463574828482561, '2026-07-22 13:48:06', '2026-07-22 13:48:06', 0);
 
 -- ----------------------------
 -- Table structure for mall_order_item
@@ -221,6 +226,9 @@ INSERT INTO `mall_order_item` VALUES (39, 39, 6, 'ROG', '/upload/20260424174405_
 INSERT INTO `mall_order_item` VALUES (40, 39, 11, '华硕天选4', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', '规格2', 6000.00, 1, 6000.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
 INSERT INTO `mall_order_item` VALUES (41, 39, 10, '华硕天选4', '/upload/20260702101152_36afa86fd56f446984f4b5bdcf485b3b.png', '规格1', 5000.00, 1, 5000.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
 INSERT INTO `mall_order_item` VALUES (42, 39, 7, 'ROG', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
+INSERT INTO `mall_order_item` VALUES (43, 40, 7, 'ROG', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-07-22 13:26:54', '2026-07-22 13:26:54', 0);
+INSERT INTO `mall_order_item` VALUES (44, 40, 11, '华硕天选4', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', '规格2', 6000.00, 1, 6000.00, '2026-07-22 13:26:54', '2026-07-22 13:26:54', 0);
+INSERT INTO `mall_order_item` VALUES (45, 40, 10, '华硕天选4', '/upload/20260702101152_36afa86fd56f446984f4b5bdcf485b3b.png', '规格1', 5000.00, 2, 10000.00, '2026-07-22 13:26:54', '2026-07-22 13:26:54', 0);
 
 -- ----------------------------
 -- Table structure for mall_payment
@@ -255,6 +263,7 @@ INSERT INTO `mall_payment` VALUES (2070026810458701827, 'PAY2070026810458701826'
 INSERT INTO `mall_payment` VALUES (2074739412287889411, 'PAY2074739412287889410', 38, '20260625212207982258', 2046463574828482561, 'alipay', 10122.00, 1, 'SIM1783491399393', '2026-07-08 14:16:39', '2026-07-08 14:16:39', NULL, '2026-07-08 14:16:37', '2026-07-08 14:16:37', 0);
 INSERT INTO `mall_payment` VALUES (2074739443359293442, 'PAY2074739443359293441', 37, '20260625141351491940', 2046463574828482561, 'wechat', 20120.00, 1, 'SIM1783491405993', '2026-07-08 14:16:46', '2026-07-08 14:16:46', NULL, '2026-07-08 14:16:44', '2026-07-08 14:16:44', 0);
 INSERT INTO `mall_payment` VALUES (2075412792867631107, 'PAY2075412792867631106', 39, '20260710105218664074', 2046463574828482561, 'alipay', 63806.00, 1, 'SIM1783651945231', '2026-07-10 10:52:25', '2026-07-10 10:52:25', NULL, '2026-07-10 10:52:23', '2026-07-10 10:52:23', 0);
+INSERT INTO `mall_payment` VALUES (2079800407603630082, 'PAY2079800407603630081', 40, '20260722132653379640', 2046463574828482561, 'wechat', 25998.00, 1, 'SIM1784698038418', '2026-07-22 13:27:18', '2026-07-22 13:27:18', NULL, '2026-07-22 13:27:12', '2026-07-22 13:27:12', 0);
 
 -- ----------------------------
 -- Table structure for mall_product
@@ -269,15 +278,16 @@ CREATE TABLE `mall_product`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
+  `merchant_id` bigint NULL DEFAULT NULL COMMENT '商家ID',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
-INSERT INTO `mall_product` VALUES (7, 'ROG', 'ROG魔霸系列', 1, 2046463574828482561, '2026-04-24 17:45:22', '2026-07-10 14:08:07', 0);
-INSERT INTO `mall_product` VALUES (8, '测试修改枚举类后新增商品', '', 1, 2046463574828482561, '2026-06-15 13:18:57', '2026-07-10 14:08:08', 0);
-INSERT INTO `mall_product` VALUES (9, '华硕天选4', '', 1, 2046463574828482561, '2026-07-02 10:12:22', '2026-07-10 14:08:09', 0);
+INSERT INTO `mall_product` VALUES (7, 'ROG', 'ROG魔霸系列', 1, 2046463574828482561, '2026-04-24 17:45:22', '2026-07-10 14:08:07', 0, NULL);
+INSERT INTO `mall_product` VALUES (8, '测试修改枚举类后新增商品', '', 1, 2046463574828482561, '2026-06-15 13:18:57', '2026-07-10 14:08:08', 0, NULL);
+INSERT INTO `mall_product` VALUES (9, '华硕天选4', '', 1, 2046463574828482561, '2026-07-02 10:12:22', '2026-07-10 14:08:09', 0, NULL);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -610,7 +620,7 @@ CREATE TABLE `mall_product_category_rel`  (
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `category_id` bigint NOT NULL COMMENT '类目ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2072503618387124225 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2072503618387124226 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_product_category_rel
@@ -721,7 +731,7 @@ CREATE TABLE `mall_resource_rel`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
   INDEX `idx_file_id`(`file_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_resource_rel
@@ -736,6 +746,9 @@ INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 11, 30, 'detail_image', 1, '20
 INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 11, 29, 'detail_image', 2, '2026-07-02 10:12:23');
 INSERT INTO `mall_resource_rel` VALUES (9, 'after_sale', 2073964892266487809, 36, 'proof', 0, '2026-07-06 10:58:57');
 INSERT INTO `mall_resource_rel` VALUES (10, 'after_sale', 2074044816176308225, 37, 'proof', 0, '2026-07-06 16:16:33');
+INSERT INTO `mall_resource_rel` VALUES (11, 'after_sale', 2079800645982703617, 38, 'proof', 0, '2026-07-22 13:28:10');
+INSERT INTO `mall_resource_rel` VALUES (12, 'after_sale', 2079800756171264001, 39, 'proof', 0, '2026-07-22 13:28:36');
+INSERT INTO `mall_resource_rel` VALUES (13, 'after_sale', 2079805805240852481, 41, 'proof', 0, '2026-07-22 13:48:40');
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -760,11 +773,11 @@ CREATE TABLE `mall_sku`  (
 -- Records of mall_sku
 -- ----------------------------
 INSERT INTO `mall_sku` VALUES (6, 7, 11282.00, 96, 2, '{\"name\": \"U7 255HX/3060\", \"fileId\": 18}', '', 1, '2026-04-24 17:45:22', '2026-07-10 10:52:25');
-INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 97, 0, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-07-10 10:52:25');
+INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 96, 0, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-07-22 13:27:18');
 INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 89, 0, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-07-10 10:52:25');
 INSERT INTO `mall_sku` VALUES (9, 8, 20.00, 0, 0, '{\"name\": \"1\", \"fileId\": 19}', '', 1, '2026-06-15 13:18:57', '2026-07-09 11:48:49');
-INSERT INTO `mall_sku` VALUES (10, 9, 5000.00, 19, 0, '{\"name\": \"规格1\", \"fileId\": 28}', '', 1, '2026-07-02 10:12:22', '2026-07-10 10:52:25');
-INSERT INTO `mall_sku` VALUES (11, 9, 6000.00, 19, 0, '{\"name\": \"规格2\", \"fileId\": 27}', '', 1, '2026-07-02 10:12:22', '2026-07-10 10:52:25');
+INSERT INTO `mall_sku` VALUES (10, 9, 5000.00, 17, 0, '{\"name\": \"规格1\", \"fileId\": 28}', '', 1, '2026-07-02 10:12:22', '2026-07-22 13:27:18');
+INSERT INTO `mall_sku` VALUES (11, 9, 6000.00, 18, 0, '{\"name\": \"规格2\", \"fileId\": 27}', '', 1, '2026-07-02 10:12:22', '2026-07-22 13:27:18');
 
 -- ----------------------------
 -- Table structure for mall_user_address
@@ -785,7 +798,7 @@ CREATE TABLE `mall_user_address`  (
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户地址表（版本化）' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of mall_user_address
