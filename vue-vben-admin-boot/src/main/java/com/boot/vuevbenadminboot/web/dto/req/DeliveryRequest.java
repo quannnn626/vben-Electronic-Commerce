@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class DeliveryRequest {
     private String orderNo;
+    private Long orderItemId;
     private String logisticsCompany;
     private String trackingNo;
     private String message;

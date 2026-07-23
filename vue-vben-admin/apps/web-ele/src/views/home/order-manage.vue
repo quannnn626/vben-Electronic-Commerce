@@ -58,12 +58,15 @@ const detailVisible = ref(false);
 const currentOrder = ref<OrderRecord | null>(null);
 const deliveryVisible = ref(false);
 const deliveryLoading = ref(false);
-const deliveryForm = reactive({
-  orderNo: '',
-  logisticsCompany: '',
-  trackingNo: '',
-  message: '',
-});
+const deliveryOrder = ref<OrderRecord | null>(null);
+const itemDeliveries = reactive<Record<number, { logisticsCompany: string; trackingNo: string }>>({});
+
+function initItemDeliveries(items: OrderItemDto[]) {
+  for (const key of Object.keys(itemDeliveries)) delete itemDeliveries[key];
+  for (const item of items) {
+    itemDeliveries[item.id] = { logisticsCompany: '', trackingNo: '' };
+  }
+}
 
 const queryForm = reactive({
   orderNo: '',
@@ -134,33 +137,26 @@ function showDetail(row: OrderRecord) {
 }
 
 function showDelivery(row: OrderRecord) {
-  deliveryForm.orderNo = row.orderNo;
-  deliveryForm.logisticsCompany = '';
-  deliveryForm.trackingNo = '';
-  deliveryForm.message = '';
+  deliveryOrder.value = row;
+  initItemDeliveries(row.items);
   deliveryVisible.value = true;
 }
 
-async function submitDelivery() {
-  if (!deliveryForm.logisticsCompany) {
-    ElMessage.warning('请填写物流公司');
-    return;
-  }
-  if (!deliveryForm.trackingNo) {
-    ElMessage.warning('请填写物流单号');
-    return;
-  }
+async function submitItemDelivery(item: OrderItemDto) {
+  const d = itemDeliveries[item.id];
+  if (!d.logisticsCompany) { ElMessage.warning('请填写物流公司'); return; }
+  if (!d.trackingNo) { ElMessage.warning('请填写物流单号'); return; }
   deliveryLoading.value = true;
   try {
     await requestClient.post('/mall/order/delivery/create', {
-      orderNo: deliveryForm.orderNo,
-      logisticsCompany: deliveryForm.logisticsCompany,
-      trackingNo: deliveryForm.trackingNo,
-      message: deliveryForm.message || null,
+      orderNo: deliveryOrder.value!.orderNo,
+      orderItemId: item.id,
+      logisticsCompany: d.logisticsCompany,
+      trackingNo: d.trackingNo,
     });
-    ElMessage.success('发货成功');
-    deliveryVisible.value = false;
+    ElMessage.success(`"${item.productName}" 发货成功`);
     loadList();
+    deliveryVisible.value = false;
   } catch (e: any) {
     ElMessage.error(e?.message ?? '发货失败');
   } finally {
@@ -334,27 +330,24 @@ onMounted(() => {
       </template>
     </ElDialog>
 
-    <ElDialog v-model="deliveryVisible" title="订单发货" width="500px" destroy-on-close>
-      <ElForm :model="deliveryForm" label-width="80px">
-        <ElFormItem label="订单编号">
-          <ElInput :model-value="deliveryForm.orderNo" disabled />
-        </ElFormItem>
-        <ElFormItem label="物流公司">
-          <ElInput v-model="deliveryForm.logisticsCompany" placeholder="请输入物流公司" />
-        </ElFormItem>
-        <ElFormItem label="物流单号">
-          <ElInput v-model="deliveryForm.trackingNo" placeholder="请输入物流单号" />
-        </ElFormItem>
-        <ElFormItem label="备注">
-          <ElInput v-model="deliveryForm.message" placeholder="选填" />
-        </ElFormItem>
-      </ElForm>
-      <template #footer>
-        <ElButton @click="deliveryVisible = false">取消</ElButton>
-        <ElButton type="primary" :loading="deliveryLoading" @click="submitDelivery">
-          确认发货
-        </ElButton>
-      </template>
+    <ElDialog v-model="deliveryVisible" title="按商品发货" width="650px" destroy-on-close>
+      <div v-if="deliveryOrder">
+        <div class="delivery-order-info">
+          订单编号：<strong>{{ deliveryOrder.orderNo }}</strong>
+        </div>
+        <div v-for="item in deliveryOrder.items" :key="item.id" class="delivery-item">
+          <div class="delivery-item-header">
+            <span class="font-medium">{{ item.productName }}</span>
+            <span v-if="item.skuSpecName" class="text-gray-500 text-sm">{{ item.skuSpecName }}</span>
+            <span class="text-gray-500 text-sm">×{{ item.quantity }}</span>
+          </div>
+          <div class="delivery-item-form">
+            <ElInput v-model="itemDeliveries[item.id].logisticsCompany" placeholder="物流公司" size="small" style="width:140px" />
+            <ElInput v-model="itemDeliveries[item.id].trackingNo" placeholder="物流单号" size="small" style="width:200px" />
+            <ElButton size="small" type="primary" :loading="deliveryLoading" @click="submitItemDelivery(item)">发货</ElButton>
+          </div>
+        </div>
+      </div>
     </ElDialog>
   </Page>
 </template>
@@ -454,4 +447,36 @@ onMounted(() => {
   min-width: 80px;
   text-align: right;
 }
+
+.delivery-order-info {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--el-border-color-lighter);
+}
+
+.delivery-item {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.delivery-item-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.delivery-item-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.font-medium { font-weight: 500; }
+
+.text-gray-500 { color: var(--el-text-color-secondary); }
+
+.text-sm { font-size: 13px; }
 </style>

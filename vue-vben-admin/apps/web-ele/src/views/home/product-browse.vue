@@ -43,7 +43,7 @@ const tableData = computed(() => {
 async function loadProducts() {
   loading.value = true;
   try {
-    const data = await requestClient.get<ProductItem[]>(`${productApiBase}/list`);
+    const data = await requestClient.get<ProductItem[]>(`${productApiBase}/browse`);
     products.value = Array.isArray(data) ? data : [];
   } finally {
     loading.value = false;

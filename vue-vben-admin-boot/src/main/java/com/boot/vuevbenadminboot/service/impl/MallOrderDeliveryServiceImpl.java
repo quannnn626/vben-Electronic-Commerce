@@ -58,6 +58,7 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         }
         MallOrderDelivery mallOrderDelivery = new MallOrderDelivery();
         mallOrderDelivery.setOrderId(mallOrder.getId());
+        mallOrderDelivery.setOrderItemId(req.getOrderItemId());
         mallOrderDelivery.setLogisticsCompany(req.getLogisticsCompany());
         mallOrderDelivery.setTrackingNo(req.getTrackingNo());
         mallOrderDelivery.setDeliveryStatus(0);

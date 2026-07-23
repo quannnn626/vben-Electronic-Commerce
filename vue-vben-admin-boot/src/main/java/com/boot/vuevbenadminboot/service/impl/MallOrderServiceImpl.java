@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallCart;
 import com.boot.vuevbenadminboot.domain.MallFile;
+import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderDelivery;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
@@ -17,6 +18,7 @@ import com.boot.vuevbenadminboot.service.MallCartService;
 import com.boot.vuevbenadminboot.service.MallFileService;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
+import com.boot.vuevbenadminboot.service.MallProductService;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.service.MallUserAddressService;
 import com.boot.vuevbenadminboot.service.SysUserService;
@@ -51,6 +53,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private final MallFileService fileService;
     private final MallUserAddressService addressService;
     private final MallCartService cartService;
+    private final MallProductService mallProductService;
     private final MallOrderDeliveryMapper deliveryMapper;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,6 +64,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             MallFileService fileService,
             MallUserAddressService addressService,
             MallCartService cartService,
+            MallProductService mallProductService,
             MallOrderDeliveryMapper deliveryMapper) {
         this.sysUserService = sysUserService;
         this.orderItemService = orderItemService;
@@ -68,6 +72,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         this.fileService = fileService;
         this.addressService = addressService;
         this.cartService = cartService;
+        this.mallProductService = mallProductService;
         this.deliveryMapper = deliveryMapper;
     }
 
@@ -255,9 +260,37 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     }
 
     @Override
-    public List<OrderListItemDto> getAllUserList(OrderQueryRequest req) {
+    public List<OrderListItemDto> getAllUserList(OrderQueryRequest req, String username) {
+        Long userId = sysUserService.requireUserId(username);
         LambdaQueryWrapper<MallOrder> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(MallOrder::getDeleted, 0);
+        // 非超级管理员只看自己商品的订单
+        SysUser currentUser = sysUserService.selectByUsername(username);
+        if (currentUser == null || !"super".equals(currentUser.getRole())) {
+            List<Long> productIds = mallProductService.list(
+                    new LambdaQueryWrapper<MallProduct>()
+                            .eq(MallProduct::getCreateUser, userId)
+                            .eq(MallProduct::getDeleted, 0)
+            ).stream().map(MallProduct::getId).toList();
+            if (productIds.isEmpty()) {
+                return List.of();
+            }
+            List<Long> skuIds = skuService.list(
+                    new LambdaQueryWrapper<MallSku>()
+                            .in(MallSku::getProductId, productIds)
+            ).stream().map(MallSku::getId).toList();
+            if (skuIds.isEmpty()) {
+                return List.of();
+            }
+            List<Long> orderItemOrderIds = orderItemService.list(
+                    new LambdaQueryWrapper<MallOrderItem>()
+                            .in(MallOrderItem::getSkuId, skuIds)
+            ).stream().map(MallOrderItem::getOrderId).distinct().toList();
+            if (orderItemOrderIds.isEmpty()) {
+                return List.of();
+            }
+            queryWrapper.in(MallOrder::getId, orderItemOrderIds);
+        }
         if (req.getOrderNo() != null && !req.getOrderNo().isBlank()) {
             queryWrapper.like(MallOrder::getOrderNo, req.getOrderNo());
         }

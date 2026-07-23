@@ -100,12 +100,8 @@ public class MallOrderController {
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
-        SysUser user = sysUserService.selectByUsername(username);
-        if (user == null || !"super".equals(user.getRole())) {
-            return ApiResponse.of(-1, null, "无权限");
-        }
         try {
-            return ApiResponse.of(0, orderService.getAllUserList(req), "success");
+            return ApiResponse.of(0, orderService.getAllUserList(req, username), "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }

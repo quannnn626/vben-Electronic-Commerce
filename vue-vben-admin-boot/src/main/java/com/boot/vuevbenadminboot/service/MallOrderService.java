@@ -24,5 +24,5 @@ public interface MallOrderService extends IService<MallOrder> {
 
     OrderListItemDto getOrderDetail(String username, Long orderId);
 
-    List<OrderListItemDto> getAllUserList(OrderQueryRequest req);
+    List<OrderListItemDto> getAllUserList(OrderQueryRequest req, String username);
 }

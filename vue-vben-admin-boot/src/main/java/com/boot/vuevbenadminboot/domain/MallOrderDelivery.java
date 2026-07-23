@@ -26,6 +26,11 @@ public class MallOrderDelivery {
     private Long orderId;
 
     /**
+     * 订单商品ID
+     */
+    private Long orderItemId;
+
+    /**
      * 物流公司
      */
     private String logisticsCompany;
