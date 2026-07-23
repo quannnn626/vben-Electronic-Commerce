@@ -34,12 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -266,6 +261,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         queryWrapper.eq(MallOrder::getDeleted, 0);
         // 非超级管理员只看自己商品的订单
         SysUser currentUser = sysUserService.selectByUsername(username);
+        final Set<Long> merchantSkuIds;
         if (currentUser == null || !"super".equals(currentUser.getRole())) {
             List<Long> productIds = mallProductService.list(
                     new LambdaQueryWrapper<MallProduct>()
@@ -290,6 +286,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                 return List.of();
             }
             queryWrapper.in(MallOrder::getId, orderItemOrderIds);
+            merchantSkuIds = new HashSet<>(skuIds);
+        } else {
+            merchantSkuIds = null;
         }
         if (req.getOrderNo() != null && !req.getOrderNo().isBlank()) {
             queryWrapper.like(MallOrder::getOrderNo, req.getOrderNo());
@@ -329,6 +328,14 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
         List<Long> orderIds = orders.stream().map(MallOrder::getId).toList();
         Map<Long, List<MallOrderItem>> itemMap = buildItemMap(orderIds);
+        // 非超级管理员只展示自己SKU对应的商品项
+        if (merchantSkuIds != null) {
+            for (Map.Entry<Long, List<MallOrderItem>> entry : itemMap.entrySet()) {
+                entry.setValue(entry.getValue().stream()
+                        .filter(item -> merchantSkuIds.contains(item.getSkuId()))
+                        .toList());
+            }
+        }
 
         Set<Long> skuIds = itemMap.values().stream()
                 .flatMap(List::stream)
