@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallProductCategoryRel;
 import com.boot.vuevbenadminboot.domain.MallProductCategory;
 import com.boot.vuevbenadminboot.domain.MallSku;
+import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.domain.enums.CommonStatusEnum;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,12 +72,53 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     }
 
     @Override
-    public List<ProductListItemDto> listProducts() {
+    public List<ProductListItemDto> listPublishedProducts() {
         List<MallProduct> products = this.list(
                 new LambdaQueryWrapper<MallProduct>()
                         .eq(MallProduct::getDeleted, 0)
+                        .eq(MallProduct::getStatus, CommonStatusEnum.ENABLED.getCode())
                         .orderByDesc(MallProduct::getId)
         );
+        if (products.isEmpty()) {
+            return List.of();
+        }
+        List<Long> productIds = products.stream().map(MallProduct::getId).toList();
+        Map<Long, List<Long>> categoryMap = buildCategoryMap(productIds);
+        Map<Long, List<String>> categoryNameMap = buildCategoryNameMap(categoryMap);
+        Map<Long, List<ProductSkuDto>> skuMap = buildSkuMap(productIds);
+
+        List<ProductListItemDto> result = new ArrayList<>();
+        for (MallProduct product : products) {
+            ProductListItemDto dto = new ProductListItemDto();
+            dto.setId(product.getId());
+            dto.setName(product.getName());
+            List<ProductSkuDto> skuList = skuMap.getOrDefault(product.getId(), List.of());
+            dto.setSkus(skuList);
+            dto.setPrice(calculateMinSkuPrice(skuList));
+            dto.setStock(sumSkuStock(skuList));
+            dto.setDescription(product.getDescription());
+            dto.setStatus(product.getStatus());
+            dto.setCreateTime(product.getCreateTime());
+            List<Long> categoryIds = categoryMap.getOrDefault(product.getId(), List.of());
+            dto.setCategoryIds(categoryIds);
+            dto.setCategoryNames(categoryNameMap.getOrDefault(product.getId(), List.of()));
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    public List<ProductListItemDto> listProducts(String username) {
+        Long userId = sysUserService.requireUserId(username);
+        SysUser user = sysUserService.selectByUsername(username);
+        LambdaQueryWrapper<MallProduct> wrapper = new LambdaQueryWrapper<MallProduct>()
+                .eq(MallProduct::getDeleted, 0)
+                .orderByDesc(MallProduct::getId);
+        // 非超级管理员只看自己创建的商品
+        if (user == null || !"super".equals(user.getRole())) {
+            wrapper.eq(MallProduct::getCreateUser, userId);
+        }
+        List<MallProduct> products = this.list(wrapper);
         if (products.isEmpty()) {
             return List.of();
         }

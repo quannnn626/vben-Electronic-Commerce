@@ -26,8 +26,14 @@ public class ProductController {
 
     @GetMapping("/list")
     public Map<String, Object> list(HttpServletRequest request) {
-        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
-        return ApiResponse.of(0, productService.listProducts(), "success");
+        String username = getLoginUsername(request);
+        if (username == null) return ApiResponse.of(-1, null, "未登录");
+        return ApiResponse.of(0, productService.listProducts(username), "success");
+    }
+
+    @GetMapping("/browse")
+    public Map<String, Object> browse() {
+        return ApiResponse.of(0, productService.listPublishedProducts(), "success");
     }
 
     @GetMapping("/detail")

@@ -13,7 +13,9 @@ import java.util.List;
  * @createDate 2026-04-19 19:20:12
  */
 public interface MallProductService extends IService<MallProduct> {
-    List<ProductListItemDto> listProducts();
+    List<ProductListItemDto> listProducts(String username);
+
+    List<ProductListItemDto> listPublishedProducts();
 
     ProductListItemDto getProductDetail(Long id);
 
