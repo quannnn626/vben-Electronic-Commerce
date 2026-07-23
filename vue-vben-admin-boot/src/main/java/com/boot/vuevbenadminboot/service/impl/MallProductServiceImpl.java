@@ -92,7 +92,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             ProductListItemDto dto = new ProductListItemDto();
             dto.setId(product.getId());
             dto.setName(product.getName());
-            dto.setMerchantId(product.getMerchantId());
             List<ProductSkuDto> skuList = skuMap.getOrDefault(product.getId(), List.of());
             dto.setSkus(skuList);
             dto.setPrice(calculateMinSkuPrice(skuList));
@@ -165,7 +164,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         ProductListItemDto dto = new ProductListItemDto();
         dto.setId(product.getId());
         dto.setName(product.getName());
-        dto.setMerchantId(product.getMerchantId());
         List<ProductSkuDto> skuList = skuMap.getOrDefault(product.getId(), List.of());
         dto.setSkus(skuList);
         dto.setPrice(calculateMinSkuPrice(skuList));
@@ -187,7 +185,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         MallProduct product = new MallProduct();
         product.setName(req.getName().trim());
         product.setDescription(req.getDescription());
-        product.setMerchantId(req.getMerchantId() != null ? req.getMerchantId() : userId);
         product.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         product.setCreateUser(userId);
         product.setDeleted(0);
@@ -209,9 +206,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         old.setName(req.getName().trim());
         old.setDescription(req.getDescription());
-        if (req.getMerchantId() != null) {
-            old.setMerchantId(req.getMerchantId());
-        }
         old.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         old.setUpdateTime(new Date());
         boolean updated = this.updateById(old);
