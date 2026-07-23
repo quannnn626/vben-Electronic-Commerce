@@ -13,6 +13,7 @@ public class ProductSaveRequest {
     private List<Long> categoryIds;
     private String description;
     private Long id;
+    private Long merchantId;
     private String name;
     private List<ProductSkuDto> skus;
     private Integer status;
