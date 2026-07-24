@@ -259,37 +259,31 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         Long userId = sysUserService.requireUserId(username);
         LambdaQueryWrapper<MallOrder> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(MallOrder::getDeleted, 0);
-        // 非超级管理员只看自己商品的订单
-        SysUser currentUser = sysUserService.selectByUsername(username);
-        final Set<Long> merchantSkuIds;
-        if (currentUser == null || !"super".equals(currentUser.getRole())) {
-            List<Long> productIds = mallProductService.list(
-                    new LambdaQueryWrapper<MallProduct>()
-                            .eq(MallProduct::getCreateUser, userId)
-                            .eq(MallProduct::getDeleted, 0)
-            ).stream().map(MallProduct::getId).toList();
-            if (productIds.isEmpty()) {
-                return List.of();
-            }
-            List<Long> skuIds = skuService.list(
-                    new LambdaQueryWrapper<MallSku>()
-                            .in(MallSku::getProductId, productIds)
-            ).stream().map(MallSku::getId).toList();
-            if (skuIds.isEmpty()) {
-                return List.of();
-            }
-            List<Long> orderItemOrderIds = orderItemService.list(
-                    new LambdaQueryWrapper<MallOrderItem>()
-                            .in(MallOrderItem::getSkuId, skuIds)
-            ).stream().map(MallOrderItem::getOrderId).distinct().toList();
-            if (orderItemOrderIds.isEmpty()) {
-                return List.of();
-            }
-            queryWrapper.in(MallOrder::getId, orderItemOrderIds);
-            merchantSkuIds = new HashSet<>(skuIds);
-        } else {
-            merchantSkuIds = null;
+        // 只看自己商品的订单
+        List<Long> productIds = mallProductService.list(
+                new LambdaQueryWrapper<MallProduct>()
+                        .eq(MallProduct::getCreateUser, userId)
+                        .eq(MallProduct::getDeleted, 0)
+        ).stream().map(MallProduct::getId).toList();
+        if (productIds.isEmpty()) {
+            return List.of();
         }
+        List<Long> mySkuIds = skuService.list(
+                new LambdaQueryWrapper<MallSku>()
+                        .in(MallSku::getProductId, productIds)
+        ).stream().map(MallSku::getId).toList();
+        if (mySkuIds.isEmpty()) {
+            return List.of();
+        }
+        List<Long> orderItemOrderIds = orderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .in(MallOrderItem::getSkuId, mySkuIds)
+        ).stream().map(MallOrderItem::getOrderId).distinct().toList();
+        if (orderItemOrderIds.isEmpty()) {
+            return List.of();
+        }
+        queryWrapper.in(MallOrder::getId, orderItemOrderIds);
+        final Set<Long> merchantSkuIds = new HashSet<>(mySkuIds);
         if (req.getOrderNo() != null && !req.getOrderNo().isBlank()) {
             queryWrapper.like(MallOrder::getOrderNo, req.getOrderNo());
         }
@@ -328,13 +322,11 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
         List<Long> orderIds = orders.stream().map(MallOrder::getId).toList();
         Map<Long, List<MallOrderItem>> itemMap = buildItemMap(orderIds);
-        // 非超级管理员只展示自己SKU对应的商品项
-        if (merchantSkuIds != null) {
-            for (Map.Entry<Long, List<MallOrderItem>> entry : itemMap.entrySet()) {
-                entry.setValue(entry.getValue().stream()
-                        .filter(item -> merchantSkuIds.contains(item.getSkuId()))
-                        .toList());
-            }
+        // 只展示自己SKU对应的商品项
+        for (Map.Entry<Long, List<MallOrderItem>> entry : itemMap.entrySet()) {
+            entry.setValue(entry.getValue().stream()
+                    .filter(item -> merchantSkuIds.contains(item.getSkuId()))
+                    .toList());
         }
 
         Set<Long> skuIds = itemMap.values().stream()

@@ -2,9 +2,7 @@ package com.boot.vuevbenadminboot.web;
 
 import com.boot.vuevbenadminboot.auth.AuthConstants;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
-import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
-import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleBatchAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleRequest;
@@ -26,11 +24,9 @@ import java.util.Map;
 @RequestMapping("/mall/afterSale")
 public class MallAfterSaleController {
     private final MallAfterSaleService mallAfterSaleService;
-    private final SysUserService sysUserService;
 
-    public MallAfterSaleController(MallAfterSaleService mallAfterSaleService, SysUserService sysUserService) {
+    public MallAfterSaleController(MallAfterSaleService mallAfterSaleService) {
         this.mallAfterSaleService = mallAfterSaleService;
-        this.sysUserService = sysUserService;
     }
 
     @PostMapping("/create")
@@ -83,10 +79,6 @@ public class MallAfterSaleController {
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
-        SysUser user = sysUserService.selectByUsername(username);
-        if (user == null || !"super".equals(user.getRole())) {
-            return ApiResponse.of(-1, null, "无权限");
-        }
         try {
             mallAfterSaleService.audit(request, username);
             return ApiResponse.of(0, null, "审核完成");
@@ -101,10 +93,6 @@ public class MallAfterSaleController {
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
         }
-        SysUser user = sysUserService.selectByUsername(username);
-        if (user == null || !"super".equals(user.getRole())) {
-            return ApiResponse.of(-1, null, "无权限");
-        }
         try {
             mallAfterSaleService.batchAudit(request, username);
             return ApiResponse.of(0, null, "批量审核完成");
@@ -118,10 +106,6 @@ public class MallAfterSaleController {
         String username = (String) request.getAttribute(AuthConstants.REQUEST_USERNAME);
         if (username == null) {
             return ApiResponse.of(-1, null, "未登录");
-        }
-        SysUser user = sysUserService.selectByUsername(username);
-        if (user == null || !"super".equals(user.getRole())) {
-            return ApiResponse.of(-1, null, "无权限");
         }
         try {
             List<AfterSaleAdminListDto> list = mallAfterSaleService.listAfterSalesAdmin();
