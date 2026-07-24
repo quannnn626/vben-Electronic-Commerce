@@ -5,11 +5,14 @@ import com.boot.vuevbenadminboot.domain.MallOrderDelivery;
 import com.boot.vuevbenadminboot.service.MallOrderDeliveryService;
 import com.boot.vuevbenadminboot.web.dto.req.DeliveryRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,5 +36,11 @@ public class MallOrderDeliveryController {
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
         }
+    }
+
+    @GetMapping("/items")
+    public Map<String, Object> deliveredItems(@RequestParam Long orderId) {
+        List<Long> itemIds = mallOrderDeliveryService.getDeliveredItemIds(orderId);
+        return ApiResponse.of(0, itemIds, "success");
     }
 }

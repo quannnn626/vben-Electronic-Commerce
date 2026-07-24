@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderDelivery;
+import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
 import com.boot.vuevbenadminboot.service.MallOrderDeliveryService;
 import com.boot.vuevbenadminboot.mapper.MallOrderDeliveryMapper;
+import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.DeliveryRequest;
@@ -15,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author quannnn
@@ -28,11 +33,14 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
     private final SysUserService sysUserService;
     private final MallOrderService mallOrderService;
     private final MallOrderMapper mallOrderMapper;
+    private final MallOrderItemService mallOrderItemService;
 
-    public MallOrderDeliveryServiceImpl(SysUserService sysUserService, MallOrderService mallOrderService, MallOrderMapper mallOrderMapper) {
+    public MallOrderDeliveryServiceImpl(SysUserService sysUserService, MallOrderService mallOrderService,
+                                         MallOrderMapper mallOrderMapper, MallOrderItemService mallOrderItemService) {
         this.sysUserService = sysUserService;
         this.mallOrderService = mallOrderService;
         this.mallOrderMapper = mallOrderMapper;
+        this.mallOrderItemService = mallOrderItemService;
     }
 
     @Override
@@ -47,7 +55,8 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         if (mallOrder == null) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (!Objects.equals(mallOrder.getStatus(), OrderStatusEnum.PAID.getCode())) {
+        if (!Objects.equals(mallOrder.getStatus(), OrderStatusEnum.PAID.getCode())
+                && !Objects.equals(mallOrder.getStatus(), OrderStatusEnum.DELIVERING.getCode())) {
             throw new IllegalArgumentException("仅已支付订单可发货");
         }
         if (req.getTrackingNo() == null || req.getTrackingNo().isBlank()) {
@@ -55,6 +64,13 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         }
         if (req.getLogisticsCompany() == null || req.getLogisticsCompany().isBlank()) {
             throw new IllegalArgumentException("请填写物流公司");
+        }
+        // 防重：已发货的商品不能再发
+        Long count = this.count(new LambdaQueryWrapper<MallOrderDelivery>()
+                .eq(MallOrderDelivery::getOrderItemId, req.getOrderItemId())
+                .eq(MallOrderDelivery::getDeleted, 0));
+        if (count > 0) {
+            throw new IllegalArgumentException("该商品已发货");
         }
         MallOrderDelivery mallOrderDelivery = new MallOrderDelivery();
         mallOrderDelivery.setOrderId(mallOrder.getId());
@@ -69,13 +85,40 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         mallOrderDelivery.setDeleted(0);
         this.save(mallOrderDelivery);
 
+        // 所有商品都发货后才改订单状态
+        List<MallOrderItem> orderItems = mallOrderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .eq(MallOrderItem::getOrderId, mallOrder.getId())
+                        .eq(MallOrderItem::getDeleted, 0)
+        );
+        List<MallOrderDelivery> deliveries = this.list(
+                new LambdaQueryWrapper<MallOrderDelivery>()
+                        .eq(MallOrderDelivery::getOrderId, mallOrder.getId())
+                        .eq(MallOrderDelivery::getDeleted, 0)
+        );
+        Set<Long> deliveredItemIds = deliveries.stream()
+                .map(MallOrderDelivery::getOrderItemId).collect(Collectors.toSet());
+        boolean allDelivered = orderItems.stream().allMatch(it -> deliveredItemIds.contains(it.getId()));
         Date now = new Date();
-        mallOrder.setStatus(OrderStatusEnum.SHIPPED.getCode());
+        mallOrder.setStatus(allDelivered
+                ? OrderStatusEnum.SHIPPED.getCode()
+                : OrderStatusEnum.DELIVERING.getCode());
         mallOrder.setDeliveryTime(now);
         mallOrder.setUpdateTime(now);
         mallOrderMapper.updateById(mallOrder);
 
         return mallOrderDelivery;
+    }
+
+    @Override
+    public List<Long> getDeliveredItemIds(Long orderId) {
+        return this.list(new LambdaQueryWrapper<MallOrderDelivery>()
+                        .eq(MallOrderDelivery::getOrderId, orderId)
+                        .eq(MallOrderDelivery::getDeleted, 0))
+                .stream()
+                .map(MallOrderDelivery::getOrderItemId)
+                .filter(id -> id != null)
+                .toList();
     }
 }
 

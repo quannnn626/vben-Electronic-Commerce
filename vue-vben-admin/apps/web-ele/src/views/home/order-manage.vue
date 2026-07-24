@@ -80,6 +80,7 @@ const statusOptions = [
   { label: '全部', value: null },
   { label: '待支付', value: 0 },
   { label: '已支付', value: 1 },
+  { label: '发货中', value: 5 },
   { label: '已发货', value: 2 },
   { label: '已完成', value: 3 },
   { label: '已取消', value: 4 },
@@ -91,6 +92,7 @@ const statusMap: Record<number, { label: string; type: string }> = {
   2: { label: '已发货', type: 'success' },
   3: { label: '已完成', type: 'success' },
   4: { label: '已取消', type: 'info' },
+  5: { label: '发货中', type: 'warning' },
 };
 
 function normalizeImage(url?: string) {
@@ -136,10 +138,21 @@ function showDetail(row: OrderRecord) {
   detailVisible.value = true;
 }
 
-function showDelivery(row: OrderRecord) {
+const deliveredIds = ref<number[]>([]);
+
+async function showDelivery(row: OrderRecord) {
   deliveryOrder.value = row;
+  // 查已发货的商品ID
+  try {
+    const ids = await requestClient.get<number[]>('/mall/order/delivery/items', { params: { orderId: row.id } });
+    deliveredIds.value = Array.isArray(ids) ? ids : [];
+  } catch { deliveredIds.value = []; }
   initItemDeliveries(row.items);
   deliveryVisible.value = true;
+}
+
+function isDelivered(itemId: number) {
+  return deliveredIds.value.includes(itemId);
 }
 
 async function submitItemDelivery(item: OrderItemDto) {
@@ -240,7 +253,7 @@ onMounted(() => {
               详情
             </ElButton>
             <ElButton
-              v-if="row.status === 1"
+              v-if="row.status === 1 || row.status === 5"
               size="small"
               text
               type="success"
@@ -335,7 +348,7 @@ onMounted(() => {
         <div class="delivery-order-info">
           订单编号：<strong>{{ deliveryOrder.orderNo }}</strong>
         </div>
-        <div v-for="item in deliveryOrder.items" :key="item.id" class="delivery-item">
+        <div v-for="item in deliveryOrder.items" :key="item.id" v-show="!isDelivered(item.id)" class="delivery-item">
           <div class="delivery-item-header">
             <span class="font-medium">{{ item.productName }}</span>
             <span v-if="item.skuSpecName" class="text-gray-500 text-sm">{{ item.skuSpecName }}</span>

@@ -13,4 +13,6 @@ import java.util.List;
 */
 public interface MallOrderDeliveryService extends IService<MallOrderDelivery> {
     MallOrderDelivery createDelivery(DeliveryRequest req,String username);
+
+    List<Long> getDeliveredItemIds(Long orderId);
 }
