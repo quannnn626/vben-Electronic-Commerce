@@ -41,7 +41,7 @@ interface OrderItem {
   goodsImage: string;
   amount: number;
   actualAmount: number;
-  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled';
+  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'delivering';
   createTime: string;
   logisticsCompany: string;
   trackingNo: string;
@@ -55,6 +55,7 @@ const ORDER_STATUS = {
   SHIPPED: 2,    // 已发货
   COMPLETED: 3,  // 已完成
   CANCELLED: 4,  // 已取消
+  DELIVERING: 5, // 发货中
 } as const;
 
 const backendStatusMap: Record<number, OrderItem['status']> = {
@@ -63,11 +64,13 @@ const backendStatusMap: Record<number, OrderItem['status']> = {
   [ORDER_STATUS.SHIPPED]: 'shipped',
   [ORDER_STATUS.COMPLETED]: 'completed',
   [ORDER_STATUS.CANCELLED]: 'cancelled',
+  [ORDER_STATUS.DELIVERING]: 'delivering',
 };
 
 const statusMap: Record<OrderItem['status'], { label: string; type: string }> = {
   cancelled: { label: '已取消', type: 'info' },
   completed: { label: '已完成', type: 'success' },
+  delivering: { label: '发货中', type: 'warning' },
   paid: { label: '待发货', type: 'warning' },
   pending: { label: '待付款', type: 'danger' },
   shipped: { label: '已发货', type: '' },
@@ -419,7 +422,7 @@ onMounted(() => {
                 确认收货
               </ElButton>
               <ElButton
-                v-if="['paid', 'shipped', 'completed'].includes(item.status) && item.orderItemId"
+                v-if="['paid', 'shipped', 'completed', 'delivering'].includes(item.status) && item.orderItemId"
                 type="warning"
                 @click="handleAfterSale(item)"
               >
