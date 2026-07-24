@@ -16,8 +16,6 @@ public class ProductListItemDto {
     private List<String> categoryNames;
     private String description;
     private Long id;
-    private Long merchantId;
-    private String merchantName;
     private String name;
     private BigDecimal price;
     private List<ProductSkuDto> skus;

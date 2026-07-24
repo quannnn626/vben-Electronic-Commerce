@@ -50,11 +50,6 @@ public class MallProduct {
     private Date updateTime;
 
     /**
-     * 商家ID
-     */
-    private Long merchantId;
-
-    /**
      * 逻辑删除
      */
     private Integer deleted;

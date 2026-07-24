@@ -92,7 +92,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             ProductListItemDto dto = new ProductListItemDto();
             dto.setId(product.getId());
             dto.setName(product.getName());
-            dto.setMerchantId(product.getMerchantId());
             List<ProductSkuDto> skuList = skuMap.getOrDefault(product.getId(), List.of());
             dto.setSkus(skuList);
             dto.setPrice(calculateMinSkuPrice(skuList));
@@ -111,14 +110,10 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     @Override
     public List<ProductListItemDto> listProducts(String username) {
         Long userId = sysUserService.requireUserId(username);
-        SysUser user = sysUserService.selectByUsername(username);
         LambdaQueryWrapper<MallProduct> wrapper = new LambdaQueryWrapper<MallProduct>()
                 .eq(MallProduct::getDeleted, 0)
+                .eq(MallProduct::getCreateUser, userId)
                 .orderByDesc(MallProduct::getId);
-        // 非超级管理员只看自己创建的商品
-        if (user == null || !"super".equals(user.getRole())) {
-            wrapper.eq(MallProduct::getCreateUser, userId);
-        }
         List<MallProduct> products = this.list(wrapper);
         if (products.isEmpty()) {
             return List.of();
@@ -165,7 +160,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         ProductListItemDto dto = new ProductListItemDto();
         dto.setId(product.getId());
         dto.setName(product.getName());
-        dto.setMerchantId(product.getMerchantId());
         List<ProductSkuDto> skuList = skuMap.getOrDefault(product.getId(), List.of());
         dto.setSkus(skuList);
         dto.setPrice(calculateMinSkuPrice(skuList));
@@ -187,7 +181,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         MallProduct product = new MallProduct();
         product.setName(req.getName().trim());
         product.setDescription(req.getDescription());
-        product.setMerchantId(req.getMerchantId() != null ? req.getMerchantId() : userId);
         product.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         product.setCreateUser(userId);
         product.setDeleted(0);
@@ -209,9 +202,6 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
         }
         old.setName(req.getName().trim());
         old.setDescription(req.getDescription());
-        if (req.getMerchantId() != null) {
-            old.setMerchantId(req.getMerchantId());
-        }
         old.setStatus(req.getStatus() == null ? CommonStatusEnum.ENABLED.getCode() : req.getStatus());
         old.setUpdateTime(new Date());
         boolean updated = this.updateById(old);
