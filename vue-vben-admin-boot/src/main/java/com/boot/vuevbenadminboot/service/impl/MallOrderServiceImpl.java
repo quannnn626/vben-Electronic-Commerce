@@ -98,7 +98,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
         List<OrderListItemDto> result = new ArrayList<>();
         for (MallOrder order : orders) {
-            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap);
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap());
             fillDelivery(dto, deliveryMap.get(order.getId()));
             result.add(dto);
         }
@@ -181,7 +181,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         Map<Long, String> imageMap = buildSkuImageMap(skuIds);
 
         Map<Long, List<MallOrderItem>> itemMap = Map.of(order.getId(), orderItems);
-        return buildOrderDto(order, itemMap, imageMap);
+        return buildOrderDto(order, itemMap, imageMap, Collections.emptyMap());
     }
 
     // 取消订单
@@ -249,7 +249,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                 .collect(Collectors.toSet());
         Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
         Map<Long, MallOrderDelivery> deliveryMap = buildDeliveryMap(orderIds);
-        OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap);
+        OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap());
         fillDelivery(dto, deliveryMap.get(orderId));
         return dto;
     }
@@ -334,11 +334,13 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                 .map(MallOrderItem::getSkuId)
                 .collect(Collectors.toSet());
         Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
+        Map<Long, Long> skuProductMap = skuService.listByIds(skuIds).stream()
+                .collect(Collectors.toMap(MallSku::getId, MallSku::getProductId, (a, b) -> a));
         Map<Long, MallOrderDelivery> deliveryMap = buildDeliveryMap(orderIds);
 
         List<OrderListItemDto> result = new ArrayList<>();
         for (MallOrder order : orders) {
-            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap);
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, skuProductMap);
             dto.setUsername(usernameMap.get(order.getUserId()));
             fillDelivery(dto, deliveryMap.get(order.getId()));
             result.add(dto);
@@ -349,7 +351,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     // 构建订单详情 DTO
     private OrderListItemDto buildOrderDto(MallOrder order,
                                            Map<Long, List<MallOrderItem>> itemMap,
-                                           Map<Long, String> imageMap) {
+                                           Map<Long, String> imageMap,
+                                           Map<Long, Long> skuProductMap) {
         OrderListItemDto dto = new OrderListItemDto();
         dto.setId(order.getId());
         dto.setUserId(order.getUserId());
@@ -372,6 +375,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             OrderItemDto itemDto = new OrderItemDto();
             itemDto.setId(item.getId());
             itemDto.setSkuId(item.getSkuId());
+            itemDto.setProductId(skuProductMap.get(item.getSkuId()));
             itemDto.setProductName(item.getProductName());
             itemDto.setProductImage(imageMap.get(item.getSkuId()));
             itemDto.setSkuSpecName(item.getSkuSpecName());

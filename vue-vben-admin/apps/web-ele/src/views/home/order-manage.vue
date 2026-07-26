@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
@@ -24,6 +25,7 @@ import { requestClient } from '#/api/request';
 interface OrderItemDto {
   id: number;
   skuId: number;
+  productId?: number;
   productName: string;
   productImage: string;
   skuSpecName: string;
@@ -52,6 +54,7 @@ interface OrderRecord {
   items: OrderItemDto[];
 }
 
+const router = useRouter();
 const loading = ref(false);
 const list = ref<OrderRecord[]>([]);
 const detailVisible = ref(false);
@@ -131,6 +134,12 @@ function handleReset() {
   queryForm.createTime = null;
   queryForm.endCreateTime = null;
   loadList();
+}
+
+function goProduct(item: OrderItemDto) {
+  if (item.productId) {
+    router.push({ path: `/product/browse/${item.productId}` });
+  }
 }
 
 function showDetail(row: OrderRecord) {
@@ -326,12 +335,13 @@ onMounted(() => {
             <img
               v-if="item.productImage"
               :src="normalizeImage(item.productImage)"
-              class="goods-img"
+              class="goods-img cursor-pointer"
               alt=""
+              @click="goProduct(item)"
             />
             <span v-else class="goods-img-placeholder">图</span>
             <div class="goods-info">
-              <div class="goods-name">{{ item.productName }}</div>
+              <div class="goods-name cursor-pointer" @click="goProduct(item)">{{ item.productName }}</div>
               <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
             </div>
             <div class="goods-right">

@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 public class OrderItemDto {
     private Long id;
     private Long skuId;
+    private Long productId;
     private String productName;
     private String productImage;
     private String skuSpecName;
