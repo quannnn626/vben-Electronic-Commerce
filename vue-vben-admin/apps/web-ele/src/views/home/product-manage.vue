@@ -518,7 +518,7 @@ onMounted(async () => {
       v-model="dialogVisible"
       :title="isEdit ? '编辑商品' : '新增商品'"
       destroy-on-close
-      width="700px"
+      width="1000px"
     >
       <ElForm label-width="90px">
         <ElFormItem label="商品名称" required>
@@ -529,51 +529,47 @@ onMounted(async () => {
         </ElFormItem>
         <ElFormItem label="SKU规格" required>
           <div class="w-full">
-            <ElTable :data="formModel.skus" border size="small">
-              <ElTable.TableColumn label="规格名" min-width="180">
-                <template #default="{ row }">
-                  <ElInput v-model="row.specName" placeholder="如：42码 / XL / 黑色" />
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="SKU编码" min-width="150">
-                <template #default="{ row }">
-                  <ElInput v-model="row.skuCode" placeholder="可选" />
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="价格" min-width="120">
-                <template #default="{ row }">
-                  <ElInputNumber v-model="row.price" :min="0" :precision="2" :step="1" style="width: 100%" />
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="库存" min-width="110">
-                <template #default="{ row }">
-                  <ElInputNumber v-model="row.stock" :min="0" :step="1" style="width: 100%" />
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="附件" min-width="220">
-                <template #default="{ row }">
-                  <ElSelect v-model="row.fileIds" clearable multiple placeholder="选择附件（可多选）">
-                    <ElOption
-                      v-for="file in uploadedFileOptions"
-                      :key="file.id"
-                      :label="file.fileName"
-                      :value="file.id"
-                    />
-                  </ElSelect>
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="启用" width="90" align="center">
-                <template #default="{ row }">
-                  <ElSwitch v-model="row.status" :active-value="1" :inactive-value="0" />
-                </template>
-              </ElTable.TableColumn>
-              <ElTable.TableColumn label="操作" width="80" align="center">
-                <template #default="{ $index }">
-                  <ElButton link type="danger" @click="removeSkuRow($index)">删除</ElButton>
-                </template>
-              </ElTable.TableColumn>
-            </ElTable>
-            <ElButton class="mt-2" plain type="primary" @click="addSkuRow">新增规格</ElButton>
+            <div v-for="(sku, index) in formModel.skus" :key="index" class="sku-card">
+              <div class="sku-card-header">
+                <span class="sku-card-title">规格 {{ index + 1 }}</span>
+                <ElButton link type="danger" @click="removeSkuRow(index)">删除</ElButton>
+              </div>
+              <div class="sku-card-body">
+                <div class="sku-row">
+                  <div class="sku-field">
+                    <span class="sku-label">规格名</span>
+                    <ElInput v-model="sku.specName" placeholder="如：42码 / XL / 黑色" />
+                  </div>
+                  <div class="sku-field">
+                    <span class="sku-label">SKU编码</span>
+                    <ElInput v-model="sku.skuCode" placeholder="可选" />
+                  </div>
+                </div>
+                <div class="sku-row">
+                  <div class="sku-field">
+                    <span class="sku-label">价格</span>
+                    <ElInputNumber v-model="sku.price" :min="0" :precision="2" :step="1" style="width: 100%" />
+                  </div>
+                  <div class="sku-field">
+                    <span class="sku-label">库存</span>
+                    <ElInputNumber v-model="sku.stock" :min="0" :step="1" style="width: 100%" />
+                  </div>
+                </div>
+                <div class="sku-row">
+                  <div class="sku-field flex-1">
+                    <span class="sku-label">附件</span>
+                    <ElSelect v-model="sku.fileIds" clearable multiple placeholder="选择附件（可多选）">
+                      <ElOption v-for="file in uploadedFileOptions" :key="file.id" :label="file.fileName" :value="file.id" />
+                    </ElSelect>
+                  </div>
+                  <div class="sku-field sku-switch">
+                    <span class="sku-label">启用</span>
+                    <ElSwitch v-model="sku.status" :active-value="1" :inactive-value="0" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ElButton class="mt-3" @click="addSkuRow">+ 新增规格</ElButton>
           </div>
         </ElFormItem>
         <ElFormItem label="商品分类" required>
@@ -624,3 +620,57 @@ onMounted(async () => {
     </ElDialog>
   </Page>
 </template>
+
+<style scoped>
+.sku-card {
+  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--el-fill-color-lighter);
+}
+
+.sku-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.sku-card-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.sku-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sku-row {
+  display: flex;
+  gap: 16px;
+}
+
+.sku-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.sku-label {
+  display: block;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  margin-bottom: 4px;
+}
+
+.sku-switch {
+  flex: none;
+  width: 80px;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+</style>

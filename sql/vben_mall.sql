@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 24/07/2026 11:22:26
+ Date: 27/07/2026 11:41:20
 */
 
 SET NAMES utf8mb4;
@@ -45,15 +45,6 @@ CREATE TABLE `mall_after_sale`  (
 -- ----------------------------
 -- Records of mall_after_sale
 -- ----------------------------
-INSERT INTO `mall_after_sale` VALUES (2073964892266487809, 'AS20260706105857128085', 34, 8, 2046463574828482561, 1, 0, 5, '测试售后', 1, 0.00, NULL, NULL, NULL, '2026-07-06 10:58:57', '2026-07-09 11:42:59', 0);
-INSERT INTO `mall_after_sale` VALUES (2074044816176308225, 'AS20260706161632220355', 33, 9, 2046463574828482561, 2, 1, 4, '', 1, 0.00, '', 2046463574828482561, '2026-07-21 14:31:04', '2026-07-06 16:16:33', '2026-07-21 14:31:04', 0);
-INSERT INTO `mall_after_sale` VALUES (2074752805753401346, 'AS20260708150950242846', 38, 37, 2046463574828482561, 1, 3, 5, '', 1, 10122.00, '', 2046463574828482561, '2026-07-20 16:15:17', '2026-07-08 15:09:51', '2026-07-20 16:15:17', 0);
-INSERT INTO `mall_after_sale` VALUES (2074753029104283649, 'AS20260708151043334023', 37, 35, 2046463574828482561, 1, 2, 1, '', 1, 20120.00, '', 2046463574828482561, '2026-07-20 16:15:17', '2026-07-08 15:10:44', '2026-07-20 16:15:17', 0);
-INSERT INTO `mall_after_sale` VALUES (2075064654491312129, 'AS20260709114901553196', 32, 29, 2046463574828482561, 1, 2, 1, '不需要了', 1, 20.00, '', 2046463574828482561, '2026-07-20 16:15:17', '2026-07-09 11:49:01', '2026-07-20 16:15:17', 0);
-INSERT INTO `mall_after_sale` VALUES (2075400338834010113, 'AS20260710100254677682', 33, 30, 2046463574828482561, 0, 2, 5, '', 1, 20.00, '', 2046463574828482561, '2026-07-20 15:27:21', '2026-07-10 10:02:54', '2026-07-20 15:27:21', 0);
-INSERT INTO `mall_after_sale` VALUES (2079131676854534146, 'AS20260720170954982226', 39, 39, 2046463574828482561, 1, 0, 5, '', 2, 63806.00, NULL, NULL, NULL, '2026-07-20 17:09:55', '2026-07-20 17:09:55', 0);
-INSERT INTO `mall_after_sale` VALUES (2079132436954693633, 'AS20260720171256708200', 39, 38, 2046463574828482561, 1, 6, 5, '', 1, 63806.00, '', 2046463574828482561, '2026-07-21 14:30:01', '2026-07-20 17:12:56', '2026-07-21 14:30:01', 0);
-INSERT INTO `mall_after_sale` VALUES (2079454496138539009, 'AS20260721143240397506', 32, 29, 2046463574828482561, 0, 3, 5, '', 1, 20.00, '', 2046463574828482561, '2026-07-21 14:32:49', '2026-07-21 14:32:41', '2026-07-21 14:32:49', 0);
 
 -- ----------------------------
 -- Table structure for mall_cart
@@ -90,34 +81,15 @@ CREATE TABLE `mall_file`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `status` int NULL DEFAULT 0 COMMENT '状态：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_file
 -- ----------------------------
-INSERT INTO `mall_file` VALUES (11, '10月31日 (1).mp4', '/upload/20260424172524_4615a82c2a73433a9e0246cfb16ce1f0.mp4', 'video/mp4', '2026-04-24 17:25:25', '2026-04-24 17:25:25', 0);
-INSERT INTO `mall_file` VALUES (12, 'QQ图片20230426170644.jpg', '/upload/20260424172600_e89eae1061dc4293bb5562e06a63114a.jpg', 'image/jpeg', '2026-04-24 17:26:01', '2026-04-24 17:26:01', 0);
-INSERT INTO `mall_file` VALUES (13, 'QQ图片20230426170644.jpg', '/upload/20260424173833_6197e5e1ba8845e5a324f81a0166fe22.jpg', 'image/jpeg', '2026-04-24 17:38:34', '2026-04-24 17:38:34', 0);
-INSERT INTO `mall_file` VALUES (14, '微信图片_20250413113719.png', '/upload/20260424173838_a2b3394ce25447eb8a855795d41de623.png', 'image/png', '2026-04-24 17:38:38', '2026-04-24 17:38:38', 0);
-INSERT INTO `mall_file` VALUES (15, 'QQ图片20230426170644.jpg', '/upload/20260424174354_f6fc18b1319f4b588f50675af2cd9fe2.jpg', 'image/jpeg', '2026-04-24 17:43:55', '2026-04-24 17:43:55', 0);
-INSERT INTO `mall_file` VALUES (16, '微信图片_20250413113719.png', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'image/png', '2026-04-24 17:43:57', '2026-04-24 17:43:57', 0);
-INSERT INTO `mall_file` VALUES (17, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'image/jpeg', '2026-04-24 17:43:59', '2026-04-24 17:43:59', 0);
-INSERT INTO `mall_file` VALUES (18, '10月31日 (1).mp4', '/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'video/mp4', '2026-04-24 17:44:06', '2026-04-24 17:44:06', 0);
-INSERT INTO `mall_file` VALUES (19, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', 'image/png', '2026-06-15 13:18:48', '2026-06-15 13:18:48', 0);
-INSERT INTO `mall_file` VALUES (20, '71cf3bc79f3df8dc5e63917aca2b738446102843.png', '/upload/20260630143458_1617db2e8041412a96873ffb03104485.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
-INSERT INTO `mall_file` VALUES (21, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260630143458_14838869cb954658b91ee465ffd97d52.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
-INSERT INTO `mall_file` VALUES (22, '微信图片_20250329220729.png', '/upload/20260630143458_2ded372cca434af88e322d403709a5ce.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
-INSERT INTO `mall_file` VALUES (23, 'QQ图片20230426170644.jpg', '/upload/20260630143458_c19914c061654efda6636886caa744f6.jpg', 'image/jpeg', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
-INSERT INTO `mall_file` VALUES (24, '09c00d5f6e46051f3213f4fd36234136.png', '/upload/20260630143458_19b6af21e9ec48a0aac64fadc0081e61.png', 'image/png', '2026-06-30 14:34:58', '2026-06-30 14:34:58', 0);
-INSERT INTO `mall_file` VALUES (25, '微信图片_20250413113719.png', '/upload/20260630143458_de34f6d94be4400aa697191ba891b943.png', 'image/png', '2026-06-30 14:34:59', '2026-06-30 14:34:59', 0);
-INSERT INTO `mall_file` VALUES (26, '71cf3bc79f3df8dc5e63917aca2b738446102843.png', '/upload/20260702101152_a0fd21111f8b48cda27e7b85fd926fe1.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
-INSERT INTO `mall_file` VALUES (27, 'QQ图片20230426170644.jpg', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', 'image/jpeg', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
-INSERT INTO `mall_file` VALUES (28, '09c00d5f6e46051f3213f4fd36234136.png', '/upload/20260702101152_36afa86fd56f446984f4b5bdcf485b3b.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
-INSERT INTO `mall_file` VALUES (29, '微信图片_20250329220729.png', '/upload/20260702101152_cb29fb1d73d34f58a2b9471c0834b8b2.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
-INSERT INTO `mall_file` VALUES (30, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260702101152_e0c304c33e8848029873e144b9380c4c.png', 'image/png', '2026-07-02 10:11:52', '2026-07-02 10:11:52', 0);
-INSERT INTO `mall_file` VALUES (31, '个人照片.jpg', '/upload/20260702164619_1fab67a48e4042c381159100114203cf.jpg', 'image/jpeg', '2026-07-02 16:46:19', '2026-07-02 16:46:19', 0);
-INSERT INTO `mall_file` VALUES (38, '屏幕截图(479).png', '/upload/20260723105901_e23148dd9ffd4b598faf8785ce3d7b12.png', 'image/png', '2026-07-23 10:59:02', '2026-07-23 10:59:15', 0);
-INSERT INTO `mall_file` VALUES (39, '屏幕截图(647).png', '/upload/20260723105905_51a2f5eb7f32452b9311be970376011d.png', 'image/png', '2026-07-23 10:59:06', '2026-07-23 10:59:15', 0);
+INSERT INTO `mall_file` VALUES (1, '微信图片_20250329220729.png', '/upload/20260727114025_1e88c1077fd54b09bd23ebd197905856.png', 'image/png', '2026-07-27 11:40:26', '2026-07-27 11:40:26', 2);
+INSERT INTO `mall_file` VALUES (2, 'QQ图片20230426170644.jpg', '/upload/20260727114025_6858215e4f324a87aa24ce66bae74621.jpg', 'image/jpeg', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
+INSERT INTO `mall_file` VALUES (3, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260727114025_2019d45fa46e460c8251ef31e2a16042.png', 'image/png', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
+INSERT INTO `mall_file` VALUES (4, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260727114025_7fca222c69b748a0a71e6a1cf00c17d5.jpg', 'image/jpeg', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -146,22 +118,11 @@ CREATE TABLE `mall_order`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_order_no`(`order_no` ASC) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_order
 -- ----------------------------
-INSERT INTO `mall_order` VALUES (29, '20260515173623241224', 2046463574828482561, 11282.00, 11282.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-05-15 17:36:23', NULL, NULL, NULL, '2026-06-12 14:18:45', '2026-06-12 14:18:45', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (30, '20260515173631957513', 2046463574828482561, 11282.00, 11282.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-05-15 17:36:31', NULL, NULL, NULL, '2026-06-12 14:18:39', '2026-06-12 14:18:39', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (31, '20260612141408359248', 2046463574828482561, 9998.00, 9998.00, 4, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-12 14:14:08', NULL, NULL, NULL, '2026-06-15 10:01:03', '2026-06-15 10:01:03', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (32, '20260615131913507790', 2046463574828482561, 20.00, 20.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-15 13:19:13', '2026-07-09 11:48:49', NULL, NULL, NULL, '2026-06-15 13:19:13', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (33, '20260618134637725929', 2046463574828482561, 20.00, 20.00, 1, 'yyy', '16674532231', '浙江省嘉兴市嘉善县浙江省嘉兴市嘉善县', 4, '2026-06-18 13:46:38', '2026-06-22 15:13:58', '2026-06-26 16:04:08', NULL, NULL, '2026-06-26 16:09:17', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (34, '20260625141014708880', 2046463574828482561, 20120.00, 20120.00, 2, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:10:14', '2026-06-25 14:10:30', '2026-06-26 16:13:22', NULL, NULL, '2026-06-26 16:13:22', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (37, '20260625141351491940', 2046463574828482561, 20120.00, 20120.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 14:13:52', '2026-07-08 14:16:46', NULL, NULL, NULL, '2026-06-25 14:13:52', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (38, '20260625212207982258', 2046463574828482561, 10122.00, 10122.00, 1, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-06-25 21:22:08', '2026-07-08 14:16:39', NULL, NULL, NULL, '2026-06-25 21:22:08', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (39, '20260710105218664074', 2046463574828482561, 63806.00, 63806.00, 5, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-07-10 10:52:19', '2026-07-10 10:52:25', '2026-07-24 10:44:56', NULL, NULL, '2026-07-24 11:01:45', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (40, '20260723114800499428', 2046495738450235393, 6989.00, 6989.00, 5, 'User', '17998556533', '北京市北京市昌平区高教大楼', 5, '2026-07-23 11:48:01', '2026-07-23 11:48:16', NULL, NULL, NULL, '2026-07-24 11:01:30', 0, NULL, NULL);
-INSERT INTO `mall_order` VALUES (41, '20260724110524658964', 2046463574828482561, 19161.00, 19161.00, 5, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-07-24 11:05:25', '2026-07-24 11:05:32', '2026-07-24 11:14:00', NULL, NULL, '2026-07-24 11:14:00', 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for mall_order_delivery
@@ -185,10 +146,6 @@ CREATE TABLE `mall_order_delivery`  (
 -- ----------------------------
 -- Records of mall_order_delivery
 -- ----------------------------
-INSERT INTO `mall_order_delivery` VALUES (2070420136584372226, 34, '顺丰', '20262606141014708880', 0, '测试', 2046463574828482561, '2026-06-26 16:13:22', '2026-06-26 16:13:22', 0, NULL);
-INSERT INTO `mall_order_delivery` VALUES (2080484345720451073, 39, '物流1', '202607101052186640741', 0, NULL, 2046463574828482561, '2026-07-24 10:44:56', '2026-07-24 10:44:56', 0, 38);
-INSERT INTO `mall_order_delivery` VALUES (2080489618858127361, 41, '物流1', '202607101052186640741', 0, NULL, 2046463574828482561, '2026-07-24 11:05:53', '2026-07-24 11:05:53', 0, 46);
-INSERT INTO `mall_order_delivery` VALUES (2080491661484175362, 41, '物流1', '202607101052186640741', 0, NULL, 2046463574828482561, '2026-07-24 11:14:00', '2026-07-24 11:14:00', 0, 46);
 
 -- ----------------------------
 -- Table structure for mall_order_item
@@ -209,33 +166,11 @@ CREATE TABLE `mall_order_item`  (
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_order_id`(`order_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_order_item
 -- ----------------------------
-INSERT INTO `mall_order_item` VALUES (26, 29, 6, 'ROG', '/api/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 1, 11282.00, '2026-05-15 17:36:23', '2026-05-15 17:36:23', 0);
-INSERT INTO `mall_order_item` VALUES (27, 30, 6, 'ROG', '/api/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 1, 11282.00, '2026-05-15 17:36:31', '2026-05-15 17:36:31', 0);
-INSERT INTO `mall_order_item` VALUES (28, 31, 7, 'ROG', '/api/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-06-12 14:14:08', '2026-06-12 14:14:08', 0);
-INSERT INTO `mall_order_item` VALUES (29, 32, 9, '测试修改枚举类后新增商品', '/api/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', '1', 20.00, 1, 20.00, '2026-06-15 13:19:13', '2026-06-15 13:19:13', 0);
-INSERT INTO `mall_order_item` VALUES (30, 33, 9, '测试修改枚举类后新增商品', '/api/upload/20260615131847_1738b3ae89204dca9fdbeb79fdf88603.png', '1', 20.00, 1, 20.00, '2026-06-18 13:46:38', '2026-06-18 13:46:38', 0);
-INSERT INTO `mall_order_item` VALUES (31, 34, 8, 'ROG', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'R9 8940HX/3070Ti', 10122.00, 1, 10122.00, '2026-06-25 14:10:14', '2026-06-25 14:10:14', 0);
-INSERT INTO `mall_order_item` VALUES (32, 34, 7, 'ROG', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-06-25 14:10:14', '2026-06-25 14:10:14', 0);
-INSERT INTO `mall_order_item` VALUES (35, 37, 8, 'ROG', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'R9 8940HX/3070Ti', 10122.00, 1, 10122.00, '2026-06-25 14:13:52', '2026-06-25 14:13:52', 0);
-INSERT INTO `mall_order_item` VALUES (36, 37, 7, 'ROG', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-06-25 14:13:52', '2026-06-25 14:13:52', 0);
-INSERT INTO `mall_order_item` VALUES (37, 38, 8, 'ROG', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'R9 8940HX/3070Ti', 10122.00, 1, 10122.00, '2026-06-25 21:22:08', '2026-06-25 21:22:08', 0);
-INSERT INTO `mall_order_item` VALUES (38, 39, 8, 'ROG', '/upload/20260424174358_caa72f6e0e2848a1a0dafdea48044a42.jpg', 'R9 8940HX/3070Ti', 10122.00, 2, 20244.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
-INSERT INTO `mall_order_item` VALUES (39, 39, 6, 'ROG', '/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 2, 22564.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
-INSERT INTO `mall_order_item` VALUES (40, 39, 11, '华硕天选4', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', '规格2', 6000.00, 1, 6000.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
-INSERT INTO `mall_order_item` VALUES (41, 39, 10, '华硕天选4', '/upload/20260702101152_36afa86fd56f446984f4b5bdcf485b3b.png', '规格1', 5000.00, 1, 5000.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
-INSERT INTO `mall_order_item` VALUES (42, 39, 7, 'ROG', '/upload/20260424174356_2adbccbbee054fe1bd7394dd8b7a9051.png', 'R9 8949HX/3060', 9998.00, 1, 9998.00, '2026-07-10 10:52:19', '2026-07-10 10:52:19', 0);
-INSERT INTO `mall_order_item` VALUES (43, 40, 11, '华硕天选4', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', '规格2', 6000.00, 1, 6000.00, '2026-07-23 11:48:01', '2026-07-23 11:48:01', 0);
-INSERT INTO `mall_order_item` VALUES (44, 40, 13, '商户商品', '/upload/20260723105905_51a2f5eb7f32452b9311be970376011d.png', '规格2', 99.00, 1, 99.00, '2026-07-23 11:48:01', '2026-07-23 11:48:01', 0);
-INSERT INTO `mall_order_item` VALUES (45, 40, 12, '商户商品', '/upload/20260723105901_e23148dd9ffd4b598faf8785ce3d7b12.png', '规格1', 890.00, 1, 890.00, '2026-07-23 11:48:01', '2026-07-23 11:48:01', 0);
-INSERT INTO `mall_order_item` VALUES (46, 41, 6, 'ROG', '/upload/20260424174405_03613bac947f4ff08ffcc977825a03c3.mp4', 'U7 255HX/3060', 11282.00, 1, 11282.00, '2026-07-24 11:05:25', '2026-07-24 11:05:25', 0);
-INSERT INTO `mall_order_item` VALUES (47, 41, 11, '华硕天选4', '/upload/20260702101152_f4009a7eb8784140a05b2d4667704c22.jpg', '规格2', 6000.00, 1, 6000.00, '2026-07-24 11:05:25', '2026-07-24 11:05:25', 0);
-INSERT INTO `mall_order_item` VALUES (48, 41, 13, '商户商品', '/upload/20260723105905_51a2f5eb7f32452b9311be970376011d.png', '规格2', 99.00, 1, 99.00, '2026-07-24 11:05:25', '2026-07-24 11:05:25', 0);
-INSERT INTO `mall_order_item` VALUES (49, 41, 12, '商户商品', '/upload/20260723105901_e23148dd9ffd4b598faf8785ce3d7b12.png', '规格1', 890.00, 2, 1780.00, '2026-07-24 11:05:25', '2026-07-24 11:05:25', 0);
 
 -- ----------------------------
 -- Table structure for mall_payment
@@ -264,14 +199,6 @@ CREATE TABLE `mall_payment`  (
 -- ----------------------------
 -- Records of mall_payment
 -- ----------------------------
-INSERT INTO `mall_payment` VALUES (2066771990411001858, 'PAY2066771990411001857', 32, '20260615131913507790', 2046463574828482561, 'alipay', 20.00, 1, 'SIM1783568928691', '2026-07-09 11:48:49', '2026-07-09 11:48:49', NULL, '2026-06-16 14:36:55', '2026-06-16 14:36:55', 0);
-INSERT INTO `mall_payment` VALUES (2067484140330876931, 'PAY2067484140330876930', 33, '20260618134637725929', 2046463574828482561, 'wechat', 20.00, 1, 'SIM1782112438453', '2026-06-22 15:13:58', '2026-06-22 15:13:58', NULL, '2026-06-18 13:46:45', '2026-06-18 13:46:45', 0);
-INSERT INTO `mall_payment` VALUES (2070026810458701827, 'PAY2070026810458701826', 34, '20260625141014708880', 2046463574828482561, 'alipay', 20120.00, 1, 'SIM1782367830118', '2026-06-25 14:10:30', '2026-06-25 14:10:30', NULL, '2026-06-25 14:10:25', '2026-06-25 14:10:25', 0);
-INSERT INTO `mall_payment` VALUES (2074739412287889411, 'PAY2074739412287889410', 38, '20260625212207982258', 2046463574828482561, 'alipay', 10122.00, 1, 'SIM1783491399393', '2026-07-08 14:16:39', '2026-07-08 14:16:39', NULL, '2026-07-08 14:16:37', '2026-07-08 14:16:37', 0);
-INSERT INTO `mall_payment` VALUES (2074739443359293442, 'PAY2074739443359293441', 37, '20260625141351491940', 2046463574828482561, 'wechat', 20120.00, 1, 'SIM1783491405993', '2026-07-08 14:16:46', '2026-07-08 14:16:46', NULL, '2026-07-08 14:16:44', '2026-07-08 14:16:44', 0);
-INSERT INTO `mall_payment` VALUES (2075412792867631107, 'PAY2075412792867631106', 39, '20260710105218664074', 2046463574828482561, 'alipay', 63806.00, 1, 'SIM1783651945231', '2026-07-10 10:52:25', '2026-07-10 10:52:25', NULL, '2026-07-10 10:52:23', '2026-07-10 10:52:23', 0);
-INSERT INTO `mall_payment` VALUES (2080137890501611523, 'PAY2080137890501611522', 40, '20260723114800499428', 2046495738450235393, 'alipay', 6989.00, 1, 'SIM1784778496266', '2026-07-23 11:48:16', '2026-07-23 11:48:16', NULL, '2026-07-23 11:48:14', '2026-07-23 11:48:14', 0);
-INSERT INTO `mall_payment` VALUES (2080489522489798657, 'PAY2080489522426884097', 41, '20260724110524658964', 2046463574828482561, 'alipay', 19161.00, 1, 'SIM1784862331884', '2026-07-24 11:05:32', '2026-07-24 11:05:32', NULL, '2026-07-24 11:05:30', '2026-07-24 11:05:30', 0);
 
 -- ----------------------------
 -- Table structure for mall_product
@@ -287,15 +214,12 @@ CREATE TABLE `mall_product`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
-INSERT INTO `mall_product` VALUES (7, 'ROG', 'ROG魔霸系列', 1, 2046463574828482561, '2026-04-24 17:45:22', '2026-07-10 14:08:07', 0);
-INSERT INTO `mall_product` VALUES (8, '测试修改枚举类后新增商品', '', 1, 2046463574828482561, '2026-06-15 13:18:57', '2026-07-10 14:08:08', 0);
-INSERT INTO `mall_product` VALUES (9, '华硕天选4', '', 1, 2046463574828482561, '2026-07-02 10:12:22', '2026-07-10 14:08:09', 0);
-INSERT INTO `mall_product` VALUES (10, '商户商品', '', 1, 2047131275460681729, '2026-07-23 10:59:15', '2026-07-23 10:59:15', 0);
+INSERT INTO `mall_product` VALUES (1, '管理员商品1', '管理员添加商品', 1, 2046463574828482561, '2026-07-27 11:41:03', '2026-07-27 11:41:03', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -313,311 +237,126 @@ CREATE TABLE `mall_product_category`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` int NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 101318 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1026 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品类目表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category
 -- ----------------------------
-INSERT INTO `mall_product_category` VALUES (1, '艺术品', 0, 1, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2, '珠宝首饰', 0, 1, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (3, '古玩杂项', 0, 1, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4, '名表名包', 0, 1, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (5, '房产汽车', 0, 1, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (6, '酒类收藏', 0, 1, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (7, '邮品钱币', 0, 1, 7, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (8, '古籍善本', 0, 1, 8, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (9, '现当代艺术', 0, 1, 9, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (10, '奢侈品', 0, 1, 10, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (11, '书画', 1, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (12, '陶瓷', 1, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (13, '玉器', 1, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (14, '雕塑', 1, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (15, '当代艺术', 1, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (21, '翡翠玉石', 2, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (22, '钻石', 2, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (23, '黄金', 2, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (24, '彩色宝石', 2, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (25, '珍珠', 2, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (31, '青铜器', 3, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (32, '钱币', 3, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (33, '文房四宝', 3, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (34, '紫砂壶', 3, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (35, '竹木牙角', 3, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (41, '瑞士名表', 4, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (42, '古董表', 4, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (43, '奢侈包袋', 4, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (44, '配饰', 4, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (51, '房产', 5, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (52, '汽车', 5, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (53, '摩托车', 5, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (61, '白酒', 6, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (62, '红酒', 6, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (63, '威士忌', 6, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (71, '邮票', 7, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (72, '邮封', 7, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (73, '邮戳', 7, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (74, '钱币', 7, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (75, '纸币', 7, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (81, '古籍', 8, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (82, '善本', 8, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (83, '碑帖', 8, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (84, '信札', 8, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (85, '手稿', 8, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (91, '当代绘画', 9, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (92, '当代雕塑', 9, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (93, '装置艺术', 9, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (94, '影像艺术', 9, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (95, '行为艺术', 9, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (101, '高级定制', 10, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (102, '珠宝', 10, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (103, '腕表', 10, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (104, '皮具', 10, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (105, '配饰', 10, 2, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (111, '国画', 11, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (112, '油画', 11, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (113, '书法', 11, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (114, '版画', 11, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (115, '水彩画', 11, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (121, '明清瓷器', 12, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (122, '现代陶瓷', 12, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (123, '官窑瓷器', 12, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (124, '民窑瓷器', 12, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (131, '和田玉', 13, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (132, '翡翠', 13, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (133, '岫玉', 13, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (134, '古玉', 13, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (141, '石雕', 14, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (142, '木雕', 14, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (143, '铜雕', 14, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (144, '玉雕', 14, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (145, '现代雕塑', 14, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (151, '抽象艺术', 15, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (152, '观念艺术', 15, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (153, '新媒体艺术', 15, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (200, '钟表收藏', 0, 1, 11, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (201, '茶具收藏', 0, 1, 12, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (202, '文玩收藏', 0, 1, 13, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (203, '红色收藏', 0, 1, 14, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (204, '当代工艺品', 0, 1, 15, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (211, '翡翠手镯', 21, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (212, '挂件吊坠', 21, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (213, '翡翠戒指', 21, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (214, '翡翠项链', 21, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (215, '翡翠耳环', 21, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (221, '钻戒', 22, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (222, '钻石项链', 22, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (223, '钻石耳环', 22, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (224, '钻石手链', 22, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (231, '黄金饰品', 23, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (232, '金条', 23, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (233, '金币', 23, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (241, '红宝石', 24, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (242, '蓝宝石', 24, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (243, '祖母绿', 24, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (244, '碧玺', 24, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (245, '坦桑石', 24, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (246, '其他彩色宝石', 24, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (251, '海水珍珠', 25, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (252, '淡水珍珠', 25, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (253, '南洋珍珠', 25, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (254, '大溪地黑珍珠', 25, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (255, '古董珍珠', 25, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (311, '青铜礼器', 31, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (312, '青铜兵器', 31, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (313, '青铜杂器', 31, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (321, '古钱币', 32, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (322, '机制币', 32, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (323, '纸币', 32, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (324, '纪念币', 32, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (331, '毛笔', 33, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (332, '墨', 33, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (333, '纸', 33, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (334, '砚台', 33, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (341, '明清紫砂', 34, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (342, '现代紫砂', 34, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (343, '名家紫砂', 34, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (344, '紫砂摆件', 34, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (351, '竹雕', 35, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (352, '木雕', 35, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (353, '象牙', 35, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (354, '角雕', 35, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (355, '核雕', 35, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (411, '百达翡丽', 41, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (412, '劳力士', 41, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (413, '江诗丹顿', 41, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (414, '欧米茄', 41, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (421, '怀表', 42, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (422, '座钟', 42, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (423, '古董腕表', 42, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (424, '限量版', 42, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (431, '爱马仕', 43, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (432, '香奈儿', 43, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (433, '路易威登', 43, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (434, '古驰', 43, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (441, '太阳镜', 44, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (442, '丝巾', 44, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (443, '腰带', 44, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (444, '钱包', 44, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (445, '卡包', 44, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (511, '住宅', 51, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (512, '商业地产', 51, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (513, '土地', 51, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (514, '别墅', 51, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (515, '商铺', 51, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (516, '写字楼', 51, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (521, '轿车', 52, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (522, 'SUV', 52, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (523, '跑车', 52, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (524, '古董车', 52, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (525, '豪华车', 52, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (526, '新能源车', 52, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (531, '哈雷', 53, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (532, '杜卡迪', 53, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (533, '宝马摩托', 53, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (534, '其他品牌', 53, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (611, '茅台', 61, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (612, '五粮液', 61, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (613, '剑南春', 61, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (614, '泸州老窖', 61, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (615, '洋河', 61, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (616, '郎酒', 61, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (617, '汾酒', 61, 3, 7, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (618, '古井贡酒', 61, 3, 8, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (619, '其他名酒', 61, 3, 9, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (621, '拉菲', 62, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (622, '拉图', 62, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (623, '玛歌', 62, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (624, '木桐', 62, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (625, '奥比昂', 62, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (626, '勃艮第', 62, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (627, '其他红酒', 62, 3, 7, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (631, '苏格兰威士忌', 63, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (632, '日本威士忌', 63, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (633, '美国威士忌', 63, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (634, '其他威士忌', 63, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (711, '清代邮票', 71, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (712, '民国邮票', 71, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (713, '新中国邮票', 71, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (714, '外国邮票', 71, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (715, '特种邮票', 71, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (716, '纪念邮票', 71, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (721, '实寄封', 72, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (722, '首日封', 72, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (723, '纪念封', 72, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (724, '其他邮封', 72, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (731, '日戳', 73, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (732, '纪念戳', 73, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (733, '风景戳', 73, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (734, '其他邮戳', 73, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (741, '古钱币', 74, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (742, '机制币', 74, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (743, '银元', 74, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (744, '铜币', 74, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (745, '纪念币', 74, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (751, '第一套人民币', 75, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (752, '第二套人民币', 75, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (753, '第三套人民币', 75, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (754, '第四套人民币', 75, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (755, '第五套人民币', 75, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (756, '外汇券', 75, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (757, '外国纸币', 75, 3, 7, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (811, '宋刻本', 81, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (812, '元刻本', 81, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (813, '明刻本', 81, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (814, '清刻本', 81, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (815, '民国刻本', 81, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (816, '抄本', 81, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (821, '经部', 82, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (822, '史部', 82, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (823, '子部', 82, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (824, '集部', 82, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (831, '碑拓', 83, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (832, '帖拓', 83, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (833, '其他碑帖', 83, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (841, '名人信札', 84, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (842, '历史信札', 84, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (843, '其他信札', 84, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (851, '名人手稿', 85, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (852, '历史手稿', 85, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (853, '其他手稿', 85, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (911, '抽象绘画', 91, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (912, '写实绘画', 91, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (913, '表现主义', 91, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (914, '超现实主义', 91, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (915, '波普艺术', 91, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (921, '金属雕塑', 92, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (922, '石雕', 92, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (923, '木雕', 92, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (924, '其他雕塑', 92, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (931, '装置艺术', 93, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (932, '其他装置', 93, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (941, '摄影作品', 94, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (942, '视频艺术', 94, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (943, '其他影像', 94, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (951, '行为艺术', 95, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (952, '其他行为', 95, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1011, '高级时装', 101, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1012, '定制礼服', 101, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1013, '定制西装', 101, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1021, '高级珠宝', 102, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1022, '其他珠宝', 102, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1031, '高级腕表', 103, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1032, '其他腕表', 103, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1041, '高级皮具', 104, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1042, '其他皮具', 104, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1051, '高级配饰', 105, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (1052, '其他配饰', 105, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2001, '怀表', 200, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2002, '座钟', 200, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2003, '挂钟', 200, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2011, '紫砂茶具', 201, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2012, '瓷器茶具', 201, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2013, '银器茶具', 201, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2014, '其他茶具', 201, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2021, '手串', 202, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2022, '把件', 202, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2023, '摆件', 202, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2024, '其他文玩', 202, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2031, '红色文献', 203, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2032, '红色徽章', 203, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2033, '红色纪念品', 203, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2041, '当代陶瓷', 204, 2, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2042, '当代漆器', 204, 2, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2043, '当代金属工艺', 204, 2, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (2044, '其他工艺品', 204, 2, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4124, '真力时', 41, 3, 13, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4125, '百年灵', 41, 3, 14, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4126, '宇舶', 41, 3, 15, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4127, '萧邦', 41, 3, 16, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4128, '伯爵', 41, 3, 17, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (4129, '其他品牌', 41, 3, 18, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20111, '紫砂壶', 2011, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20112, '紫砂杯', 2011, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20113, '紫砂茶盘', 2011, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20114, '其他紫砂', 2011, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20121, '青花茶具', 2012, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20122, '粉彩茶具', 2012, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20123, '单色釉茶具', 2012, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20124, '其他瓷器茶具', 2012, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20211, '小叶紫檀', 2021, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20212, '海南黄花梨', 2021, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20213, '金丝楠', 2021, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20214, '沉香', 2021, 3, 4, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20215, '崖柏', 2021, 3, 5, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20216, '菩提', 2021, 3, 6, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20217, '其他手串', 2021, 3, 7, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20221, '和田玉把件', 2022, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20222, '翡翠把件', 2022, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (20223, '其他把件', 2022, 3, 3, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (41111, '百达翡丽', 4111, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (41112, '其他百达翡丽', 4111, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (41121, '劳力士', 4112, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (41122, '其他劳力士', 4112, 3, 2, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (101313, '义乌出品', 2041, 3, 1, 1, NULL, '2026-04-21 21:31:19', '2026-04-21 21:31:19', 0);
-INSERT INTO `mall_product_category` VALUES (101314, '义务', 0, 1, 16, 1, '义乌出品', '2026-04-22 10:57:51', '2026-04-22 10:57:51', 0);
-INSERT INTO `mall_product_category` VALUES (101315, '日用', 101314, 2, 1, 1, '日用品', '2026-04-22 10:58:53', '2026-04-22 10:58:53', 0);
-INSERT INTO `mall_product_category` VALUES (101316, '雨伞', 101315, 3, 1, 1, '雨伞', '2026-04-22 11:03:51', '2026-04-22 11:03:51', 0);
-INSERT INTO `mall_product_category` VALUES (101317, '纸巾', 101315, 3, 2, 1, '餐巾纸', '2026-04-22 11:06:26', '2026-04-22 11:06:26', 0);
+INSERT INTO `mall_product_category` VALUES (1, '数码家电', 0, 1, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (2, '服饰鞋包', 0, 1, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (3, '美妆护肤', 0, 1, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (4, '食品生鲜', 0, 1, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (5, '家居百货', 0, 1, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (6, '母婴用品', 0, 1, 6, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (7, '运动户外', 0, 1, 7, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (8, '汽车用品', 0, 1, 8, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (9, '图书文娱', 0, 1, 9, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (10, '手机配件', 0, 1, 10, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (11, '手机整机', 1, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (12, '电脑整机', 1, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (13, '平板设备', 1, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (14, '大家电', 1, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (15, '小家电', 1, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (21, '男装', 2, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (22, '女装', 2, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (23, '鞋靴', 2, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (24, '箱包', 2, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (25, '内衣配饰', 2, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (31, '面部护肤', 3, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (32, '彩妆美妆', 3, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (33, '香水香氛', 3, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (34, '身体护理', 3, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (35, '个护工具', 3, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (41, '新鲜果蔬', 4, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (42, '肉蛋水产', 4, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (43, '休闲零食', 4, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (44, '酒水饮料', 4, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (45, '粮油干货', 4, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (51, '厨具餐具', 5, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (52, '清洁用品', 5, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (53, '家纺床品', 5, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (54, '收纳置物', 5, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (55, '日用杂货', 5, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (61, '奶粉辅食', 6, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (62, '尿裤湿巾', 6, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (63, '婴童服饰', 6, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (64, '母婴洗护', 6, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (65, '玩具车床', 6, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (71, '运动服饰', 7, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (72, '健身器材', 7, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (73, '球类运动', 7, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (74, '户外装备', 7, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (75, '骑行用品', 7, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (81, '车内饰品', 8, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (82, '车外养护', 8, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (83, '车载电器', 8, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (84, '维修工具', 8, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (85, '安全防护', 8, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (91, '正版图书', 9, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (92, '文具纸品', 9, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (93, '影音唱片', 9, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (94, '游戏周边', 9, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (95, '手办潮玩', 9, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (101, '手机壳膜', 10, 2, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (102, '充电设备', 10, 2, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (103, '耳机音箱', 10, 2, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (104, '数据线材', 10, 2, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (105, '手机支架', 10, 2, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (111, '苹果手机', 11, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (112, '华为手机', 11, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (113, '小米手机', 11, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (114, 'OPPO/vivo', 11, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (115, '三星手机', 11, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (121, '游戏本', 12, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (122, '轻薄本', 12, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (123, '台式整机', 12, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (124, '一体机', 12, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (125, '工作站', 12, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (221, '连衣裙', 22, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (222, 'T恤衬衫', 22, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (223, '裤子半身裙', 22, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (224, '卫衣毛衣', 22, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (225, '外套大衣', 22, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (311, '水乳套装', 31, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (312, '精华原液', 31, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (313, '面霜眼霜', 31, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (314, '面膜泥膜', 31, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (315, '洁面卸妆', 31, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (431, '饼干糕点', 43, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (432, '肉干肉脯', 43, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (433, '糖果巧克力', 43, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (434, '膨化零食', 43, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (435, '坚果果干', 43, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (521, '洗衣液洗衣粉', 52, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (522, '洗洁精油污净', 52, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (523, '拖把扫帚', 52, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (524, '纸巾湿巾', 52, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (525, '垃圾袋清洁刷', 52, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (611, '一段奶粉', 61, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (612, '二段奶粉', 61, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (613, '三段奶粉', 61, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (614, '米粉米糊', 61, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (615, '果泥菜泥', 61, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (721, '哑铃杠铃', 72, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (722, '瑜伽垫瑜伽球', 72, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (723, '筋膜枪', 72, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (724, '跑步机', 72, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (725, '握力器拉力带', 72, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (811, '车载香薰', 81, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (812, '座椅坐垫', 81, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (813, '方向盘套', 81, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (814, '车载收纳盒', 81, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (815, '车内摆件', 81, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (951, '盲盒手办', 95, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (952, '动漫模型', 95, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (953, '积木拼装', 95, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (954, 'BJD娃娃', 95, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (955, '周边徽章立牌', 95, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (1021, '快充充电器', 102, 3, 1, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (1022, '无线充电宝', 102, 3, 2, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (1023, '车载快充头', 102, 3, 3, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (1024, '磁吸充电器', 102, 3, 4, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
+INSERT INTO `mall_product_category` VALUES (1025, '多口插排', 102, 3, 5, 1, NULL, '2026-07-27 10:33:57', '2026-07-27 10:33:57', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category_rel
@@ -628,95 +367,16 @@ CREATE TABLE `mall_product_category_rel`  (
   `product_id` bigint NOT NULL COMMENT '商品ID',
   `category_id` bigint NOT NULL COMMENT '类目ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2080125560011214855 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品-类目关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category_rel
 -- ----------------------------
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859329, 7, 111);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859330, 7, 112);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859331, 7, 113);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859332, 7, 114);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859333, 7, 115);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856549859334, 7, 121);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968193, 7, 122);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968194, 7, 123);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968195, 7, 124);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968196, 7, 131);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968197, 7, 132);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968198, 7, 133);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968199, 7, 134);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968200, 7, 141);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968201, 7, 142);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968202, 7, 143);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968203, 7, 144);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968204, 7, 145);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968205, 7, 151);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968206, 7, 152);
-INSERT INTO `mall_product_category_rel` VALUES (2047612856616968207, 7, 153);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486529, 8, 111);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486530, 8, 112);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486531, 8, 113);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486532, 8, 114);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486533, 8, 115);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486534, 8, 121);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978206486535, 8, 122);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818178, 8, 123);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818179, 8, 124);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818180, 8, 131);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818181, 8, 132);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818182, 8, 133);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818183, 8, 134);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818184, 8, 141);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818185, 8, 142);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818186, 8, 143);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818187, 8, 144);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818188, 8, 145);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818189, 8, 151);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818190, 8, 152);
-INSERT INTO `mall_product_category_rel` VALUES (2066389978256818191, 8, 153);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618299043842, 9, 111);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618299043843, 9, 112);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618299043844, 9, 113);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618299043845, 9, 114);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015362, 9, 115);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015363, 9, 121);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015364, 9, 122);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015365, 9, 123);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015366, 9, 124);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015367, 9, 131);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015368, 9, 132);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015369, 9, 133);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015370, 9, 134);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015371, 9, 141);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015372, 9, 142);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015373, 9, 143);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015374, 9, 144);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015375, 9, 145);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015376, 9, 151);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618320015377, 9, 152);
-INSERT INTO `mall_product_category_rel` VALUES (2072503618387124225, 9, 153);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559788916738, 10, 111);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717378, 10, 112);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717379, 10, 113);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717380, 10, 114);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717381, 10, 115);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717382, 10, 121);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717383, 10, 122);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717384, 10, 123);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717385, 10, 124);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717386, 10, 131);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717387, 10, 132);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717388, 10, 133);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717389, 10, 134);
-INSERT INTO `mall_product_category_rel` VALUES (2080125559935717390, 10, 141);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560002826241, 10, 142);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560007020545, 10, 143);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560011214850, 10, 144);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560011214851, 10, 145);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560011214852, 10, 151);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560011214853, 10, 152);
-INSERT INTO `mall_product_category_rel` VALUES (2080125560011214854, 10, 153);
+INSERT INTO `mall_product_category_rel` VALUES (2081585630230114305, 1, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2081585630230114306, 1, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2081585630230114307, 1, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2081585630251085825, 1, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2081585630251085826, 1, 125);
 
 -- ----------------------------
 -- Table structure for mall_refund
@@ -743,7 +403,6 @@ CREATE TABLE `mall_refund`  (
 -- ----------------------------
 -- Records of mall_refund
 -- ----------------------------
-INSERT INTO `mall_refund` VALUES (2079454530687021058, 2079454496138539009, 32, 2046463574828482561, 'RF20260721143249205996', 20.00, 0, NULL, NULL, NULL, '2026-07-21 14:32:49', '2026-07-21 14:32:49');
 
 -- ----------------------------
 -- Table structure for mall_resource_rel
@@ -760,25 +419,17 @@ CREATE TABLE `mall_resource_rel`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_resource`(`resource_type` ASC, `resource_id` ASC) USING BTREE,
   INDEX `idx_file_id`(`file_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通用资源关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_resource_rel
 -- ----------------------------
-INSERT INTO `mall_resource_rel` VALUES (1, 'sku', 10, 28, 'main_image', 0, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (2, 'sku', 10, 28, 'detail_image', 0, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (3, 'sku', 10, 26, 'detail_image', 1, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (4, 'sku', 10, 27, 'detail_image', 2, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (5, 'sku', 11, 27, 'main_image', 0, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (6, 'sku', 11, 27, 'detail_image', 0, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 11, 30, 'detail_image', 1, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 11, 29, 'detail_image', 2, '2026-07-02 10:12:23');
-INSERT INTO `mall_resource_rel` VALUES (9, 'after_sale', 2073964892266487809, 36, 'proof', 0, '2026-07-06 10:58:57');
-INSERT INTO `mall_resource_rel` VALUES (10, 'after_sale', 2074044816176308225, 37, 'proof', 0, '2026-07-06 16:16:33');
-INSERT INTO `mall_resource_rel` VALUES (11, 'sku', 12, 38, 'main_image', 0, '2026-07-23 10:59:15');
-INSERT INTO `mall_resource_rel` VALUES (12, 'sku', 12, 38, 'detail_image', 0, '2026-07-23 10:59:15');
-INSERT INTO `mall_resource_rel` VALUES (13, 'sku', 13, 39, 'main_image', 0, '2026-07-23 10:59:15');
-INSERT INTO `mall_resource_rel` VALUES (14, 'sku', 13, 39, 'detail_image', 0, '2026-07-23 10:59:15');
+INSERT INTO `mall_resource_rel` VALUES (1, 'sku', 1, 2, 'main_image', 0, '2026-07-27 11:41:03');
+INSERT INTO `mall_resource_rel` VALUES (2, 'sku', 1, 2, 'detail_image', 0, '2026-07-27 11:41:03');
+INSERT INTO `mall_resource_rel` VALUES (3, 'sku', 2, 3, 'main_image', 0, '2026-07-27 11:41:03');
+INSERT INTO `mall_resource_rel` VALUES (4, 'sku', 2, 3, 'detail_image', 0, '2026-07-27 11:41:03');
+INSERT INTO `mall_resource_rel` VALUES (5, 'sku', 3, 4, 'main_image', 0, '2026-07-27 11:41:03');
+INSERT INTO `mall_resource_rel` VALUES (6, 'sku', 3, 4, 'detail_image', 0, '2026-07-27 11:41:03');
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -797,19 +448,14 @@ CREATE TABLE `mall_sku`  (
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_product_id`(`product_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '商品SKU表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_sku
 -- ----------------------------
-INSERT INTO `mall_sku` VALUES (6, 7, 11282.00, 95, 2, '{\"name\": \"U7 255HX/3060\", \"fileId\": 18}', '', 1, '2026-04-24 17:45:22', '2026-07-24 11:05:32');
-INSERT INTO `mall_sku` VALUES (7, 7, 9998.00, 97, 0, '{\"name\": \"R9 8949HX/3060\", \"fileId\": 16}', '', 1, '2026-04-24 17:45:22', '2026-07-10 10:52:25');
-INSERT INTO `mall_sku` VALUES (8, 7, 10122.00, 89, 0, '{\"name\": \"R9 8940HX/3070Ti\", \"fileId\": 17}', '', 1, '2026-04-24 17:45:22', '2026-07-10 10:52:25');
-INSERT INTO `mall_sku` VALUES (9, 8, 20.00, 0, 0, '{\"name\": \"1\", \"fileId\": 19}', '', 1, '2026-06-15 13:18:57', '2026-07-09 11:48:49');
-INSERT INTO `mall_sku` VALUES (10, 9, 5000.00, 19, 0, '{\"name\": \"规格1\", \"fileId\": 28}', '', 1, '2026-07-02 10:12:22', '2026-07-10 10:52:25');
-INSERT INTO `mall_sku` VALUES (11, 9, 6000.00, 17, 0, '{\"name\": \"规格2\", \"fileId\": 27}', '', 1, '2026-07-02 10:12:22', '2026-07-24 11:05:32');
-INSERT INTO `mall_sku` VALUES (12, 10, 890.00, 97, 0, '{\"name\": \"规格1\", \"fileId\": 38}', '', 1, '2026-07-23 10:59:15', '2026-07-24 11:05:32');
-INSERT INTO `mall_sku` VALUES (13, 10, 99.00, 98, 0, '{\"name\": \"规格2\", \"fileId\": 39}', '', 1, '2026-07-23 10:59:15', '2026-07-24 11:05:32');
+INSERT INTO `mall_sku` VALUES (1, 1, 5000.00, 100, 0, '{\"name\": \"规格1\", \"fileId\": 2}', '', 1, '2026-07-27 11:41:03', '2026-07-27 11:41:03');
+INSERT INTO `mall_sku` VALUES (2, 1, 6000.00, 100, 0, '{\"name\": \"规格2\", \"fileId\": 3}', '', 1, '2026-07-27 11:41:03', '2026-07-27 11:41:03');
+INSERT INTO `mall_sku` VALUES (3, 1, 7000.00, 100, 0, '{\"name\": \"规格3\", \"fileId\": 4}', '', 1, '2026-07-27 11:41:03', '2026-07-27 11:41:03');
 
 -- ----------------------------
 -- Table structure for mall_user_address
