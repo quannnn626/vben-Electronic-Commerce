@@ -12,7 +12,7 @@ import java.util.List;
  * @createDate 2026-04-24 16:39:05
  */
 public interface MallSkuService extends IService<MallSku> {
-    List<StockManageItemDto> listForManage(String keyword);
+    List<StockManageItemDto> listForManage(String keyword, String username);
 
     void increaseStock(Long skuId, Integer quantity);
 

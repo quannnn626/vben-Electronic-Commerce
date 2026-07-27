@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.mapper.MallProductMapper;
 import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.mapper.MallSkuMapper;
+import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.util.QuantityUtil;
 import com.boot.vuevbenadminboot.web.dto.resp.StockManageItemDto;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,16 +32,31 @@ public class MallSkuServiceImpl extends ServiceImpl<MallSkuMapper, MallSku>
     implements MallSkuService{
 
     private final MallProductMapper productMapper;
+    private final SysUserService sysUserService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public MallSkuServiceImpl(MallProductMapper productMapper) {
+    public MallSkuServiceImpl(MallProductMapper productMapper, SysUserService sysUserService) {
         this.productMapper = productMapper;
+        this.sysUserService = sysUserService;
     }
 
     @Override
-    public List<StockManageItemDto> listForManage(String keyword) {
+    public List<StockManageItemDto> listForManage(String keyword, String username) {
+        Long userId = sysUserService.requireUserId(username);
+        // 只看自己商品的SKU
+        List<MallProduct> myProducts = productMapper.selectList(
+                new LambdaQueryWrapper<MallProduct>()
+                        .eq(MallProduct::getCreateUser, userId)
+                        .eq(MallProduct::getDeleted, 0)
+        );
+        List<Long> myProductIds = myProducts.stream().map(MallProduct::getId).toList();
+        if (myProductIds.isEmpty()) {
+            return List.of();
+        }
         List<MallSku> skus = this.list(
-                new LambdaQueryWrapper<MallSku>().orderByDesc(MallSku::getId)
+                new LambdaQueryWrapper<MallSku>()
+                        .in(MallSku::getProductId, myProductIds)
+                        .orderByDesc(MallSku::getId)
         );
         if (skus.isEmpty()) {
             return List.of();

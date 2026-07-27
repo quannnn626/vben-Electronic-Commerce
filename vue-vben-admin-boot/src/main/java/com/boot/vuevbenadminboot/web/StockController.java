@@ -25,8 +25,9 @@ public class StockController {
     @GetMapping("/list")
     public Map<String, Object> list(@RequestParam(required = false) String keyword,
                                     HttpServletRequest request) {
-        if (getLoginUsername(request) == null) return ApiResponse.of(-1, null, "未登录");
-        return ApiResponse.of(0, skuService.listForManage(keyword), "success");
+        String username = getLoginUsername(request);
+        if (username == null) return ApiResponse.of(-1, null, "未登录");
+        return ApiResponse.of(0, skuService.listForManage(keyword, username), "success");
     }
 
     @PostMapping("/increase")
