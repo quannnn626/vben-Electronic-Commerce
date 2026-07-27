@@ -99,8 +99,6 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (reasonEnum == null) {
             throw new IllegalArgumentException("售后原因无效");
         }
-        BigDecimal refundAmount = calcRefundAmount(typeEnum, mallOrder.getPayAmount());
-
         // 校验商品列表
         List<AfterSaleItemRequest> items = request.getItems();
         if (items == null || items.isEmpty()) {
@@ -124,6 +122,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             if (qty > orderItem.getQuantity()) {
                 throw new IllegalArgumentException("售后数量不能超过购买数量");
             }
+            // 退款金额 = 商品单价 × 售后数量（换货为0）
+            BigDecimal refundAmount = typeEnum == AfterSaleTypeEnum.EXCHANGE
+                    ? BigDecimal.ZERO
+                    : orderItem.getPrice().multiply(BigDecimal.valueOf(qty));
             // 累加校验 查询订单项所有进行中的售后
             List<MallAfterSale> activeSales = mallAfterSaleMapper.selectList(
                     new LambdaQueryWrapper<MallAfterSale>()
