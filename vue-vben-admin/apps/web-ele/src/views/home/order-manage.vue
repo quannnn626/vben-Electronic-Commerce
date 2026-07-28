@@ -177,8 +177,9 @@ async function submitItemDelivery(item: OrderItemDto) {
       trackingNo: d.trackingNo,
     });
     ElMessage.success(`"${item.productName}" 发货成功`);
+    // 标记已发货，隐藏
+    deliveredIds.value.push(item.id);
     loadList();
-    deliveryVisible.value = false;
   } catch (e: any) {
     ElMessage.error(e?.message ?? '发货失败');
   } finally {
