@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 28/07/2026 15:31:35
+ Date: 28/07/2026 15:59:12
 */
 
 SET NAMES utf8mb4;
@@ -155,6 +155,24 @@ CREATE TABLE `mall_order_delivery`  (
 INSERT INTO `mall_order_delivery` VALUES (2081991918260920321, 1, '3', '202607281432507165263', 0, NULL, 2046463574828482561, '2026-07-28 14:35:30', '2026-07-28 14:35:30', 0, 3);
 INSERT INTO `mall_order_delivery` VALUES (2081992597922717697, 1, '2', '202607281432507165262', 0, NULL, 2046463574828482561, '2026-07-28 14:38:12', '2026-07-28 14:38:12', 0, 2);
 INSERT INTO `mall_order_delivery` VALUES (2081992601622093826, 1, '1', '202607281432507165261', 0, NULL, 2046463574828482561, '2026-07-28 14:38:12', '2026-07-28 14:38:12', 0, 1);
+
+-- ----------------------------
+-- Table structure for mall_order_delivery_item
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_order_delivery_item`;
+CREATE TABLE `mall_order_delivery_item`  (
+  `id` bigint NOT NULL COMMENT 'ID',
+  `delivery_id` bigint NOT NULL COMMENT '物流单ID',
+  `order_item_id` bigint NOT NULL COMMENT '订单商品ID',
+  `quantity` int NULL DEFAULT 1 COMMENT '发货数量',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `idx_delivery`(`delivery_id` ASC) USING BTREE,
+  INDEX `idx_order_item`(`order_item_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '物流商品关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of mall_order_delivery_item
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_order_item
