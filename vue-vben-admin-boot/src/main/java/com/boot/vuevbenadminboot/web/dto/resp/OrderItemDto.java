@@ -17,5 +17,7 @@ public class OrderItemDto {
     private String skuSpecName;
     private BigDecimal price;
     private Integer quantity;
+    private Integer itemStatus;
+    private Integer refundQuantity;
     private BigDecimal totalPrice;
 }

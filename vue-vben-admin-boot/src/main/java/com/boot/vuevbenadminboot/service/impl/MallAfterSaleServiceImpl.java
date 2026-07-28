@@ -222,6 +222,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 itemDto.setPrice(orderItem.getPrice());
                 itemDto.setQuantity(orderItem.getQuantity());
                 itemDto.setTotalPrice(orderItem.getTotalPrice());
+                itemDto.setItemStatus(orderItem.getItemStatus());
+                itemDto.setRefundQuantity(orderItem.getRefundQuantity());
                 itemDtos.add(itemDto);
             }
             dto.setItems(itemDtos);
@@ -293,6 +295,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                     itemDto.setPrice(oi.getPrice());
                     itemDto.setQuantity(oi.getQuantity());
                     itemDto.setTotalPrice(oi.getTotalPrice());
+                    itemDto.setItemStatus(oi.getItemStatus());
+                    itemDto.setRefundQuantity(oi.getRefundQuantity());
                     itemDtos.add(itemDto);
                 }
                 dto.setItems(itemDtos);
@@ -354,6 +358,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                     itemDto.setPrice(oi.getPrice());
                     itemDto.setQuantity(oi.getQuantity());
                     itemDto.setTotalPrice(oi.getTotalPrice());
+                    itemDto.setItemStatus(oi.getItemStatus());
+                    itemDto.setRefundQuantity(oi.getRefundQuantity());
                     itemDtos.add(itemDto);
                 }
                 dto.setItems(itemDtos);

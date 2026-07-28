@@ -11,6 +11,7 @@ import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.SysUser;
 import com.boot.vuevbenadminboot.domain.MallUserAddress;
+import com.boot.vuevbenadminboot.domain.enums.OrderItemStatusEnum;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderDeliveryMapper;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
@@ -151,6 +152,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             item.setPrice(itemReq.getPrice());
             item.setQuantity(itemReq.getQuantity());
             item.setTotalPrice(itemReq.getTotalPrice());
+            item.setItemStatus(OrderItemStatusEnum.WAIT_DELIVERY.getCode());
+            item.setRefundQuantity(0);
+            item.setProductId(itemReq.getProductId());
             item.setCreateTime(new java.util.Date());
             item.setUpdateTime(new java.util.Date());
             item.setDeleted(0);
@@ -382,6 +386,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             itemDto.setPrice(item.getPrice());
             itemDto.setQuantity(item.getQuantity());
             itemDto.setTotalPrice(item.getTotalPrice());
+            itemDto.setItemStatus(item.getItemStatus());
+            itemDto.setRefundQuantity(item.getRefundQuantity());
             itemDtos.add(itemDto);
         }
         dto.setItems(itemDtos);

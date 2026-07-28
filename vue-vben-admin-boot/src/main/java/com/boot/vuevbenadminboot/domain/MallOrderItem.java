@@ -74,6 +74,9 @@ public class MallOrderItem {
     /**
      * 逻辑删除：0-未删除 1-已删除
      */
+    private Integer itemStatus;
+    private Integer refundQuantity;
+    private Long productId;
     private Integer deleted;
 
     @Override

@@ -18,6 +18,7 @@ public class OrderCreateRequest {
     @Data
     public static class OrderItemRequest {
         private Long skuId;
+        private Long productId;
         private String productName;
         private String productImage;
         private String skuSpecName;
