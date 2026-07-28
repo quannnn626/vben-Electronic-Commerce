@@ -55,8 +55,7 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         if (mallOrder == null) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (!Objects.equals(mallOrder.getStatus(), OrderStatusEnum.PAID.getCode())
-                && !Objects.equals(mallOrder.getStatus(), OrderStatusEnum.DELIVERING.getCode())) {
+        if (!Objects.equals(mallOrder.getStatus(), OrderStatusEnum.PAID.getCode())) {
             throw new IllegalArgumentException("仅已支付订单可发货");
         }
         if (req.getTrackingNo() == null || req.getTrackingNo().isBlank()) {
@@ -98,11 +97,7 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         );
         Set<Long> deliveredItemIds = deliveries.stream()
                 .map(MallOrderDelivery::getOrderItemId).collect(Collectors.toSet());
-        boolean allDelivered = orderItems.stream().allMatch(it -> deliveredItemIds.contains(it.getId()));
         Date now = new Date();
-        mallOrder.setStatus(allDelivered
-                ? OrderStatusEnum.SHIPPED.getCode()
-                : OrderStatusEnum.DELIVERING.getCode());
         mallOrder.setDeliveryTime(now);
         mallOrder.setUpdateTime(now);
         mallOrderMapper.updateById(mallOrder);

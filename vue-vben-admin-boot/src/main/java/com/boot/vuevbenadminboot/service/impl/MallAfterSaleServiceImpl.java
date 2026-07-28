@@ -446,9 +446,7 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 break;
             case REFUND_RETURN:
             case EXCHANGE:
-                valid = orderStatus.equals(OrderStatusEnum.SHIPPED.getCode())
-                        || orderStatus.equals(OrderStatusEnum.COMPLETED.getCode())
-                        || orderStatus.equals(OrderStatusEnum.DELIVERING.getCode());
+                valid = orderStatus.equals(OrderStatusEnum.PAID.getCode());
                 break;
             default:
                 throw new IllegalArgumentException("不支持的售后类型");

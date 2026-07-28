@@ -197,8 +197,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (!order.getStatus().equals(OrderStatusEnum.WAIT_PAY.getCode())) {
-            throw new IllegalArgumentException("仅待支付订单可取消");
+        if (!order.getStatus().equals(OrderStatusEnum.WAIT_PAY.getCode())
+                && !order.getStatus().equals(OrderStatusEnum.PAID.getCode())) {
+            throw new IllegalArgumentException("仅待支付或已支付订单可取消");
         }
         order.setStatus(OrderStatusEnum.CANCELLED.getCode());
         order.setCancelTime(new java.util.Date());
@@ -227,10 +228,9 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         if (order == null || !order.getUserId().equals(userId)) {
             throw new IllegalArgumentException("订单不存在");
         }
-        if (!order.getStatus().equals(OrderStatusEnum.SHIPPED.getCode())) {
-            throw new IllegalArgumentException("仅已发货订单可确认收货");
+        if (!order.getStatus().equals(OrderStatusEnum.PAID.getCode())) {
+            throw new IllegalArgumentException("仅已支付订单可确认收货");
         }
-        order.setStatus(OrderStatusEnum.COMPLETED.getCode());
         order.setFinishTime(new java.util.Date());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);

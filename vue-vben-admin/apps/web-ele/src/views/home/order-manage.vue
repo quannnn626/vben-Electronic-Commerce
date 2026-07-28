@@ -83,19 +83,15 @@ const statusOptions = [
   { label: '全部', value: null },
   { label: '待支付', value: 0 },
   { label: '已支付', value: 1 },
-  { label: '发货中', value: 5 },
-  { label: '已发货', value: 2 },
-  { label: '已完成', value: 3 },
-  { label: '已取消', value: 4 },
+  { label: '已取消', value: 2 },
+  { label: '已关闭', value: 3 },
 ];
 
 const statusMap: Record<number, { label: string; type: string }> = {
   0: { label: '待支付', type: 'warning' },
   1: { label: '已支付', type: '' },
-  2: { label: '已发货', type: 'success' },
-  3: { label: '已完成', type: 'success' },
-  4: { label: '已取消', type: 'info' },
-  5: { label: '发货中', type: 'warning' },
+  2: { label: '已取消', type: 'info' },
+  3: { label: '已关闭', type: 'info' },
 };
 
 function normalizeImage(url?: string) {
@@ -263,7 +259,7 @@ onMounted(() => {
               详情
             </ElButton>
             <ElButton
-              v-if="row.status === 1 || row.status === 5"
+              v-if="row.status === 1"
               size="small"
               text
               type="success"

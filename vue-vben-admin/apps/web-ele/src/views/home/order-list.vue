@@ -41,7 +41,7 @@ interface OrderItem {
   goodsImage: string;
   amount: number;
   actualAmount: number;
-  status: 'pending' | 'paid' | 'shipped' | 'completed' | 'cancelled' | 'delivering';
+  status: 'pending' | 'paid' | 'cancelled' | 'closed';
   createTime: string;
   logisticsCompany: string;
   trackingNo: string;
@@ -52,28 +52,22 @@ interface OrderItem {
 const ORDER_STATUS = {
   WAIT_PAY: 0,   // 待支付
   PAID: 1,       // 已支付
-  SHIPPED: 2,    // 已发货
-  COMPLETED: 3,  // 已完成
-  CANCELLED: 4,  // 已取消
-  DELIVERING: 5, // 发货中
+  CANCELLED: 2,  // 已取消
+  CLOSED: 3,     // 已关闭
 } as const;
 
 const backendStatusMap: Record<number, OrderItem['status']> = {
   [ORDER_STATUS.WAIT_PAY]: 'pending',
   [ORDER_STATUS.PAID]: 'paid',
-  [ORDER_STATUS.SHIPPED]: 'shipped',
-  [ORDER_STATUS.COMPLETED]: 'completed',
   [ORDER_STATUS.CANCELLED]: 'cancelled',
-  [ORDER_STATUS.DELIVERING]: 'delivering',
+  [ORDER_STATUS.CLOSED]: 'closed',
 };
 
 const statusMap: Record<OrderItem['status'], { label: string; type: string }> = {
   cancelled: { label: '已取消', type: 'info' },
-  completed: { label: '已完成', type: 'success' },
-  delivering: { label: '发货中', type: 'warning' },
-  paid: { label: '待发货', type: 'warning' },
+  closed: { label: '已关闭', type: 'info' },
+  paid: { label: '已支付', type: '' },
   pending: { label: '待付款', type: 'danger' },
-  shipped: { label: '已发货', type: '' },
 };
 
 const keyword = ref('');
@@ -415,14 +409,14 @@ onMounted(() => {
                 取消
               </ElButton>
               <ElButton
-                v-if="item.status === 'shipped'"
+                v-if="item.status === 'paid'"
                 type="primary"
                 @click="handleConfirm(item)"
               >
                 确认收货
               </ElButton>
               <ElButton
-                v-if="['paid', 'shipped', 'completed', 'delivering'].includes(item.status) && item.orderItemId"
+                v-if="item.status === 'paid' && item.orderItemId"
                 type="warning"
                 @click="handleAfterSale(item)"
               >
@@ -430,7 +424,7 @@ onMounted(() => {
               </ElButton>
               <ElButton
                 v-if="
-                  ['completed', 'paid', 'cancelled', 'shipped'].includes(item.status)
+                  ['paid', 'cancelled', 'closed'].includes(item.status)
                 "
                 @click="handleViewDetail(item)"
               >
