@@ -8,6 +8,7 @@ import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleReasonEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleStatusEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleTypeEnum;
+import com.boot.vuevbenadminboot.domain.enums.OrderItemStatusEnum;
 import com.boot.vuevbenadminboot.domain.enums.OrderStatusEnum;
 import com.boot.vuevbenadminboot.mapper.MallOrderItemMapper;
 import com.boot.vuevbenadminboot.service.MallAfterSaleService;
@@ -157,6 +158,12 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             afterSale.setUpdateTime(new Date());
             afterSale.setDeleted(0);
             this.save(afterSale);
+
+            // 更新订单商品状态为售后中 + 累加退款数量
+            orderItem.setItemStatus(OrderItemStatusEnum.AFTER_SALE.getCode());
+            orderItem.setRefundQuantity(
+                    (orderItem.getRefundQuantity() == null ? 0 : orderItem.getRefundQuantity()) + qty);
+            mallOrderItemMapper.updateById(orderItem);
 
             // 凭证附件仅关联第一条
             List<Long> fileIds = request.getFileIds();
@@ -417,6 +424,12 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         as.setUpdateTime(new Date());
         if (target == AfterSaleStatusEnum.REJECTED) {
             as.setStatus(AfterSaleStatusEnum.REJECTED.getCode());
+            // 恢复商品状态
+            MallOrderItem oi = mallOrderItemMapper.selectById(as.getOrderItemId());
+            if (oi != null) {
+                oi.setItemStatus(OrderItemStatusEnum.RECEIVED.getCode());
+                mallOrderItemMapper.updateById(oi);
+            }
             return;
         }
         AfterSaleTypeEnum type = AfterSaleTypeEnum.of(as.getType());

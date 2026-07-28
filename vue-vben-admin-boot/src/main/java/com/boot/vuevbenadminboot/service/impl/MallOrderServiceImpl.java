@@ -234,6 +234,16 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         order.setFinishTime(new java.util.Date());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);
+        // 所有商品标记已收货
+        List<MallOrderItem> items = orderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .eq(MallOrderItem::getOrderId, orderId)
+                        .eq(MallOrderItem::getDeleted, 0)
+        );
+        for (MallOrderItem item : items) {
+            item.setItemStatus(OrderItemStatusEnum.RECEIVED.getCode());
+            orderItemService.updateById(item);
+        }
     }
 
     // 查看订单详情

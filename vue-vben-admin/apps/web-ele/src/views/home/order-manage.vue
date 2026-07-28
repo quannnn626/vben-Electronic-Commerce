@@ -32,7 +32,17 @@ interface OrderItemDto {
   price: number;
   quantity: number;
   totalPrice: number;
+  itemStatus?: number;
 }
+
+const itemStatusMap: Record<number, { label: string; type: string }> = {
+  0: { label: '待发货', type: 'info' },
+  1: { label: '已发货', type: '' },
+  2: { label: '运输中', type: 'warning' },
+  3: { label: '已收货', type: 'success' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '售后中', type: 'danger' },
+};
 
 interface OrderRecord {
   id: number;
@@ -168,7 +178,7 @@ async function submitItemDelivery(item: OrderItemDto) {
   try {
     await requestClient.post('/mall/order/delivery/create', {
       orderNo: deliveryOrder.value!.orderNo,
-      orderItemId: item.id,
+      items: [{ orderItemId: item.id, quantity: 1 }],
       logisticsCompany: d.logisticsCompany,
       trackingNo: d.trackingNo,
     });
@@ -340,6 +350,9 @@ onMounted(() => {
             <div class="goods-info">
               <div class="goods-name cursor-pointer" @click="goProduct(item)">{{ item.productName }}</div>
               <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
+              <ElTag v-if="item.itemStatus !== undefined" :type="itemStatusMap[item.itemStatus]?.type ?? 'info'" size="small" class="mt-1">
+                {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
+              </ElTag>
             </div>
             <div class="goods-right">
               <span>¥{{ item.price.toFixed(2) }} × {{ item.quantity }}</span>

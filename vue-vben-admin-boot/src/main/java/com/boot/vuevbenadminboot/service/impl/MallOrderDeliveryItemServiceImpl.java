@@ -14,9 +14,10 @@ public class MallOrderDeliveryItemServiceImpl extends ServiceImpl<MallOrderDeliv
     implements MallOrderDeliveryItemService{
 
     @Override
-    public List<Long> getDeliveredItemIds(Long deliveryId) {
+    public List<Long> getDeliveredItemIds(List<Long> deliveryIds) {
+        if (deliveryIds.isEmpty()) return List.of();
         return this.list(new LambdaQueryWrapper<MallOrderDeliveryItem>()
-                        .eq(MallOrderDeliveryItem::getDeliveryId, deliveryId))
+                        .in(MallOrderDeliveryItem::getDeliveryId, deliveryIds))
                 .stream()
                 .map(MallOrderDeliveryItem::getOrderItemId)
                 .toList();
