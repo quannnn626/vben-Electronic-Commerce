@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -91,6 +91,20 @@ async function loadOrderDetail() {
 
 const canPay = ref(false);
 
+// 是否有可确认收货的商品（已发货或运输中）
+const hasConfirmableItems = computed(() =>
+  order.value?.items.some((i) => i.itemStatus === 1 || i.itemStatus === 2) ?? false,
+);
+
+function goConfirmReceipt(orderItemId?: number) {
+  if (!order.value) return;
+  const query: Record<string, string> = { orderId: String(order.value.id) };
+  if (orderItemId) {
+    query.orderItemId = String(orderItemId);
+  }
+  router.push({ name: 'ConfirmReceipt', query });
+}
+
 const itemStatusMap: Record<number, { label: string; type: string }> = {
   0: { label: '待发货', type: 'info' },
   1: { label: '已发货', type: '' },
@@ -175,6 +189,14 @@ onMounted(() => {
                 <div class="goods-qty">×{{ item.quantity }}</div>
               </div>
               <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
+              <ElButton
+                v-if="order?.status === 1 && (item.itemStatus === 1 || item.itemStatus === 2)"
+                size="small"
+                type="primary"
+                @click="goConfirmReceipt(item.id)"
+              >
+                确认收货
+              </ElButton>
             </div>
           </div>
           <ElEmpty v-else description="暂无商品信息" />

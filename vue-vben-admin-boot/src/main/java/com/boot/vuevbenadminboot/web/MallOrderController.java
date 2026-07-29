@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -75,6 +76,34 @@ public class MallOrderController {
         }
         try {
             orderService.finishOrder(username, orderId);
+            return ApiResponse.of(0, null, "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @PostMapping("/item/finish")
+    public Map<String, Object> finishItem(@RequestParam Long orderItemId, HttpServletRequest request) {
+        String username = getLoginUsername(request);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        try {
+            orderService.finishOrderItem(username, orderItemId);
+            return ApiResponse.of(0, null, "success");
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.of(1, null, e.getMessage());
+        }
+    }
+
+    @PostMapping("/batchFinish")
+    public Map<String, Object> batchFinish(@RequestBody List<Long> orderIds, HttpServletRequest request) {
+        String username = getLoginUsername(request);
+        if (username == null) {
+            return ApiResponse.of(-1, null, "未登录");
+        }
+        try {
+            orderService.batchFinishOrder(username, orderIds);
             return ApiResponse.of(0, null, "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());

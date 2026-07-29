@@ -250,6 +250,15 @@ const routes: RouteRecordRaw[] = [
       title: '售后详情',
     },
   },
+  {
+    name: 'ConfirmReceipt',
+    path: '/order/confirm-receipt',
+    component: () => import('#/views/home/confirm-receipt.vue'),
+    meta: {
+      hideInMenu: true,
+      title: '确认收货',
+    },
+  },
 ];
 
 export default routes;

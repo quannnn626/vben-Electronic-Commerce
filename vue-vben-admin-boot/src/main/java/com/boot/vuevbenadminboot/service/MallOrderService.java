@@ -22,6 +22,10 @@ public interface MallOrderService extends IService<MallOrder> {
 
     void finishOrder(String username, Long orderId);
 
+    void finishOrderItem(String username, Long orderItemId);
+
+    void batchFinishOrder(String username, java.util.List<Long> orderIds);
+
     OrderListItemDto getOrderDetail(String username, Long orderId);
 
     List<OrderListItemDto> getAllUserList(OrderQueryRequest req, String username);

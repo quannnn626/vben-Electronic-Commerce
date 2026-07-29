@@ -231,28 +231,8 @@ async function handleCancel(row: OrderItem) {
   }
 }
 
-async function handleConfirm(row: OrderItem) {
-  try {
-    await ElMessageBox.confirm('确认已收到商品吗？', '确认收货', {
-      confirmButtonText: '确定',
-      cancelButtonText: '返回',
-      type: 'success',
-    });
-  } catch {
-    return;
-  }
-  actionLoading.value[row.id] = true;
-  try {
-    await requestClient.post('/mall/order/finish', null, {
-      params: { orderId: Number(row.id) },
-    });
-    ElMessage.success('确认收货成功');
-    await loadOrders(activeTab.value === 'all' ? undefined : Number(activeTab.value));
-  } catch (e: any) {
-    ElMessage.error(e?.message ?? '确认失败');
-  } finally {
-    actionLoading.value[row.id] = false;
-  }
+function handleConfirm(row: OrderItem) {
+  router.push({ name: 'ConfirmReceipt', query: { orderId: row.id } });
 }
 
 function handleAfterSale(row: OrderItem) {

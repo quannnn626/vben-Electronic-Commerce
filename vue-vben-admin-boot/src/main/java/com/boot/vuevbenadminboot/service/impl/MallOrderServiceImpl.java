@@ -219,7 +219,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         }
     }
 
-    // 确认收货
+    // 确认收货（整个订单）
     @Override
     @Transactional
     public void finishOrder(String username, Long orderId) {
@@ -243,6 +243,59 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         for (MallOrderItem item : items) {
             item.setItemStatus(OrderItemStatusEnum.RECEIVED.getCode());
             orderItemService.updateById(item);
+        }
+    }
+
+    // 单个商品确认收货
+    @Override
+    @Transactional
+    public void finishOrderItem(String username, Long orderItemId) {
+        Long userId = sysUserService.requireUserId(username);
+        MallOrderItem item = orderItemService.getById(orderItemId);
+        if (item == null || item.getDeleted() != null && item.getDeleted() == 1) {
+            throw new IllegalArgumentException("订单商品不存在");
+        }
+        MallOrder order = this.getById(item.getOrderId());
+        if (order == null || !order.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("订单不存在");
+        }
+        if (!order.getStatus().equals(OrderStatusEnum.PAID.getCode())) {
+            throw new IllegalArgumentException("仅已支付订单可确认收货");
+        }
+        int currentStatus = item.getItemStatus() != null ? item.getItemStatus() : 0;
+        if (currentStatus != OrderItemStatusEnum.SHIPPED.getCode()
+                && currentStatus != OrderItemStatusEnum.IN_TRANSIT.getCode()) {
+            throw new IllegalArgumentException("仅已发货或运输中的商品可确认收货");
+        }
+        // 更新该商品状态为已收货
+        item.setItemStatus(OrderItemStatusEnum.RECEIVED.getCode());
+        orderItemService.updateById(item);
+
+        // 检查是否所有商品都已收货/完成/售后，如果是则更新订单完成时间
+        List<MallOrderItem> allItems = orderItemService.list(
+                new LambdaQueryWrapper<MallOrderItem>()
+                        .eq(MallOrderItem::getOrderId, order.getId())
+                        .eq(MallOrderItem::getDeleted, 0)
+        );
+        boolean allFinished = allItems.stream().allMatch(i -> {
+            Integer s = i.getItemStatus();
+            return s != null && (s == OrderItemStatusEnum.RECEIVED.getCode()
+                    || s == OrderItemStatusEnum.COMPLETED.getCode()
+                    || s == OrderItemStatusEnum.AFTER_SALE.getCode());
+        });
+        if (allFinished && order.getFinishTime() == null) {
+            order.setFinishTime(new java.util.Date());
+            order.setUpdateTime(new java.util.Date());
+            this.updateById(order);
+        }
+    }
+
+    // 批量确认收货
+    @Override
+    @Transactional
+    public void batchFinishOrder(String username, java.util.List<Long> orderIds) {
+        for (Long orderId : orderIds) {
+            finishOrder(username, orderId);
         }
     }
 
