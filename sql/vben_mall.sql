@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 29/07/2026 10:24:22
+ Date: 29/07/2026 11:06:36
 */
 
 SET NAMES utf8mb4;
@@ -193,6 +193,9 @@ CREATE TABLE `mall_order_item`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
+  `item_status` tinyint NULL DEFAULT 0 COMMENT '商品履约状态：0待发货 1已发货 2运输中 3已收货 4已完成 5售后中',
+  `refund_quantity` int NULL DEFAULT 0 COMMENT '已退款数量',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '商品ID',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_order_id`(`order_id` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = DYNAMIC;
