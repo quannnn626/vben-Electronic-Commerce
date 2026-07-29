@@ -16,11 +16,15 @@
             <result property="totalPrice" column="total_price" />
             <result property="createTime" column="create_time" />
             <result property="updateTime" column="update_time" />
+            <result property="itemStatus" column="item_status" />
+            <result property="refundQuantity" column="refund_quantity" />
+            <result property="productId" column="product_id" />
             <result property="deleted" column="deleted" />
     </resultMap>
 
     <sql id="Base_Column_List">
         id,order_id,sku_id,product_name,product_image,sku_spec_name,price,
-        quantity,total_price,create_time,update_time,deleted
+        quantity,total_price,item_status,refund_quantity,product_id,
+        create_time,update_time,deleted
     </sql>
 </mapper>

@@ -11,6 +11,7 @@ import {
   ElEmpty,
   ElMessage,
   ElRadio,
+  ElTag,
 } from 'element-plus';
 
 import { requestClient } from '#/api/request';
@@ -23,6 +24,7 @@ interface OrderItem {
   skuSpecName: string;
   price: number;
   quantity: number;
+  itemStatus: number;
   totalPrice: number;
 }
 
@@ -89,6 +91,15 @@ async function loadOrderDetail() {
 
 const canPay = ref(false);
 
+const itemStatusMap: Record<number, { label: string; type: string }> = {
+  0: { label: '待发货', type: 'info' },
+  1: { label: '已发货', type: '' },
+  2: { label: '运输中', type: 'warning' },
+  3: { label: '已收货', type: 'success' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '售后中', type: 'danger' },
+};
+
 async function handleConfirmPay() {
   if (!order.value) return;
   submitLoading.value = true;
@@ -150,6 +161,14 @@ onMounted(() => {
               <div class="goods-info">
                 <div class="goods-name">{{ item.productName }}</div>
                 <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
+                <ElTag
+                  v-if="item.itemStatus !== undefined"
+                  :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
+                  size="small"
+                  class="mt-1"
+                >
+                  {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
+                </ElTag>
               </div>
               <div class="goods-price-col">
                 <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
