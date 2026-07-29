@@ -11,7 +11,7 @@
  Target Server Version : 80019
  File Encoding         : 65001
 
- Date: 28/07/2026 15:59:12
+ Date: 29/07/2026 10:24:22
 */
 
 SET NAMES utf8mb4;
@@ -86,15 +86,21 @@ CREATE TABLE `mall_file`  (
 -- ----------------------------
 -- Records of mall_file
 -- ----------------------------
-INSERT INTO `mall_file` VALUES (2, 'QQ图片20230426170644.jpg', '/upload/20260727114025_6858215e4f324a87aa24ce66bae74621.jpg', 'image/jpeg', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
-INSERT INTO `mall_file` VALUES (3, 'u=1755718785,2557578010&fm=253&app=138&f=JPEG.png', '/upload/20260727114025_2019d45fa46e460c8251ef31e2a16042.png', 'image/png', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
-INSERT INTO `mall_file` VALUES (4, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260727114025_7fca222c69b748a0a71e6a1cf00c17d5.jpg', 'image/jpeg', '2026-07-27 11:40:26', '2026-07-27 11:41:03', 0);
-INSERT INTO `mall_file` VALUES (5, 'Zephyrus Duo 15 x ZЯØFØRM_3840x2160.jpg', '/upload/20260728142853_616646a7d10a4e2bb4c8b7b96a9694cb.jpg', 'image/jpeg', '2026-07-28 14:28:54', '2026-07-28 14:29:15', 0);
-INSERT INTO `mall_file` VALUES (6, '99195447cc7a803b26497db4fd5749233546867556157528.jpg', '/upload/20260728142853_dd1d29b614604d258b96f7cdfc85d097.jpg', 'image/jpeg', '2026-07-28 14:28:54', '2026-07-28 14:29:15', 0);
-INSERT INTO `mall_file` VALUES (7, '微信图片_20250413113719.png', '/upload/20260728142853_1ed65863fbd74ff4ab833b17dd140749.png', 'image/png', '2026-07-28 14:28:54', '2026-07-28 14:29:15', 0);
-INSERT INTO `mall_file` VALUES (8, '屏幕截图(472).png', '/upload/20260728143057_1fce8e7cd2fa4789ab886189333a66bc.png', 'image/png', '2026-07-28 14:30:57', '2026-07-28 14:31:20', 0);
-INSERT INTO `mall_file` VALUES (9, '屏幕截图(478).png', '/upload/20260728143057_80851c37e56f4addb147b6de2d6ed3bb.png', 'image/png', '2026-07-28 14:30:57', '2026-07-28 14:31:20', 0);
-INSERT INTO `mall_file` VALUES (10, '屏幕截图(479).png', '/upload/20260728143057_17a6ec364ec14230af22e024d508a83b.png', 'image/png', '2026-07-28 14:30:57', '2026-07-28 14:31:20', 0);
+INSERT INTO `mall_file` VALUES (18, 'QQ图片20230426170644.jpg', '/upload/20260729100206_c24f957bdf254b42a0f074f58e59d286.jpg', 'image/jpeg', '2026-07-29 10:02:06', '2026-07-29 10:02:06', 2);
+INSERT INTO `mall_file` VALUES (19, '99195447cc7a803b26497db4fd5749233546867556157528.jpg', '/upload/20260729100206_018efabb7d06461e9fdaa98f8711552e.jpg', 'image/jpeg', '2026-07-29 10:02:06', '2026-07-29 10:02:06', 2);
+INSERT INTO `mall_file` VALUES (20, '微信图片_20250413113719.png', '/upload/20260729100206_5e6946bca8cc4355a1c373065024189d.png', 'image/png', '2026-07-29 10:02:06', '2026-07-29 10:02:06', 2);
+INSERT INTO `mall_file` VALUES (27, '屏幕截图(472).png', '/upload/20260729101609_b2be32ee380a4617a3cff59ba9336103.png', 'image/png', '2026-07-29 10:16:09', '2026-07-29 10:16:09', 2);
+INSERT INTO `mall_file` VALUES (28, '屏幕截图(479).png', '/upload/20260729101609_eda3916b53664d3890815e23130df58e.png', 'image/png', '2026-07-29 10:16:09', '2026-07-29 10:16:09', 2);
+INSERT INTO `mall_file` VALUES (29, '屏幕截图(478).png', '/upload/20260729101609_892b7c9847fe449f98bc6831a539e648.png', 'image/png', '2026-07-29 10:16:09', '2026-07-29 10:16:09', 2);
+INSERT INTO `mall_file` VALUES (30, '屏幕截图(472).png', '/upload/20260729101942_6ca6a852c2d84ecf993b138c7f39edd8.png', 'image/png', '2026-07-29 10:19:43', '2026-07-29 10:19:43', 2);
+INSERT INTO `mall_file` VALUES (31, '屏幕截图(479).png', '/upload/20260729101942_13fa71f7f32349d495132385e36a5bbf.png', 'image/png', '2026-07-29 10:19:43', '2026-07-29 10:19:43', 2);
+INSERT INTO `mall_file` VALUES (32, '屏幕截图(478).png', '/upload/20260729101942_4a12b03299884c03ac980512d8e9c0f4.png', 'image/png', '2026-07-29 10:19:43', '2026-07-29 10:19:43', 2);
+INSERT INTO `mall_file` VALUES (33, '屏幕截图(479).png', '/upload/20260729102306_3d371bfb3d4f4798a612f45ec0736c45.png', 'image/png', '2026-07-29 10:23:06', '2026-07-29 10:23:14', 0);
+INSERT INTO `mall_file` VALUES (34, '屏幕截图(472).png', '/upload/20260729102306_67fdade903c44c2fb6bb0512562eb3a0.png', 'image/png', '2026-07-29 10:23:06', '2026-07-29 10:23:14', 0);
+INSERT INTO `mall_file` VALUES (35, '屏幕截图(478).png', '/upload/20260729102306_7811673be84b466fadb8da428f176f55.png', 'image/png', '2026-07-29 10:23:06', '2026-07-29 10:23:14', 0);
+INSERT INTO `mall_file` VALUES (36, '屏幕截图(472).png', '/upload/20260729102354_2c38faf1aa63426ea6b0f51e40f8a93b.png', 'image/png', '2026-07-29 10:23:55', '2026-07-29 10:24:04', 0);
+INSERT INTO `mall_file` VALUES (37, '屏幕截图(479).png', '/upload/20260729102354_b337f19370244bf2aa16f6a4bbc50278.png', 'image/png', '2026-07-29 10:23:55', '2026-07-29 10:24:04', 0);
+INSERT INTO `mall_file` VALUES (38, '屏幕截图(478).png', '/upload/20260729102354_0cb5d085f19949c986f2e4ab1e60e4bd.png', 'image/png', '2026-07-29 10:23:55', '2026-07-29 10:24:04', 0);
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -123,12 +129,11 @@ CREATE TABLE `mall_order`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uk_order_no`(`order_no` ASC) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_order
 -- ----------------------------
-INSERT INTO `mall_order` VALUES (1, '20260728143250716526', 2046463574828482561, 36330.00, 36330.00, 5, 'y', '19987665633', '浙江省嘉兴市嘉善县宇智波幼儿园', 3, '2026-07-28 14:32:50', '2026-07-28 14:32:57', '2026-07-28 14:38:12', NULL, NULL, '2026-07-28 14:38:12', 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for mall_order_delivery
@@ -152,9 +157,6 @@ CREATE TABLE `mall_order_delivery`  (
 -- ----------------------------
 -- Records of mall_order_delivery
 -- ----------------------------
-INSERT INTO `mall_order_delivery` VALUES (2081991918260920321, 1, '3', '202607281432507165263', 0, NULL, 2046463574828482561, '2026-07-28 14:35:30', '2026-07-28 14:35:30', 0, 3);
-INSERT INTO `mall_order_delivery` VALUES (2081992597922717697, 1, '2', '202607281432507165262', 0, NULL, 2046463574828482561, '2026-07-28 14:38:12', '2026-07-28 14:38:12', 0, 2);
-INSERT INTO `mall_order_delivery` VALUES (2081992601622093826, 1, '1', '202607281432507165261', 0, NULL, 2046463574828482561, '2026-07-28 14:38:12', '2026-07-28 14:38:12', 0, 1);
 
 -- ----------------------------
 -- Table structure for mall_order_delivery_item
@@ -191,25 +193,13 @@ CREATE TABLE `mall_order_item`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` tinyint NULL DEFAULT 0 COMMENT '逻辑删除：0-未删除 1-已删除',
-  `item_status` tinyint NULL DEFAULT 0 COMMENT '商品履约状态：0待发货 1已发货 2运输中 3已收货 4已完成 5售后中',
-  `refund_quantity` int NULL DEFAULT 0 COMMENT '已退款数量',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '商品ID',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_order_id`(`order_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '订单明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_order_item
 -- ----------------------------
-INSERT INTO `mall_order_item` VALUES (1, 1, 3, '管理员商品1', '/upload/20260727114025_7fca222c69b748a0a71e6a1cf00c17d5.jpg', '规格3', 7000.00, 2, 14000.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (2, 1, 2, '管理员商品1', '/upload/20260727114025_2019d45fa46e460c8251ef31e2a16042.png', '规格2', 6000.00, 2, 12000.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (3, 1, 1, '管理员商品1', '/upload/20260727114025_6858215e4f324a87aa24ce66bae74621.jpg', '规格1', 5000.00, 2, 10000.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (4, 1, 6, '用户商品1', '/upload/20260728142853_616646a7d10a4e2bb4c8b7b96a9694cb.jpg', '3', 44.00, 2, 88.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (5, 1, 5, '用户商品1', '/upload/20260728142853_dd1d29b614604d258b96f7cdfc85d097.jpg', '2', 33.00, 2, 66.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (6, 1, 4, '用户商品1', '/upload/20260728142853_dd1d29b614604d258b96f7cdfc85d097.jpg', '1', 22.00, 2, 44.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (7, 1, 9, '用户2商品', '/upload/20260728143057_17a6ec364ec14230af22e024d508a83b.png', '3', 33.00, 2, 66.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (8, 1, 8, '用户2商品', '/upload/20260728143057_80851c37e56f4addb147b6de2d6ed3bb.png', '2', 22.00, 2, 44.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
-INSERT INTO `mall_order_item` VALUES (9, 1, 7, '用户2商品', '/upload/20260728143057_1fce8e7cd2fa4789ab886189333a66bc.png', '1', 11.00, 2, 22.00, '2026-07-28 14:32:50', '2026-07-28 14:32:50', 0, 0, 0, NULL);
 
 -- ----------------------------
 -- Table structure for mall_payment
@@ -238,7 +228,6 @@ CREATE TABLE `mall_payment`  (
 -- ----------------------------
 -- Records of mall_payment
 -- ----------------------------
-INSERT INTO `mall_payment` VALUES (2081991270672965635, 'PAY2081991270672965634', 1, '20260728143250716526', 2046463574828482561, 'alipay', 36330.00, 1, 'SIM1785220376694', '2026-07-28 14:32:57', '2026-07-28 14:32:57', NULL, '2026-07-28 14:32:55', '2026-07-28 14:32:55', 0);
 
 -- ----------------------------
 -- Table structure for mall_product
@@ -259,9 +248,8 @@ CREATE TABLE `mall_product`  (
 -- ----------------------------
 -- Records of mall_product
 -- ----------------------------
-INSERT INTO `mall_product` VALUES (1, '管理员商品1', '管理员添加商品', 1, 2046463574828482561, '2026-07-27 11:41:03', '2026-07-27 11:41:03', 0);
-INSERT INTO `mall_product` VALUES (2, '用户商品1', '', 1, 2047131275460681729, '2026-07-28 14:29:15', '2026-07-28 14:29:15', 0);
-INSERT INTO `mall_product` VALUES (3, '用户2商品', '', 1, 2046495738450235393, '2026-07-28 14:31:20', '2026-07-28 14:31:20', 0);
+INSERT INTO `mall_product` VALUES (1, '管理员商品1', '管理员添加商品', 1, 2046463574828482561, '2026-07-27 11:41:03', '2026-07-29 10:23:14', 0);
+INSERT INTO `mall_product` VALUES (17, '管理员商品2', '管理员添加商品', 1, 2046463574828482561, '2026-07-29 10:24:04', '2026-07-29 10:24:04', 0);
 
 -- ----------------------------
 -- Table structure for mall_product_category
@@ -414,17 +402,16 @@ CREATE TABLE `mall_product_category_rel`  (
 -- ----------------------------
 -- Records of mall_product_category_rel
 -- ----------------------------
-INSERT INTO `mall_product_category_rel` VALUES (2081585630230114305, 1, 121);
-INSERT INTO `mall_product_category_rel` VALUES (2081585630230114306, 1, 122);
-INSERT INTO `mall_product_category_rel` VALUES (2081585630230114307, 1, 123);
-INSERT INTO `mall_product_category_rel` VALUES (2081585630251085825, 1, 124);
-INSERT INTO `mall_product_category_rel` VALUES (2081585630251085826, 1, 125);
-INSERT INTO `mall_product_category_rel` VALUES (2081990346806206466, 2, 221);
-INSERT INTO `mall_product_category_rel` VALUES (2081990346806206467, 2, 222);
-INSERT INTO `mall_product_category_rel` VALUES (2081990346806206468, 2, 223);
-INSERT INTO `mall_product_category_rel` VALUES (2081990346806206469, 2, 224);
-INSERT INTO `mall_product_category_rel` VALUES (2081990346806206470, 2, 225);
-INSERT INTO `mall_product_category_rel` VALUES (2081990872604155906, 3, 94);
+INSERT INTO `mall_product_category_rel` VALUES (2082290823984885762, 1, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2082290823984885763, 1, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2082290823984885764, 1, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2082290823984885765, 1, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2082290823984885766, 1, 125);
+INSERT INTO `mall_product_category_rel` VALUES (2082291032030752770, 17, 121);
+INSERT INTO `mall_product_category_rel` VALUES (2082291032030752771, 17, 122);
+INSERT INTO `mall_product_category_rel` VALUES (2082291032030752772, 17, 123);
+INSERT INTO `mall_product_category_rel` VALUES (2082291032030752773, 17, 124);
+INSERT INTO `mall_product_category_rel` VALUES (2082291032030752774, 17, 125);
 
 -- ----------------------------
 -- Table structure for mall_refund
@@ -472,25 +459,18 @@ CREATE TABLE `mall_resource_rel`  (
 -- ----------------------------
 -- Records of mall_resource_rel
 -- ----------------------------
-INSERT INTO `mall_resource_rel` VALUES (1, 'sku', 1, 2, 'main_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (2, 'sku', 1, 2, 'detail_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (3, 'sku', 2, 3, 'main_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (4, 'sku', 2, 3, 'detail_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (5, 'sku', 3, 4, 'main_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (6, 'sku', 3, 4, 'detail_image', 0, '2026-07-27 11:41:03');
-INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 4, 6, 'main_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 4, 6, 'detail_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (9, 'sku', 5, 6, 'main_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (10, 'sku', 5, 6, 'detail_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (11, 'sku', 6, 5, 'main_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (12, 'sku', 6, 5, 'detail_image', 0, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (13, 'sku', 6, 7, 'detail_image', 1, '2026-07-28 14:29:15');
-INSERT INTO `mall_resource_rel` VALUES (14, 'sku', 7, 8, 'main_image', 0, '2026-07-28 14:31:20');
-INSERT INTO `mall_resource_rel` VALUES (15, 'sku', 7, 8, 'detail_image', 0, '2026-07-28 14:31:20');
-INSERT INTO `mall_resource_rel` VALUES (16, 'sku', 8, 9, 'main_image', 0, '2026-07-28 14:31:20');
-INSERT INTO `mall_resource_rel` VALUES (17, 'sku', 8, 9, 'detail_image', 0, '2026-07-28 14:31:20');
-INSERT INTO `mall_resource_rel` VALUES (18, 'sku', 9, 10, 'main_image', 0, '2026-07-28 14:31:20');
-INSERT INTO `mall_resource_rel` VALUES (19, 'sku', 9, 10, 'detail_image', 0, '2026-07-28 14:31:20');
+INSERT INTO `mall_resource_rel` VALUES (7, 'sku', 4, 34, 'main_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (8, 'sku', 4, 34, 'detail_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (9, 'sku', 5, 35, 'main_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (10, 'sku', 5, 35, 'detail_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (11, 'sku', 6, 33, 'main_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (12, 'sku', 6, 33, 'detail_image', 0, '2026-07-29 10:23:14');
+INSERT INTO `mall_resource_rel` VALUES (13, 'sku', 7, 36, 'main_image', 0, '2026-07-29 10:24:04');
+INSERT INTO `mall_resource_rel` VALUES (14, 'sku', 7, 36, 'detail_image', 0, '2026-07-29 10:24:04');
+INSERT INTO `mall_resource_rel` VALUES (15, 'sku', 8, 38, 'main_image', 0, '2026-07-29 10:24:04');
+INSERT INTO `mall_resource_rel` VALUES (16, 'sku', 8, 38, 'detail_image', 0, '2026-07-29 10:24:04');
+INSERT INTO `mall_resource_rel` VALUES (17, 'sku', 9, 37, 'main_image', 0, '2026-07-29 10:24:04');
+INSERT INTO `mall_resource_rel` VALUES (18, 'sku', 9, 37, 'detail_image', 0, '2026-07-29 10:24:04');
 
 -- ----------------------------
 -- Table structure for mall_sku
@@ -514,15 +494,12 @@ CREATE TABLE `mall_sku`  (
 -- ----------------------------
 -- Records of mall_sku
 -- ----------------------------
-INSERT INTO `mall_sku` VALUES (1, 1, 5000.00, 98, 0, '{\"name\": \"规格1\", \"fileId\": 2}', '', 1, '2026-07-27 11:41:03', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (2, 1, 6000.00, 98, 0, '{\"name\": \"规格2\", \"fileId\": 3}', '', 1, '2026-07-27 11:41:03', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (3, 1, 7000.00, 98, 0, '{\"name\": \"规格3\", \"fileId\": 4}', '', 1, '2026-07-27 11:41:03', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (4, 2, 22.00, 98, 0, '{\"name\": \"1\", \"fileId\": 6}', '', 1, '2026-07-28 14:29:15', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (5, 2, 33.00, 98, 0, '{\"name\": \"2\", \"fileId\": 6}', '', 1, '2026-07-28 14:29:15', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (6, 2, 44.00, 98, 0, '{\"name\": \"3\", \"fileId\": 5}', '', 1, '2026-07-28 14:29:15', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (7, 3, 11.00, 98, 0, '{\"name\": \"1\", \"fileId\": 8}', '', 1, '2026-07-28 14:31:20', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (8, 3, 22.00, 98, 0, '{\"name\": \"2\", \"fileId\": 9}', '', 1, '2026-07-28 14:31:20', '2026-07-28 14:32:57');
-INSERT INTO `mall_sku` VALUES (9, 3, 33.00, 98, 0, '{\"name\": \"3\", \"fileId\": 10}', '', 1, '2026-07-28 14:31:20', '2026-07-28 14:32:57');
+INSERT INTO `mall_sku` VALUES (4, 1, 5000.00, 100, 0, '{\"name\": \"规格1\", \"fileId\": 34}', '', 1, '2026-07-29 10:23:14', '2026-07-29 10:23:14');
+INSERT INTO `mall_sku` VALUES (5, 1, 6000.00, 100, 0, '{\"name\": \"规格2\", \"fileId\": 35}', '', 1, '2026-07-29 10:23:14', '2026-07-29 10:23:14');
+INSERT INTO `mall_sku` VALUES (6, 1, 7000.00, 100, 0, '{\"name\": \"规格3\", \"fileId\": 33}', '', 1, '2026-07-29 10:23:14', '2026-07-29 10:23:14');
+INSERT INTO `mall_sku` VALUES (7, 17, 5000.00, 100, 0, '{\"name\": \"规格1\", \"fileId\": 36}', '', 1, '2026-07-29 10:24:04', '2026-07-29 10:24:04');
+INSERT INTO `mall_sku` VALUES (8, 17, 6000.00, 100, 0, '{\"name\": \"规格2\", \"fileId\": 38}', '', 1, '2026-07-29 10:24:04', '2026-07-29 10:24:04');
+INSERT INTO `mall_sku` VALUES (9, 17, 7000.00, 100, 0, '{\"name\": \"规格3\", \"fileId\": 37}', '', 1, '2026-07-29 10:24:04', '2026-07-29 10:24:04');
 
 -- ----------------------------
 -- Table structure for mall_user_address
@@ -578,7 +555,7 @@ CREATE TABLE `sys_user`  (
 -- Records of sys_user
 -- ----------------------------
 INSERT INTO `sys_user` VALUES (2046463574828482561, 'vben', '$2a$10$vj1MurvaDi6sMAycJOA8geMyUVdH.smxVC43ZF9idADeVE//FiV3e', 'Super', '', 'super', '/analytics', '', 1, '2026-04-19 19:06:22', '2026-04-26 16:55:44', 0);
-INSERT INTO `sys_user` VALUES (2046495738450235393, 'test', '$2a$10$81x9rMP5EKA0xP4zO2/jSuM9OyuUKQSXWHZ.bMdjTpy7Qnki0MlFe', '用户2', NULL, 'user', '/analytics', NULL, 1, '2026-04-21 15:46:21', '2026-07-28 14:30:14', 0);
-INSERT INTO `sys_user` VALUES (2047131275460681729, 'user', '$2a$10$PKAE5Cd4tkv.hAEHDLlcd.oW5S4B8fYHkj/brPisHKWaF6WaVQgFq', '用户1', NULL, 'user', '/analytics', NULL, 1, '2026-04-23 09:51:45', '2026-07-28 14:30:15', 0);
+INSERT INTO `sys_user` VALUES (2046495738450235393, 'test', '$2a$10$81x9rMP5EKA0xP4zO2/jSuM9OyuUKQSXWHZ.bMdjTpy7Qnki0MlFe', 'User', NULL, 'user', '/analytics', NULL, 1, '2026-04-21 15:46:21', '2026-04-23 09:50:11', 0);
+INSERT INTO `sys_user` VALUES (2047131275460681729, 'user', '$2a$10$PKAE5Cd4tkv.hAEHDLlcd.oW5S4B8fYHkj/brPisHKWaF6WaVQgFq', '用户', NULL, 'user', '/analytics', NULL, 1, '2026-04-23 09:51:45', '2026-04-23 09:51:45', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

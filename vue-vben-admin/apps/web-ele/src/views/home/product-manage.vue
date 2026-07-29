@@ -166,7 +166,7 @@ function saveDraft() {
     categoryIds: formModel.categoryIds,
     description: formModel.description,
     name: formModel.name,
-    skus: formModel.skus.map((s) => ({ ...s, fileIds: undefined })), // 不存临时 fileIds
+    skus: formModel.skus.map((s) => ({ ...s, fileId: undefined, fileIds: undefined })),
     status: formModel.status,
   };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -317,7 +317,7 @@ function buildPayload() {
     id: currentEditId.value,
     name: formModel.name.trim(),
     skus: formModel.skus.map((item) => {
-      const firstFileId = item.fileId ?? item.fileIds?.[0];
+      const firstFileId = item.fileIds?.[0] ?? item.fileId;
       return {
         fileId: firstFileId,
         fileIds: item.fileIds ?? [],
