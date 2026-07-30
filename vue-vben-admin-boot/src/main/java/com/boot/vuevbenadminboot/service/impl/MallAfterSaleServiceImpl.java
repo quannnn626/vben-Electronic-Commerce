@@ -189,10 +189,9 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
 
     @Override
     public AfterSaleDetailDto getAfterSaleDetail(Long id, String userName) {
-        // 校验
         Long userId = sysUserService.requireUserId(userName);
         MallAfterSale as = this.getById(id);
-        if (as == null || !as.getUserId().equals(userId) || as.getDeleted() == 1) {
+        if (as == null || as.getDeleted() == 1) {
             throw new IllegalArgumentException("售后单不存在");
         }
         MallOrder order = mallOrderService.getById(as.getOrderId());
@@ -202,6 +201,27 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                         .eq(MallOrderItem::getId, as.getOrderItemId())
                         .eq(MallOrderItem::getDeleted, 0)
         );
+        // 权限判断：买家本人或商品所属商家
+        if (!as.getUserId().equals(userId)) {
+            if (orderItem == null) {
+                throw new IllegalArgumentException("售后单不存在");
+            }
+            // 通过productId或SKU链确认商品归属
+            Long productId = orderItem.getProductId();
+            if (productId == null && orderItem.getSkuId() != null) {
+                MallSku sku = mallSkuService.getById(orderItem.getSkuId());
+                if (sku != null) {
+                    productId = sku.getProductId();
+                }
+            }
+            if (productId == null) {
+                throw new IllegalArgumentException("售后单不存在");
+            }
+            MallProduct product = mallProductService.getById(productId);
+            if (product == null || !product.getCreateUser().equals(userId)) {
+                throw new IllegalArgumentException("售后单不存在");
+            }
+        }
 
         // 组装售后详情
         AfterSaleDetailDto dto = new AfterSaleDetailDto();
