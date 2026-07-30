@@ -8,6 +8,7 @@ import {
   ElButton,
   ElCard,
   ElCheckbox,
+  ElDivider,
   ElEmpty,
   ElMessage,
   ElMessageBox,
@@ -184,33 +185,16 @@ onMounted(() => {
     </div>
 
     <div v-else v-loading="loading" class="receipt-layout">
-      <!-- 订单信息 -->
-      <ElCard v-if="order" shadow="never" class="mb-4">
-        <div class="order-info">
-          <div class="info-row">
-            <span class="info-label">订单编号</span>
-            <span class="info-value">{{ order.orderNo }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">收货人</span>
-            <span class="info-value">{{ order.receiverName }} {{ order.receiverPhone }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">收货地址</span>
-            <span class="info-value">{{ order.receiverAddress }}</span>
-          </div>
-        </div>
-      </ElCard>
-
-      <!-- 可确认收货的商品 -->
-      <ElCard shadow="never">
-        <template #header>
-          <div class="card-header">
-            <span class="card-title">
-              <template v-if="isSingleItem">确认收货</template>
-              <template v-else>可确认收货的商品（{{ confirmableItems.length }} 件）</template>
-            </span>
-            <div class="card-actions">
+      <!-- 商品列表 -->
+      <div class="receipt-main">
+        <!-- 可确认收货的商品 -->
+        <ElCard shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span class="card-title">
+                <template v-if="isSingleItem">确认收货</template>
+                <template v-else>可确认收货的商品（{{ confirmableItems.length }} 件）</template>
+              </span>
               <ElCheckbox
                 v-if="confirmableItems.length > 0"
                 :model-value="allSelected"
@@ -219,122 +203,165 @@ onMounted(() => {
               >
                 全选
               </ElCheckbox>
-              <ElButton
-                v-if="selectedIds.size > 0"
-                type="primary"
-                :loading="confirmLoading"
-                @click="handleBatchConfirm"
-              >
-                确认收货（{{ selectedIds.size }}）
-              </ElButton>
             </div>
-          </div>
-        </template>
+          </template>
 
-        <div v-if="confirmableItems.length > 0" class="goods-list">
-          <div v-for="item in confirmableItems" :key="item.id" class="goods-item">
-            <ElCheckbox
-              :model-value="selectedIds.has(item.id)"
-              class="goods-checkbox"
-              @change="handleSelect(item.id)"
-            />
-            <div class="goods-image-box">
-              <img
-                v-if="item.productImage"
-                :src="normalizeImage(item.productImage)"
-                class="goods-img"
-                alt=""
+          <div v-if="confirmableItems.length > 0" class="goods-list">
+            <div v-for="item in confirmableItems" :key="item.id" class="goods-item">
+              <ElCheckbox
+                :model-value="selectedIds.has(item.id)"
+                class="goods-checkbox"
+                @change="handleSelect(item.id)"
               />
-              <span v-else class="goods-image-placeholder">图</span>
-            </div>
-            <div class="goods-info">
-              <div class="goods-name">{{ item.productName }}</div>
-              <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
-              <ElTag
-                :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
-                size="small"
-                class="mt-1"
-              >
-                {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
-              </ElTag>
-              <div
-                v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
-                class="goods-delivery"
-              >
-                物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+              <div class="goods-image-box">
+                <img
+                  v-if="item.productImage"
+                  :src="normalizeImage(item.productImage)"
+                  class="goods-img"
+                  alt=""
+                />
+                <span v-else class="goods-image-placeholder">图</span>
               </div>
-            </div>
-            <div class="goods-price-col">
-              <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
-              <div class="goods-qty">×{{ item.quantity }}</div>
-            </div>
-            <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
-          </div>
-        </div>
-        <ElEmpty v-else description="暂无待收货商品，所有商品已确认收货" />
-      </ElCard>
-
-      <!-- 已收货/其他状态商品（多商品模式才显示） -->
-      <ElCard v-if="order && !isSingleItem" shadow="never" class="mt-4">
-        <template #header>
-          <span class="card-title">其他商品</span>
-        </template>
-        <div v-if="order.items.filter((i) => i.itemStatus !== 1 && i.itemStatus !== 2).length > 0" class="goods-list">
-          <div
-            v-for="item in order.items.filter((i) => i.itemStatus !== 1 && i.itemStatus !== 2)"
-            :key="item.id"
-            class="goods-item"
-          >
-            <div class="goods-image-box">
-              <img
-                v-if="item.productImage"
-                :src="normalizeImage(item.productImage)"
-                class="goods-img"
-                alt=""
-              />
-              <span v-else class="goods-image-placeholder">图</span>
-            </div>
-            <div class="goods-info">
-              <div class="goods-name">{{ item.productName }}</div>
-              <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
-              <ElTag
-                :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
-                size="small"
-                class="mt-1"
-              >
-                {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
-              </ElTag>
-              <div
-                v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
-                class="goods-delivery"
-              >
-                物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+              <div class="goods-info">
+                <div class="goods-name">{{ item.productName }}</div>
+                <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
+                <ElTag
+                  :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
+                  size="small"
+                  class="mt-1"
+                >
+                  {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
+                </ElTag>
+                <div
+                  v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
+                  class="goods-delivery"
+                >
+                  物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+                </div>
               </div>
+              <div class="goods-price-col">
+                <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
+                <div class="goods-qty">×{{ item.quantity }}</div>
+              </div>
+              <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
             </div>
-            <div class="goods-price-col">
-              <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
-              <div class="goods-qty">×{{ item.quantity }}</div>
-            </div>
-            <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
           </div>
-        </div>
-        <ElEmpty v-else description="暂无其他商品" />
-      </ElCard>
+          <ElEmpty v-else description="暂无待收货商品，所有商品已确认收货" />
+        </ElCard>
 
-      <div class="mt-4">
-        <ElButton @click="goBack">返回</ElButton>
+        <!-- 已收货/其他状态商品 -->
+        <ElCard v-if="order && !isSingleItem" shadow="never" class="mt-4">
+          <template #header>
+            <span class="card-title">其他商品</span>
+          </template>
+          <div v-if="order.items.filter((i) => i.itemStatus !== 1 && i.itemStatus !== 2).length > 0" class="goods-list">
+            <div
+              v-for="item in order.items.filter((i) => i.itemStatus !== 1 && i.itemStatus !== 2)"
+              :key="item.id"
+              class="goods-item"
+            >
+              <div class="goods-image-box">
+                <img
+                  v-if="item.productImage"
+                  :src="normalizeImage(item.productImage)"
+                  class="goods-img"
+                  alt=""
+                />
+                <span v-else class="goods-image-placeholder">图</span>
+              </div>
+              <div class="goods-info">
+                <div class="goods-name">{{ item.productName }}</div>
+                <div v-if="item.skuSpecName" class="goods-spec">{{ item.skuSpecName }}</div>
+                <ElTag
+                  :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
+                  size="small"
+                  class="mt-1"
+                >
+                  {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
+                </ElTag>
+                <div
+                  v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
+                  class="goods-delivery"
+                >
+                  物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+                </div>
+              </div>
+              <div class="goods-price-col">
+                <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
+                <div class="goods-qty">×{{ item.quantity }}</div>
+              </div>
+              <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
+            </div>
+          </div>
+          <ElEmpty v-else description="暂无其他商品" />
+        </ElCard>
       </div>
+
+      <!-- 订单摘要 -->
+      <aside v-if="order" class="receipt-sidebar">
+        <ElCard shadow="never" class="summary-card">
+          <h3 class="summary-title">订单摘要</h3>
+
+          <div class="summary-row">
+            <span class="summary-label">订单编号</span>
+            <span class="summary-value summary-no">{{ order.orderNo }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">收货人</span>
+            <span class="summary-value">{{ order.receiverName }} {{ order.receiverPhone }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">收货地址</span>
+            <span class="summary-value">{{ order.receiverAddress }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">商品件数</span>
+            <span class="summary-value">
+              {{ order.items.reduce((s, i) => s + i.quantity, 0) }} 件
+            </span>
+          </div>
+
+          <div class="summary-row">
+            <span class="summary-label">商品金额</span>
+            <span class="summary-value">¥{{ order.totalAmount?.toFixed(2) }}</span>
+          </div>
+
+          <ElDivider />
+
+          <div class="summary-row summary-total-row">
+            <span class="summary-label">应付金额</span>
+            <span class="summary-total-price">¥{{ order.payAmount?.toFixed(2) }}</span>
+          </div>
+
+          <ElDivider />
+
+          <div class="summary-actions">
+            <ElButton class="action-btn" @click="goBack">返回</ElButton>
+            <ElButton
+              v-if="selectedIds.size > 0"
+              class="action-btn action-submit"
+              type="primary"
+              :loading="confirmLoading"
+              @click="handleBatchConfirm"
+            >
+              确认收货（{{ selectedIds.size }}）
+            </ElButton>
+          </div>
+        </ElCard>
+      </aside>
     </div>
   </Page>
 </template>
 
 <style scoped>
 .receipt-layout {
-  max-width: 900px;
-}
-
-.mb-4 {
-  margin-bottom: 16px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  align-items: start;
 }
 
 .mt-1 {
@@ -356,32 +383,7 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.order-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.info-row {
-  display: flex;
-  gap: 12px;
-}
-
-.info-label {
-  color: var(--el-text-color-secondary);
-  min-width: 80px;
-}
-
-.info-value {
-  font-weight: 500;
-}
-
+/* 商品列表 */
 .goods-list {
   display: flex;
   flex-direction: column;
@@ -485,5 +487,76 @@ onMounted(() => {
   font-weight: 600;
   min-width: 90px;
   text-align: right;
+}
+
+/* 右侧摘要 */
+.summary-card {
+  position: sticky;
+  top: 12px;
+}
+
+.summary-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.summary-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.summary-label {
+  color: var(--el-text-color-regular);
+  font-size: 14px;
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.summary-no {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  word-break: break-all;
+  text-align: right;
+  max-width: 180px;
+}
+
+.summary-total-row {
+  padding: 8px 0;
+}
+
+.summary-total-price {
+  color: var(--el-color-danger);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.action-btn {
+  flex: 1;
+}
+
+.action-submit {
+  flex: 2;
+}
+
+@media (max-width: 960px) {
+  .receipt-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    position: static;
+  }
 }
 </style>
