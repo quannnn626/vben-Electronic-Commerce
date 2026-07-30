@@ -7,6 +7,7 @@ import com.boot.vuevbenadminboot.domain.MallFile;
 import com.boot.vuevbenadminboot.domain.MallProduct;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderDelivery;
+import com.boot.vuevbenadminboot.domain.MallOrderDeliveryItem;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
 import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.SysUser;
@@ -17,6 +18,7 @@ import com.boot.vuevbenadminboot.mapper.MallOrderDeliveryMapper;
 import com.boot.vuevbenadminboot.mapper.MallOrderMapper;
 import com.boot.vuevbenadminboot.service.MallCartService;
 import com.boot.vuevbenadminboot.service.MallFileService;
+import com.boot.vuevbenadminboot.service.MallOrderDeliveryItemService;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
 import com.boot.vuevbenadminboot.service.MallProductService;
@@ -51,6 +53,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private final MallCartService cartService;
     private final MallProductService mallProductService;
     private final MallOrderDeliveryMapper deliveryMapper;
+    private final MallOrderDeliveryItemService deliveryItemService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public MallOrderServiceImpl(
@@ -61,7 +64,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             MallUserAddressService addressService,
             MallCartService cartService,
             MallProductService mallProductService,
-            MallOrderDeliveryMapper deliveryMapper) {
+            MallOrderDeliveryMapper deliveryMapper,
+            MallOrderDeliveryItemService deliveryItemService) {
         this.sysUserService = sysUserService;
         this.orderItemService = orderItemService;
         this.skuService = skuService;
@@ -70,6 +74,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         this.cartService = cartService;
         this.mallProductService = mallProductService;
         this.deliveryMapper = deliveryMapper;
+        this.deliveryItemService = deliveryItemService;
     }
 
     // 获取订单列表
@@ -99,8 +104,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
         List<OrderListItemDto> result = new ArrayList<>();
         for (MallOrder order : orders) {
-            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap());
-            fillDelivery(dto, deliveryMap.get(order.getId()));
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap(), deliveryMap);
             result.add(dto);
         }
         return result;
@@ -185,7 +189,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         Map<Long, String> imageMap = buildSkuImageMap(skuIds);
 
         Map<Long, List<MallOrderItem>> itemMap = Map.of(order.getId(), orderItems);
-        return buildOrderDto(order, itemMap, imageMap, Collections.emptyMap());
+        return buildOrderDto(order, itemMap, imageMap, Collections.emptyMap(), Collections.emptyMap());
     }
 
     // 取消订单
@@ -316,8 +320,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
                 .collect(Collectors.toSet());
         Map<Long, String> skuImageMap = buildSkuImageMap(skuIds);
         Map<Long, MallOrderDelivery> deliveryMap = buildDeliveryMap(orderIds);
-        OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap());
-        fillDelivery(dto, deliveryMap.get(orderId));
+        OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, Collections.emptyMap(), deliveryMap);
         return dto;
     }
 
@@ -407,9 +410,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
 
         List<OrderListItemDto> result = new ArrayList<>();
         for (MallOrder order : orders) {
-            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, skuProductMap);
+            OrderListItemDto dto = buildOrderDto(order, itemMap, skuImageMap, skuProductMap, deliveryMap);
             dto.setUsername(usernameMap.get(order.getUserId()));
-            fillDelivery(dto, deliveryMap.get(order.getId()));
             result.add(dto);
         }
         return result;
@@ -419,7 +421,8 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
     private OrderListItemDto buildOrderDto(MallOrder order,
                                            Map<Long, List<MallOrderItem>> itemMap,
                                            Map<Long, String> imageMap,
-                                           Map<Long, Long> skuProductMap) {
+                                           Map<Long, Long> skuProductMap,
+                                           Map<Long, MallOrderDelivery> deliveryMap) {
         OrderListItemDto dto = new OrderListItemDto();
         dto.setId(order.getId());
         dto.setUserId(order.getUserId());
@@ -451,6 +454,12 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             itemDto.setTotalPrice(item.getTotalPrice());
             itemDto.setItemStatus(item.getItemStatus());
             itemDto.setRefundQuantity(item.getRefundQuantity());
+            // 填充该商品的物流信息
+            MallOrderDelivery delivery = deliveryMap.get(item.getId());
+            if (delivery != null) {
+                itemDto.setLogisticsCompany(delivery.getLogisticsCompany());
+                itemDto.setTrackingNo(delivery.getTrackingNo());
+            }
             itemDtos.add(itemDto);
         }
         dto.setItems(itemDtos);
@@ -548,25 +557,37 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         }
     }
 
-    // 批量查询物流信息
+    // 批量查询物流信息，通过 MallOrderDeliveryItem 关联表获取 orderItemId → 物流信息 的映射
     private Map<Long, MallOrderDelivery> buildDeliveryMap(List<Long> orderIds) {
         if (orderIds.isEmpty()) {
             return Collections.emptyMap();
         }
+        // 查询订单的所有物流记录
         List<MallOrderDelivery> deliveries = deliveryMapper.selectList(
                 new LambdaQueryWrapper<MallOrderDelivery>()
                         .in(MallOrderDelivery::getOrderId, orderIds)
                         .eq(MallOrderDelivery::getDeleted, 0)
         );
-        return deliveries.stream()
-                .collect(Collectors.toMap(MallOrderDelivery::getOrderId, d -> d, (a, b) -> a));
-    }
-
-    // 填充物流信息
-    private void fillDelivery(OrderListItemDto dto, MallOrderDelivery delivery) {
-        if (delivery != null) {
-            dto.setLogisticsCompany(delivery.getLogisticsCompany());
-            dto.setTrackingNo(delivery.getTrackingNo());
+        if (deliveries.isEmpty()) {
+            return Collections.emptyMap();
         }
+        // 查询每个物流记录对应的 orderItemId
+        List<Long> deliveryIds = deliveries.stream().map(MallOrderDelivery::getId).toList();
+        List<MallOrderDeliveryItem> deliveryItems = deliveryItemService.list(
+                new LambdaQueryWrapper<MallOrderDeliveryItem>()
+                        .in(MallOrderDeliveryItem::getDeliveryId, deliveryIds)
+        );
+        // 构建 deliveryId → MallOrderDelivery 的映射
+        Map<Long, MallOrderDelivery> deliveryById = deliveries.stream()
+                .collect(Collectors.toMap(MallOrderDelivery::getId, d -> d, (a, b) -> a));
+        // 构建 orderItemId → MallOrderDelivery 的映射
+        Map<Long, MallOrderDelivery> result = new HashMap<>();
+        for (MallOrderDeliveryItem di : deliveryItems) {
+            MallOrderDelivery delivery = deliveryById.get(di.getDeliveryId());
+            if (delivery != null && di.getOrderItemId() != null) {
+                result.putIfAbsent(di.getOrderItemId(), delivery);
+            }
+        }
+        return result;
     }
 }

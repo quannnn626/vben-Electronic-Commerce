@@ -20,4 +20,6 @@ public class OrderItemDto {
     private Integer itemStatus;
     private Integer refundQuantity;
     private BigDecimal totalPrice;
+    private String logisticsCompany;
+    private String trackingNo;
 }

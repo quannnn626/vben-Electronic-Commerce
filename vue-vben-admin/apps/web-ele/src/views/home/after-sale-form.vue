@@ -38,9 +38,13 @@ interface OrderItemDto {
   skuId: number;
   productName: string;
   productImage: string;
+  skuSpecName: string;
   price: number;
   quantity: number;
+  itemStatus: number;
   totalPrice: number;
+  logisticsCompany: string;
+  trackingNo: string;
 }
 
 interface OrderDetail {
@@ -49,8 +53,37 @@ interface OrderDetail {
   totalAmount: number;
   payAmount: number;
   status: number;
+  receiverName: string;
+  receiverPhone: string;
+  receiverAddress: string;
+  createTime: string;
+  payTime: string | null;
+  deliveryTime: string | null;
+  finishTime: string | null;
+  cancelTime: string | null;
+  logisticsCompany: string;
+  trackingNo: string;
   items: OrderItemDto[];
 }
+
+// 订单状态映射
+const orderStatusMap: Record<number, { label: string; type: string }> = {
+  0: { label: '待支付', type: 'danger' },
+  1: { label: '已支付', type: 'warning' },
+  2: { label: '已发货', type: '' },
+  3: { label: '已完成', type: 'success' },
+  4: { label: '已取消', type: 'info' },
+};
+
+// 商品发货状态映射
+const itemStatusMap: Record<number, { label: string; type: string }> = {
+  0: { label: '待发货', type: 'info' },
+  1: { label: '已发货', type: '' },
+  2: { label: '运输中', type: 'warning' },
+  3: { label: '已收货', type: 'success' },
+  4: { label: '已完成', type: 'success' },
+  5: { label: '售后中', type: 'danger' },
+};
 
 const route = useRoute();
 const router = useRouter();
@@ -280,8 +313,42 @@ onMounted(() => {
 
     <ElCard v-if="order" class="mt-4" shadow="never">
       <div class="order-info">
-        <span class="text-gray-500">订单编号：</span>
-        <span class="font-medium">{{ order.orderNo }}</span>
+        <div class="order-info-row">
+          <span class="text-gray-500">订单编号：</span>
+          <span class="font-medium">{{ order.orderNo }}</span>
+          <ElTag
+            :type="orderStatusMap[order.status]?.type ?? 'info'"
+            size="small"
+            class="ml-3"
+          >
+            {{ orderStatusMap[order.status]?.label ?? '未知' }}
+          </ElTag>
+        </div>
+        <div class="order-info-row mt-2">
+          <span class="text-gray-500">下单时间：</span>
+          <span>{{ order.createTime || '-' }}</span>
+        </div>
+        <div v-if="order.payTime" class="order-info-row mt-1">
+          <span class="text-gray-500">支付时间：</span>
+          <span>{{ order.payTime }}</span>
+        </div>
+        <div v-if="order.deliveryTime" class="order-info-row mt-1">
+          <span class="text-gray-500">发货时间：</span>
+          <span>{{ order.deliveryTime }}</span>
+        </div>
+        <div v-if="order.finishTime" class="order-info-row mt-1">
+          <span class="text-gray-500">完成时间：</span>
+          <span>{{ order.finishTime }}</span>
+        </div>
+        <!-- 收货信息 -->
+        <div v-if="order.receiverName" class="order-info-row mt-2">
+          <span class="text-gray-500">收货人：</span>
+          <span>{{ order.receiverName }} {{ order.receiverPhone }}</span>
+        </div>
+        <div v-if="order.receiverAddress" class="order-info-row mt-1">
+          <span class="text-gray-500">收货地址：</span>
+          <span>{{ order.receiverAddress }}</span>
+        </div>
       </div>
     </ElCard>
 
@@ -324,7 +391,27 @@ onMounted(() => {
           </div>
 
           <div class="item-info" @click="availableQty(item) > 0 ? toggleItem(item.id) : undefined">
-            <div class="item-name">{{ item.productName }}</div>
+            <div class="item-name">
+              {{ item.productName }}
+              <ElTag
+                v-if="item.itemStatus !== undefined"
+                :type="itemStatusMap[item.itemStatus]?.type ?? 'info'"
+                size="small"
+                class="ml-2"
+              >
+                {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
+              </ElTag>
+            </div>
+            <div v-if="item.skuSpecName" class="item-spec">{{ item.skuSpecName }}</div>
+            <div
+              v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
+              class="item-delivery"
+            >
+              <span class="item-delivery-label">物流：</span>
+              <template v-if="item.logisticsCompany">{{ item.logisticsCompany }}</template>
+              <template v-if="item.logisticsCompany && item.trackingNo"> · </template>
+              <template v-if="item.trackingNo">{{ item.trackingNo }}</template>
+            </div>
             <div class="item-meta">
               <span class="text-gray-500">购买：{{ item.quantity }} 件</span>
               <span v-if="claimedMap[item.id]" class="text-orange-500">已申请：{{ claimedMap[item.id] }} 件</span>
@@ -439,7 +526,14 @@ onMounted(() => {
 
 <style scoped>
 .order-info {
-  font-size: 15px;
+  font-size: 14px;
+}
+
+.order-info-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .item-list {
@@ -509,6 +603,28 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.item-spec {
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  margin-top: 2px;
+}
+
+.item-delivery {
+  font-size: 12px;
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.item-delivery-label {
+  color: var(--el-text-color-secondary);
 }
 
 .item-meta {

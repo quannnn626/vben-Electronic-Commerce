@@ -323,14 +323,6 @@ onMounted(() => {
             <span class="detail-label">发货时间</span>
             <span>{{ currentOrder.deliveryTime }}</span>
           </div>
-          <div v-if="currentOrder.logisticsCompany" class="detail-row">
-            <span class="detail-label">物流公司</span>
-            <span>{{ currentOrder.logisticsCompany }}</span>
-          </div>
-          <div v-if="currentOrder.trackingNo" class="detail-row">
-            <span class="detail-label">物流单号</span>
-            <span>{{ currentOrder.trackingNo }}</span>
-          </div>
           <div v-if="currentOrder.finishTime" class="detail-row">
             <span class="detail-label">完成时间</span>
             <span>{{ currentOrder.finishTime }}</span>

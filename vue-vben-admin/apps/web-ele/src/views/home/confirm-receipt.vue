@@ -26,6 +26,8 @@ interface OrderItem {
   quantity: number;
   itemStatus: number;
   totalPrice: number;
+  logisticsCompany: string;
+  trackingNo: string;
 }
 
 interface OrderDetail {
@@ -255,6 +257,12 @@ onMounted(() => {
               >
                 {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
               </ElTag>
+              <div
+                v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
+                class="goods-delivery"
+              >
+                物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+              </div>
             </div>
             <div class="goods-price-col">
               <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
@@ -296,6 +304,12 @@ onMounted(() => {
               >
                 {{ itemStatusMap[item.itemStatus]?.label ?? '-' }}
               </ElTag>
+              <div
+                v-if="(item.itemStatus === 1 || item.itemStatus === 2) && (item.logisticsCompany || item.trackingNo)"
+                class="goods-delivery"
+              >
+                物流：{{ item.logisticsCompany }}{{ item.logisticsCompany && item.trackingNo ? ' · ' : '' }}{{ item.trackingNo }}
+              </div>
             </div>
             <div class="goods-price-col">
               <div class="goods-unit-price">¥{{ item.price.toFixed(2) }}</div>
@@ -435,6 +449,16 @@ onMounted(() => {
   color: var(--el-text-color-secondary);
   font-size: 13px;
   margin-top: 4px;
+}
+
+.goods-delivery {
+  font-size: 12px;
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin-top: 4px;
+  display: inline-block;
 }
 
 .goods-price-col {
