@@ -22,7 +22,7 @@ public interface MallAfterSaleService extends IService<MallAfterSale> {
 
     AfterSaleDetailDto getAfterSaleDetail(Long id, String userName);
 
-    List<AfterSaleAdminListDto> listAfterSalesAdmin();
+    List<AfterSaleAdminListDto> listAfterSalesAdmin(String userName);
 
     void audit(AfterSaleAuditRequest request, String userName);
 

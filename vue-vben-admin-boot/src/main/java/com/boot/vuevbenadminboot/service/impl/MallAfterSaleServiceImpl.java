@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.vuevbenadminboot.domain.MallAfterSale;
 import com.boot.vuevbenadminboot.domain.MallOrder;
 import com.boot.vuevbenadminboot.domain.MallOrderItem;
+import com.boot.vuevbenadminboot.domain.MallProduct;
+import com.boot.vuevbenadminboot.domain.MallSku;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleReasonEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleStatusEnum;
 import com.boot.vuevbenadminboot.domain.enums.AfterSaleTypeEnum;
@@ -15,8 +17,10 @@ import com.boot.vuevbenadminboot.service.MallAfterSaleService;
 import com.boot.vuevbenadminboot.mapper.MallAfterSaleMapper;
 import com.boot.vuevbenadminboot.service.MallOrderItemService;
 import com.boot.vuevbenadminboot.service.MallOrderService;
+import com.boot.vuevbenadminboot.service.MallProductService;
 import com.boot.vuevbenadminboot.service.MallRefundService;
 import com.boot.vuevbenadminboot.service.MallResourceRelService;
+import com.boot.vuevbenadminboot.service.MallSkuService;
 import com.boot.vuevbenadminboot.service.SysUserService;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleAuditRequest;
 import com.boot.vuevbenadminboot.web.dto.req.AfterSaleBatchAuditRequest;
@@ -54,6 +58,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
     private final MallAfterSaleMapper mallAfterSaleMapper;
     private final MallResourceRelService resourceRelService;
     private final MallRefundService refundService;
+    private final MallProductService mallProductService;
+    private final MallSkuService mallSkuService;
 
     public MallAfterSaleServiceImpl(SysUserService sysUserService,
                                     MallOrderService mallOrderService,
@@ -61,7 +67,9 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                                     MallOrderItemMapper mallOrderItemMapper,
                                     MallAfterSaleMapper mallAfterSaleMapper,
                                     MallResourceRelService resourceRelService,
-                                    MallRefundService refundService) {
+                                    MallRefundService refundService,
+                                    MallProductService mallProductService,
+                                    MallSkuService mallSkuService) {
         this.sysUserService = sysUserService;
         this.mallOrderService = mallOrderService;
         this.mallOrderItemService = mallOrderItemService;
@@ -69,6 +77,8 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         this.mallAfterSaleMapper = mallAfterSaleMapper;
         this.resourceRelService = resourceRelService;
         this.refundService = refundService;
+        this.mallProductService = mallProductService;
+        this.mallSkuService = mallSkuService;
     }
 
     @Override
@@ -314,7 +324,18 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
     }
 
     @Override
-    public List<AfterSaleAdminListDto> listAfterSalesAdmin() {
+    public List<AfterSaleAdminListDto> listAfterSalesAdmin(String userName) {
+        Long userId = sysUserService.requireUserId(userName);
+        // 查询当前商家创建的商品ID集合
+        List<MallProduct> myProducts = mallProductService.list(
+                new LambdaQueryWrapper<MallProduct>()
+                        .eq(MallProduct::getCreateUser, userId)
+                        .eq(MallProduct::getDeleted, 0)
+        );
+        java.util.Set<Long> myProductIds = myProducts.stream().map(MallProduct::getId).collect(Collectors.toSet());
+        if (myProductIds.isEmpty()) {
+            return List.of();
+        }
         List<MallAfterSale> afterSales = this.list(
                 new LambdaQueryWrapper<MallAfterSale>()
                         .eq(MallAfterSale::getDeleted, 0)
@@ -335,12 +356,34 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                         u -> u.getNickname() != null && !u.getNickname().isBlank() ? u.getNickname() : u.getUsername(),
                         (a, b) -> a));
         // 批量查售后对应的订单商品
-        List<Long> adminOrderItemIds = afterSales.stream().map(MallAfterSale::getOrderItemId).distinct().toList();
-        Map<Long, MallOrderItem> adminOrderItemMap = mallOrderItemService.listByIds(adminOrderItemIds).stream()
+        List<Long> orderItemIds = afterSales.stream().map(MallAfterSale::getOrderItemId).distinct().toList();
+        Map<Long, MallOrderItem> orderItemMap = mallOrderItemService.listByIds(orderItemIds).stream()
                 .collect(Collectors.toMap(MallOrderItem::getId, i -> i, (a, b) -> a));
+        // 通过SKU链确定orderItem归属的商品：orderItem.skuId → MallSku.productId
+        List<Long> skuIds = orderItemMap.values().stream()
+                .map(MallOrderItem::getSkuId).filter(id -> id != null).distinct().toList();
+        Map<Long, Long> skuProductMap; // skuId → productId
+        if (!skuIds.isEmpty()) {
+            skuProductMap = mallSkuService.listByIds(skuIds).stream()
+                    .collect(Collectors.toMap(MallSku::getId, MallSku::getProductId, (a, b) -> a));
+        } else {
+            skuProductMap = Map.of();
+        }
 
         List<AfterSaleAdminListDto> result = new ArrayList<>();
         for (MallAfterSale as : afterSales) {
+            MallOrderItem oi = orderItemMap.get(as.getOrderItemId());
+            if (oi == null) {
+                continue;
+            }
+            // 通过SKU链确定商品归属，商家只看到自己商品的售后单
+            Long orderItemProductId = oi.getProductId();
+            if (orderItemProductId == null && oi.getSkuId() != null) {
+                orderItemProductId = skuProductMap.get(oi.getSkuId());
+            }
+            if (orderItemProductId == null || !myProductIds.contains(orderItemProductId)) {
+                continue;
+            }
             AfterSaleAdminListDto dto = new AfterSaleAdminListDto();
             dto.setId(as.getId());
             dto.setAfterSaleNo(as.getAfterSaleNo());
@@ -354,21 +397,18 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
                 dto.setOrderNo(order.getOrderNo());
                 dto.setUsername(usernameMap.getOrDefault(as.getUserId(), "-"));
 
-                MallOrderItem oi = adminOrderItemMap.get(as.getOrderItemId());
                 List<OrderItemDto> itemDtos = new ArrayList<>();
-                if (oi != null) {
-                    OrderItemDto itemDto = new OrderItemDto();
-                    itemDto.setId(oi.getId());
-                    itemDto.setSkuId(oi.getSkuId());
-                    itemDto.setProductName(oi.getProductName());
-                    itemDto.setProductImage(oi.getProductImage());
-                    itemDto.setPrice(oi.getPrice());
-                    itemDto.setQuantity(oi.getQuantity());
-                    itemDto.setTotalPrice(oi.getTotalPrice());
-                    itemDto.setItemStatus(oi.getItemStatus());
-                    itemDto.setRefundQuantity(oi.getRefundQuantity());
-                    itemDtos.add(itemDto);
-                }
+                OrderItemDto itemDto = new OrderItemDto();
+                itemDto.setId(oi.getId());
+                itemDto.setSkuId(oi.getSkuId());
+                itemDto.setProductName(oi.getProductName());
+                itemDto.setProductImage(oi.getProductImage());
+                itemDto.setPrice(oi.getPrice());
+                itemDto.setQuantity(oi.getQuantity());
+                itemDto.setTotalPrice(oi.getTotalPrice());
+                itemDto.setItemStatus(oi.getItemStatus());
+                itemDto.setRefundQuantity(oi.getRefundQuantity());
+                itemDtos.add(itemDto);
                 dto.setItems(itemDtos);
             }
             result.add(dto);

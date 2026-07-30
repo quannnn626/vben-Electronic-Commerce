@@ -108,7 +108,7 @@ public class MallAfterSaleController {
             return ApiResponse.of(-1, null, "未登录");
         }
         try {
-            List<AfterSaleAdminListDto> list = mallAfterSaleService.listAfterSalesAdmin();
+            List<AfterSaleAdminListDto> list = mallAfterSaleService.listAfterSalesAdmin(username);
             return ApiResponse.of(0, list, "success");
         } catch (IllegalArgumentException e) {
             return ApiResponse.of(1, null, e.getMessage());
