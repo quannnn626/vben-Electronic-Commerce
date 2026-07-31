@@ -451,6 +451,10 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
         if (targetStatus != AfterSaleStatusEnum.APPROVED && targetStatus != AfterSaleStatusEnum.REJECTED) {
             throw new IllegalArgumentException("审核状态无效");
         }
+        // 校验商家身份：审核人必须是该售后单对应商品的商家
+        if (!verifyMerchantAccess(as, userId)) {
+            throw new IllegalArgumentException("无权审核该售后单");
+        }
         applyAuditResult(as, targetStatus, userId, request.getAuditRemark());
         this.updateById(as);
     }
@@ -469,9 +473,27 @@ public class MallAfterSaleServiceImpl extends ServiceImpl<MallAfterSaleMapper, M
             if (!as.getStatus().equals(AfterSaleStatusEnum.APPLYING.getCode())) continue;
             AfterSaleStatusEnum target = AfterSaleStatusEnum.of(item.getStatus());
             if (target != AfterSaleStatusEnum.APPROVED && target != AfterSaleStatusEnum.REJECTED) continue;
+            // 校验商家身份
+            if (!verifyMerchantAccess(as, userId)) continue;
             applyAuditResult(as, target, userId, item.getAuditRemark());
             this.updateById(as);
         }
+    }
+
+    /**
+     * 校验当前用户是否是该售后单对应商品的商家
+     */
+    private boolean verifyMerchantAccess(MallAfterSale as, Long userId) {
+        MallOrderItem oi = mallOrderItemMapper.selectById(as.getOrderItemId());
+        if (oi == null) return false;
+        Long productId = oi.getProductId();
+        if (productId == null && oi.getSkuId() != null) {
+            MallSku sku = mallSkuService.getById(oi.getSkuId());
+            if (sku != null) productId = sku.getProductId();
+        }
+        if (productId == null) return false;
+        MallProduct product = mallProductService.getById(productId);
+        return product != null && product.getCreateUser().equals(userId);
     }
 
     /**
