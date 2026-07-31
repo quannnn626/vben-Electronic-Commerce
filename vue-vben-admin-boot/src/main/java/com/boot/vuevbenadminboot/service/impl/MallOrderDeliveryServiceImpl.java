@@ -100,6 +100,10 @@ public class MallOrderDeliveryServiceImpl extends ServiceImpl<MallOrderDeliveryM
         Date now = new Date();
         mallOrder.setDeliveryTime(now);
         mallOrder.setUpdateTime(now);
+        // 首次发货时推进订单状态为已发货
+        if (Objects.equals(mallOrder.getStatus(), OrderStatusEnum.PAID.getCode())) {
+            mallOrder.setStatus(OrderStatusEnum.SHIPPED.getCode());
+        }
         mallOrderMapper.updateById(mallOrder);
 
         return delivery;

@@ -70,9 +70,10 @@ interface OrderDetail {
 const orderStatusMap: Record<number, { label: string; type: string }> = {
   0: { label: '待支付', type: 'danger' },
   1: { label: '已支付', type: 'warning' },
-  2: { label: '已发货', type: '' },
-  3: { label: '已完成', type: 'success' },
-  4: { label: '已取消', type: 'info' },
+  2: { label: '已取消', type: 'info' },
+  3: { label: '已关闭', type: 'info' },
+  4: { label: '已发货', type: '' },
+  5: { label: '已完成', type: 'success' },
 };
 
 // 商品发货状态映射
@@ -123,8 +124,8 @@ const form = reactive({
   type: null as number | null,
 });
 
-// 是否支持换货类型
-const canExchange = computed(() => order.value?.status === 2 || order.value?.status === 3);
+// 是否支持换货类型（已发货或已完成）
+const canExchange = computed(() => order.value?.status === 4 || order.value?.status === 5);
 
 const refundTypes = [
   { label: '仅退款', value: 0 },

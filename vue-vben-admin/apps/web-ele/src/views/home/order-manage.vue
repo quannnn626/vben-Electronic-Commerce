@@ -95,6 +95,8 @@ const statusOptions = [
   { label: '已支付', value: 1 },
   { label: '已取消', value: 2 },
   { label: '已关闭', value: 3 },
+  { label: '已发货', value: 4 },
+  { label: '已完成', value: 5 },
 ];
 
 const statusMap: Record<number, { label: string; type: string }> = {
@@ -102,6 +104,8 @@ const statusMap: Record<number, { label: string; type: string }> = {
   1: { label: '已支付', type: '' },
   2: { label: '已取消', type: 'info' },
   3: { label: '已关闭', type: 'info' },
+  4: { label: '已发货', type: 'warning' },
+  5: { label: '已完成', type: 'success' },
 };
 
 function normalizeImage(url?: string) {
@@ -269,7 +273,7 @@ onMounted(() => {
               详情
             </ElButton>
             <ElButton
-              v-if="row.status === 1"
+              v-if="row.status === 1 || row.status === 4"
               size="small"
               text
               type="success"

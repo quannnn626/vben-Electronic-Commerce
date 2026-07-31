@@ -207,7 +207,7 @@ onMounted(() => {
               <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
               <div class="goods-actions">
                 <ElButton
-                  v-if="order?.status === 1 && (item.itemStatus === 1 || item.itemStatus === 2)"
+                  v-if="[1, 4].includes(order?.status ?? 0) && (item.itemStatus === 1 || item.itemStatus === 2)"
                   size="small"
                   type="primary"
                   @click="goConfirmReceipt(item.id)"
@@ -215,7 +215,7 @@ onMounted(() => {
                   确认收货
                 </ElButton>
                 <ElButton
-                  v-if="order?.status === 1 && [0, 1, 2, 3, 4].includes(item.itemStatus)"
+                  v-if="[1, 4].includes(order?.status ?? 0) && [0, 1, 2, 3, 4].includes(item.itemStatus)"
                   size="small"
                   type="warning"
                   @click="goAfterSale(item.id)"

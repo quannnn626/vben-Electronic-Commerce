@@ -15,7 +15,11 @@ public enum OrderStatusEnum {
 
     CANCELLED(2, "已取消"),
 
-    CLOSED(3, "已关闭");
+    CLOSED(3, "已关闭"),
+
+    SHIPPED(4, "已发货"),
+
+    COMPLETED(5, "已完成");
 
     private final int code;
     private final String desc;

@@ -44,7 +44,7 @@ interface OrderItem {
   goodsImage: string;
   amount: number;
   actualAmount: number;
-  status: 'pending' | 'paid' | 'cancelled' | 'closed';
+  status: 'pending' | 'paid' | 'cancelled' | 'closed' | 'shipped' | 'completed';
   createTime: string;
   logisticsCompany: string;
   trackingNo: string;
@@ -58,6 +58,8 @@ const ORDER_STATUS = {
   PAID: 1,       // 已支付
   CANCELLED: 2,  // 已取消
   CLOSED: 3,     // 已关闭
+  SHIPPED: 4,    // 已发货
+  COMPLETED: 5,  // 已完成
 } as const;
 
 const backendStatusMap: Record<number, OrderItem['status']> = {
@@ -65,6 +67,8 @@ const backendStatusMap: Record<number, OrderItem['status']> = {
   [ORDER_STATUS.PAID]: 'paid',
   [ORDER_STATUS.CANCELLED]: 'cancelled',
   [ORDER_STATUS.CLOSED]: 'closed',
+  [ORDER_STATUS.SHIPPED]: 'shipped',
+  [ORDER_STATUS.COMPLETED]: 'completed',
 };
 
 const statusMap: Record<OrderItem['status'], { label: string; type: string }> = {
@@ -72,6 +76,8 @@ const statusMap: Record<OrderItem['status'], { label: string; type: string }> = 
   closed: { label: '已关闭', type: 'info' },
   paid: { label: '已支付', type: '' },
   pending: { label: '待付款', type: 'danger' },
+  shipped: { label: '已发货', type: 'warning' },
+  completed: { label: '已完成', type: 'success' },
 };
 
 const keyword = ref('');
@@ -189,10 +195,11 @@ watch(activeTab, (tab) => {
   keyword.value = '';
   if (tab === 'after-sale') {
     loadAfterSales();
-  } else if (tab === 'all') {
+  } else if (tab === 'all' || tab === 'completed') {
+    // "全部"和"已完成"需要加载所有订单（含新旧已完成订单）
     loadOrders();
   } else if (tab === 'receiving') {
-    // 待收货：已支付订单中，有商品已发货或运输中
+    // 待收货：已支付/已发货订单中，有商品已发货或运输中
     loadOrders(1);
   } else {
     loadOrders(Number(tab));
@@ -207,13 +214,20 @@ const tableData = computed(() => {
       o.itemStatuses.length > 0 && o.itemStatuses.every((s) => s === 0)
     );
   }
-  // "待收货"：只显示有商品已发货或运输中的订单
+  // "待收货"：有商品已发货或运输中，且未全部收货完成
   if (activeTab.value === 'receiving') {
     list = list.filter((o) =>
-      o.itemStatuses.some((s) => s === 1 || s === 2)
+      o.itemStatuses.some((s) => s === 1 || s === 2) &&
+      !o.itemStatuses.every((s) => s === 3 || s === 4 || s === 5)
     );
   }
-  // 已取消/已关闭 tab 不过滤（状态已在API层过滤）
+  // "已完成"：全部商品已收货/已完成/售后中
+  if (activeTab.value === 'completed') {
+    list = list.filter((o) =>
+      o.itemStatuses.length > 0 && o.itemStatuses.every((s) => s === 3 || s === 4 || s === 5)
+    );
+  }
+  // 其他 tab（待付款/已取消）不过滤（状态已在API层过滤）
   const key = keyword.value.trim().toLowerCase();
   if (!key) return list;
   return list.filter(
@@ -286,6 +300,7 @@ onMounted(() => {
       <ElTabPane label="待付款" name="0" />
       <ElTabPane label="待发货" name="1" />
       <ElTabPane label="待收货" name="receiving" />
+      <ElTabPane label="已完成" name="completed" />
       <ElTabPane label="已取消" name="2" />
       <ElTabPane label="退换/售后" name="after-sale" />
     </ElTabs>
@@ -417,14 +432,14 @@ onMounted(() => {
                 取消
               </ElButton>
               <ElButton
-                v-if="item.status === 'paid' && item.itemStatuses.some((s) => s === 1 || s === 2)"
+                v-if="['paid', 'shipped'].includes(item.status) && item.itemStatuses.some((s) => s === 1 || s === 2)"
                 type="primary"
                 @click="handleConfirm(item)"
               >
                 确认收货
               </ElButton>
               <ElButton
-                v-if="item.status === 'paid' && item.orderItemId && item.itemStatuses.some((s) => [0, 1, 2, 3, 4].includes(s))"
+                v-if="['paid', 'shipped'].includes(item.status) && item.orderItemId && item.itemStatuses.some((s) => [0, 1, 2, 3, 4].includes(s))"
                 type="warning"
                 @click="handleAfterSale(item)"
               >

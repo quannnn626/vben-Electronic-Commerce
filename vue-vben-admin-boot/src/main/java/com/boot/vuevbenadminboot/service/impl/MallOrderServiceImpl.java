@@ -236,6 +236,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
             throw new IllegalArgumentException("仅已支付订单可确认收货");
         }
         order.setFinishTime(new java.util.Date());
+        order.setStatus(OrderStatusEnum.COMPLETED.getCode());
         order.setUpdateTime(new java.util.Date());
         this.updateById(order);
         // 所有商品标记已收货
@@ -289,6 +290,7 @@ public class MallOrderServiceImpl extends ServiceImpl<MallOrderMapper, MallOrder
         });
         if (allFinished && order.getFinishTime() == null) {
             order.setFinishTime(new java.util.Date());
+            order.setStatus(OrderStatusEnum.COMPLETED.getCode());
             order.setUpdateTime(new java.util.Date());
             this.updateById(order);
         }
