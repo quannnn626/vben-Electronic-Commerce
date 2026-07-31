@@ -142,6 +142,16 @@ const allReasonOptions = [
   { label: '其他', value: 6 },
 ];
 
+// 可申请售后的商品状态：待发货、已发货、运输中、已收货、已完成
+const AFTER_SALE_ELIGIBLE_STATUSES = new Set([0, 1, 2, 3, 4]);
+
+// 过滤后可选售后的商品列表
+const eligibleItems = computed(() =>
+  order.value?.items?.filter((item) =>
+    AFTER_SALE_ELIGIBLE_STATUSES.has(item.itemStatus)
+  ) ?? []
+);
+
 // 未收到货、收到货
 const availableReasons = computed(() => {
   if (form.received === null) return allReasonOptions;
@@ -366,10 +376,14 @@ onMounted(() => {
         v-if="!loading && (!order?.items || order.items.length === 0)"
         description="暂无商品"
       />
+      <ElEmpty
+        v-else-if="!loading && eligibleItems.length === 0"
+        description="当前订单无可申请售后的商品"
+      />
 
-      <div v-if="order?.items?.length" class="item-list">
+      <div v-if="eligibleItems.length" class="item-list">
         <div
-          v-for="item in order.items"
+          v-for="item in eligibleItems"
           :key="item.id"
           class="item-card"
           :class="{ 'item-card--selected': isItemSelected(item.id) }"

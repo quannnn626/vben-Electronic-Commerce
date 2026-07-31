@@ -16,6 +16,9 @@ interface BackendOrderItem {
   price: number;
   quantity: number;
   totalPrice: number;
+  itemStatus?: number;
+  logisticsCompany?: string;
+  trackingNo?: string;
 }
 
 interface BackendOrder {
@@ -23,7 +26,7 @@ interface BackendOrder {
   orderNo: string;
   totalAmount: number;
   payAmount: number;
-  status: number; // 对应 OrderStatusEnum: 0待支付 1已支付 2已发货 3已完成 4已取消
+  status: number; // 对应 OrderStatusEnum: 0待支付 1已支付 2已取消 3已关闭
   createTime: string;
   payTime: string | null;
   deliveryTime: string | null;
@@ -46,6 +49,7 @@ interface OrderItem {
   logisticsCompany: string;
   trackingNo: string;
   orderItemId?: number;
+  itemStatuses: number[];
 }
 
 // 订单状态码常量
@@ -88,6 +92,11 @@ function transformOrder(backend: BackendOrder): OrderItem {
   const firstItem = backend.items?.[0];
   const totalCount =
     backend.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+  const itemStatuses = backend.items?.map((i) => i.itemStatus ?? 0) ?? [];
+  // 优先使用已发货商品的物流信息
+  const shippedItem = backend.items?.find((i) => i.itemStatus === 1 || i.itemStatus === 2);
+  const logisticsCompany = shippedItem?.logisticsCompany || backend.logisticsCompany || '';
+  const trackingNo = shippedItem?.trackingNo || backend.trackingNo || '';
   return {
     id: String(backend.id),
     orderNo: backend.orderNo,
@@ -98,9 +107,10 @@ function transformOrder(backend: BackendOrder): OrderItem {
     actualAmount: backend.payAmount,
     status: backendStatusMap[backend.status] ?? 'pending',
     createTime: backend.createTime,
-    logisticsCompany: backend.logisticsCompany || '',
-    trackingNo: backend.trackingNo || '',
+    logisticsCompany,
+    trackingNo,
     orderItemId: firstItem?.id,
+    itemStatuses,
   };
 }
 
@@ -181,15 +191,32 @@ watch(activeTab, (tab) => {
     loadAfterSales();
   } else if (tab === 'all') {
     loadOrders();
+  } else if (tab === 'receiving') {
+    // 待收货：已支付订单中，有商品已发货或运输中
+    loadOrders(1);
   } else {
     loadOrders(Number(tab));
   }
 });
 
 const tableData = computed(() => {
+  let list = orders.value;
+  // "待发货"：只显示全部商品都是待发货状态的订单
+  if (activeTab.value === '1') {
+    list = list.filter((o) =>
+      o.itemStatuses.length > 0 && o.itemStatuses.every((s) => s === 0)
+    );
+  }
+  // "待收货"：只显示有商品已发货或运输中的订单
+  if (activeTab.value === 'receiving') {
+    list = list.filter((o) =>
+      o.itemStatuses.some((s) => s === 1 || s === 2)
+    );
+  }
+  // 已取消/已关闭 tab 不过滤（状态已在API层过滤）
   const key = keyword.value.trim().toLowerCase();
-  if (!key) return orders.value;
-  return orders.value.filter(
+  if (!key) return list;
+  return list.filter(
     (item) =>
       item.orderNo.toLowerCase().includes(key) ||
       item.goodsName.toLowerCase().includes(key),
@@ -258,7 +285,8 @@ onMounted(() => {
       <ElTabPane label="全部订单" name="all" />
       <ElTabPane label="待付款" name="0" />
       <ElTabPane label="待发货" name="1" />
-      <ElTabPane label="待收货" name="2" />
+      <ElTabPane label="待收货" name="receiving" />
+      <ElTabPane label="已取消" name="2" />
       <ElTabPane label="退换/售后" name="after-sale" />
     </ElTabs>
 
@@ -389,14 +417,14 @@ onMounted(() => {
                 取消
               </ElButton>
               <ElButton
-                v-if="item.status === 'paid'"
+                v-if="item.status === 'paid' && item.itemStatuses.some((s) => s === 1 || s === 2)"
                 type="primary"
                 @click="handleConfirm(item)"
               >
                 确认收货
               </ElButton>
               <ElButton
-                v-if="item.status === 'paid' && item.orderItemId"
+                v-if="item.status === 'paid' && item.orderItemId && item.itemStatuses.some((s) => [0, 1, 2, 3, 4].includes(s))"
                 type="warning"
                 @click="handleAfterSale(item)"
               >

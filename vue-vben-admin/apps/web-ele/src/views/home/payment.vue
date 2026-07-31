@@ -107,6 +107,14 @@ function goConfirmReceipt(orderItemId?: number) {
   router.push({ name: 'ConfirmReceipt', query });
 }
 
+function goAfterSale(orderItemId?: number) {
+  if (!order.value) return;
+  router.push({
+    path: '/order/after-sale/create',
+    query: { orderId: String(order.value.id) },
+  });
+}
+
 const itemStatusMap: Record<number, { label: string; type: string }> = {
   0: { label: '待发货', type: 'info' },
   1: { label: '已发货', type: '' },
@@ -197,14 +205,24 @@ onMounted(() => {
                 <div class="goods-qty">×{{ item.quantity }}</div>
               </div>
               <div class="goods-subtotal">¥{{ item.totalPrice.toFixed(2) }}</div>
-              <ElButton
-                v-if="order?.status === 1 && (item.itemStatus === 1 || item.itemStatus === 2)"
-                size="small"
-                type="primary"
-                @click="goConfirmReceipt(item.id)"
-              >
-                确认收货
-              </ElButton>
+              <div class="goods-actions">
+                <ElButton
+                  v-if="order?.status === 1 && (item.itemStatus === 1 || item.itemStatus === 2)"
+                  size="small"
+                  type="primary"
+                  @click="goConfirmReceipt(item.id)"
+                >
+                  确认收货
+                </ElButton>
+                <ElButton
+                  v-if="order?.status === 1 && [0, 1, 2, 3, 4].includes(item.itemStatus)"
+                  size="small"
+                  type="warning"
+                  @click="goAfterSale(item.id)"
+                >
+                  申请售后
+                </ElButton>
+              </div>
             </div>
           </div>
           <ElEmpty v-else description="暂无商品信息" />
@@ -423,6 +441,12 @@ onMounted(() => {
   font-weight: 600;
   min-width: 90px;
   text-align: right;
+}
+
+.goods-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 /* 支付方式 */
